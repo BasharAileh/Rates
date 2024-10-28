@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "792438731850",
+    "project_id": "rates-12dcc",
+    "storage_bucket": "rates-12dcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792438731850:android:a28d26a47781ef37e0e2b3",
+        "android_client_info": {
+          "package_name": "com.bev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZbaFCFiSL_takXkXSyx4njsZNwPWynU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792438731850:android:52d3fb20f4158377e0e2b3",
+        "android_client_info": {
+          "package_name": "com.bev.rates"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZbaFCFiSL_takXkXSyx4njsZNwPWynU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
