@@ -18,18 +18,25 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-              padding: EdgeInsets.only(top: AspectRatios.height * 0.2),
-              child: Center(
-                child: Column(
-                  children: [
-                    RatesLogo(),
-                    SizedBox(height: AspectRatios.height * 0.13),
-                    LayoutBuilder(builder: (context, constraints) {
+            padding: EdgeInsets.only(top: AspectRatios.height * 0.2),
+            child: Column(
+              children: [
+                RatesLogo(),
+                SizedBox(height: AspectRatios.height * 0.13),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: AspectRatios.height * 0.4,
+                      maxWidth: AspectRatios.width * 0.8,
+                    ),
+                    child: LayoutBuilder(builder: (context, constraints) {
                       return Container(
-                        width: AspectRatios.width * 0.8,
-                        height: AspectRatios.height * 0.5,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                        width: constraints.maxHeight,
+                        height: constraints.maxHeight,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AspectRatios.width * 0.05,
+                          vertical: AspectRatios.height * 0.03,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10),
@@ -45,15 +52,21 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: Stack(
                           children: [
-                            Container(
-                              width: constraints.maxWidth * 0.8,
-                              height: constraints.maxHeight * 0.1,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                            GestureDetector(
+                              onTap: () {
+                                developer.log('${constraints.maxHeight}');
+                              },
+                              child: Container(
+                                width: constraints.maxWidth * 0.8,
+                                height: constraints.maxHeight * 0.1,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                             Positioned(
+                              top: 10,
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.amber,
@@ -91,10 +104,12 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                       );
-                    })
-                  ],
-                ),
-              )),
+                    }),
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
