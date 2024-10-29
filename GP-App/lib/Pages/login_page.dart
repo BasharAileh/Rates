@@ -46,34 +46,51 @@ class _LoginPageState extends State<LoginPage> {
                               spreadRadius: 5,
                               blurRadius: 7,
                               offset: const Offset(
-                                  0, 3), // changes position of shadow
+                                0,
+                                3,
+                              ), // changes position of shadow
                             ),
                           ],
                         ),
                         child: Stack(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                developer.log('${constraints.maxHeight}');
-                              },
+                            Positioned(
+                              top: constraints.maxHeight * 0.2,
                               child: Container(
                                 width: constraints.maxWidth * 0.8,
-                                height: constraints.maxHeight * 0.1,
+                                height: constraints.maxHeight * 0.125,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Color.fromARGB(150, 122, 178, 211),
+                                      Color.fromARGB(100, 74, 98, 138),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
                             ),
                             Positioned(
-                              top: 10,
+                              top: constraints.maxHeight * 0.2,
+                              left: constraints.maxWidth * 0.15,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.amber,
+                                  gradient: const LinearGradient(
+                                    transform: GradientRotation(0.5),
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Color.fromARGB(200, 223, 242, 235),
+                                      Color.fromARGB(255, 185, 229, 232),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: SizedBox(
-                                  width: constraints.maxWidth * 0.8,
+                                  width: constraints.maxWidth * 0.7,
+                                  height: constraints.maxHeight * 0.125,
                                   child: TextField(
                                     onChanged: (value) {
                                       developer
@@ -90,14 +107,106 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             Positioned(
-                              top: 100,
-                              left: 35,
+                              top: constraints.maxHeight * 0.4,
+                              left: constraints.maxWidth * 0.15,
                               child: Container(
-                                width: AspectRatios.width * 0.6,
-                                height: AspectRatios.height * 0.1,
+                                width: constraints.maxWidth * 0.7,
+                                height: constraints.maxHeight * 0.125,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.centerLeft,
+                                    colors: [
+                                      Color.fromARGB(150, 122, 178, 211),
+                                      Color.fromARGB(100, 74, 98, 138),
+                                    ],
+                                  ),
                                   borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: constraints.maxHeight * 0.4,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    transform: GradientRotation(0.5),
+                                    begin: Alignment.centerRight,
+                                    end: Alignment.centerLeft,
+                                    colors: [
+                                      Color.fromARGB(200, 223, 242, 235),
+                                      Color.fromARGB(255, 185, 229, 232),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: SizedBox(
+                                  width: constraints.maxWidth * 0.7,
+                                  height: constraints.maxHeight * 0.125,
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      developer
+                                          .log('==${constraints.maxWidth}');
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Password',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: constraints.maxHeight * 0.2,
+                              child: Container(
+                                width: constraints.maxWidth * 0.8,
+                                height: constraints.maxHeight * 0.125,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Color.fromARGB(150, 122, 178, 211),
+                                      Color.fromARGB(100, 74, 98, 138),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: constraints.maxHeight * 0.2,
+                              left: constraints.maxWidth * 0.15,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    transform: GradientRotation(0.5),
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Color.fromARGB(200, 223, 242, 235),
+                                      Color.fromARGB(255, 185, 229, 232),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: SizedBox(
+                                  width: constraints.maxWidth * 0.7,
+                                  height: constraints.maxHeight * 0.125,
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      developer
+                                          .log('==${constraints.maxWidth}');
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Email',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
