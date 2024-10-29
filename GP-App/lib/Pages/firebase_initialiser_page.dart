@@ -34,7 +34,7 @@ class FirebaseInitPage extends StatelessWidget {
                 return const VerificationPage();
               }
             } else {
-              return const RestaurantApp();
+              return const HomePage();
             }
 
           default:
