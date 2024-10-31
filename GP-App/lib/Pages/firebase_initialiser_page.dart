@@ -9,6 +9,7 @@ import 'package:rates/pages/register_page.dart';
 import 'package:rates/pages/splash_screen.dart';
 import 'package:rates/Pages/shops_page.dart';
 import 'package:rates/pages/verification_page.dart';
+import 'package:rates/pages/favorite_page.dart';
 
 class FirebaseInitPage extends StatelessWidget {
   const FirebaseInitPage({super.key});
