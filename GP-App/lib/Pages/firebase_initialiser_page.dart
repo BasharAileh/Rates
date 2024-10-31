@@ -3,11 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/firebase_options.dart';
 import 'package:rates/pages/home_page.dart';
-import 'package:rates/pages/login_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/pages/register_page.dart';
+import 'package:rates/pages/login_page.dart';
+
 import 'package:rates/pages/splash_screen.dart';
-import 'package:rates/Pages/shops_page.dart';
 import 'package:rates/pages/verification_page.dart';
 
 class FirebaseInitPage extends StatelessWidget {
@@ -34,7 +33,7 @@ class FirebaseInitPage extends StatelessWidget {
                 return const VerificationPage();
               }
             } else {
-              return const HomePage();
+              return const LoginPage();
             }
 
           default:

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:rates/constants/aspect_ratio.dart';
 
 void main() {
-  runApp(const RestaurantApp());
+  runApp(const ShopsPage());
 }
 
-class RestaurantApp extends StatelessWidget {
-  const RestaurantApp({super.key});
+class ShopsPage extends StatelessWidget {
+  const ShopsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class RestaurantListScreen extends StatelessWidget {
       "name": "Hattan Cafe",
       "logo": "assets/images/R.png",
     },
-    
+
     // Add more restaurants as needed
   ];
 
@@ -93,55 +94,57 @@ class RestaurantCard extends StatelessWidget {
     final totalHeight = MediaQuery.of(context).size.height;
     final totalWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      height: totalHeight * 0.17,
-      width: totalWidth * 0.9, // Use a more reasonable width
-      margin: EdgeInsets.symmetric(
-        vertical: totalHeight * 0.045,
-        horizontal: totalWidth * 0.05,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: Colors.amber,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.only(left: totalWidth * 0.05),
-            //,
-            child: Image.asset(
-              logo,
-              width: totalWidth * 0.19,
-              height: totalHeight * 0.1,
-              fit: BoxFit.cover,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AspectRatios.width * 0.05,
+          AspectRatios.height * 0.0415, AspectRatios.width * 0.05, 0),
+      child: Container(
+        height: totalHeight * 0.17,
+        width: totalWidth * 0.9, // Use a more reasonable width
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.amber,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: totalWidth * 0.05),
+              //,
+              child: Image.asset(
+                logo,
+                width: totalWidth * 0.19,
+                height: totalHeight * 0.1,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 3,
-            child: Text(
-              name,
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 3,
+              child: Text(
+                name,
+                style:
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  "Rate",
-                  style: TextStyle(fontSize: 16),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  onPressed: () {},
-                ),
-              ],
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "Rate",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
