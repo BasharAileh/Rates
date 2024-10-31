@@ -6,7 +6,7 @@ class Shop extends StatefulWidget {
   @override
   State<Shop> createState() => _ShopState();
 }
-
+double initialRating = 4.0;
 class _ShopState extends State<Shop> {
   @override
   Widget build(BuildContext context) {
@@ -29,20 +29,24 @@ class _ShopState extends State<Shop> {
                 SizedBox(
                   height: 15,
                 ),
+                 // Define your initial rating here
+
                 RatingBar.builder(
                   itemSize: 25,
-                  initialRating: 5,
+                  initialRating: initialRating, // Use the variable for initial rating
                   minRating: 0.5,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
+                  ignoreGestures: true,
                   itemBuilder: (context, _) => const Icon(
                     Icons.star,
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {
+                    initialRating = rating; // Update the variable when the rating changes
                     print(rating);
                   },
-                ),
+                )
               ],
             ),
           ),
@@ -65,7 +69,7 @@ class _ShopState extends State<Shop> {
           ),
 
           // Row with stacked CircleAvatar and Container
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -107,11 +111,11 @@ class _ShopState extends State<Shop> {
               children: [
                 Row(
                   children: [
-                    Text(
+                    const Text(
                       '0785017426',
                       style: TextStyle(color: Colors.white, fontSize: 28),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     GestureDetector(
