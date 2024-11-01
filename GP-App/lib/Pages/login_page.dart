@@ -46,11 +46,9 @@ class _LoginPageState extends State<LoginPage> {
                 RatesLogo(),
                 SizedBox(height: AspectRatios.height * 0.13),
                 Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: AspectRatios.height * 0.4,
-                      maxWidth: AspectRatios.width * 0.8,
-                    ),
+                  child: Container(
+                    width: AspectRatios.width * 0.9,
+                    height: AspectRatios.height * 0.4,
                     child: LayoutBuilder(builder: (context, constraints) {
                       /* String loginText = "Login";
                       TextStyle style = const TextStyle(
@@ -263,8 +261,8 @@ class _LoginPageState extends State<LoginPage> {
                                                 child: SizedBox(
                                                   width:
                                                       AspectRatios.width * 0.8,
-                                                  height: AspectRatios.height *
-                                                      0.65,
+                                                  height:
+                                                      AspectRatios.height * 0.7,
                                                   child: const RegisterPage(),
                                                 ),
                                               ),
