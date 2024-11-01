@@ -1,4 +1,6 @@
-const String loginRoute = '/login/';
-const String registerRoute = '/register/';
-const String splashScreenRoute = '/splashscreen/';
-const String firebaseInitRoute = '/firebaseinit/';
+class Routes {
+  static const String loginRoute = '/login/';
+  static const String registerRoute = '/register/';
+  static const String splashScreenRoute = '/splashscreen/';
+  static const String firebaseInitRoute = '/firebaseinit/';
+}

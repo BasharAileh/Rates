@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:rates/constants/decorations.dart';
+import 'dart:developer' as devtools show log;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -10,6 +11,27 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  late final TextEditingController _email;
+  late final TextEditingController _password1;
+  late final TextEditingController _password2;
+  String _passwordError = '';
+
+  @override
+  void initState() {
+    _email = TextEditingController();
+    _password1 = TextEditingController();
+    _password2 = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password1.dispose();
+    _password2.dispose();
+    super.dispose();
+  }
+
   String? _selectedGender;
   bool _isTermsChecked = false;
   bool _isNewsletterChecked = false;
@@ -41,72 +63,44 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _email,
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _password1,
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                const TextField(
+                TextField(
+                  onChanged: (value) {
+                    if (_password1.text != value) {
+                      setState(() {
+                        _passwordError = 'Passwords do not match';
+                      });
+                    }
+                  },
+                  controller: _password2,
                   decoration: InputDecoration(
+                    helperText: _passwordError,
                     labelText: 'Confirm Password',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(height: constraints.maxHeight * 0.02),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: constraints.maxWidth * 0.05,
-                    ),
-                    const Text('Gender :'),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Radio<String>(
-                      value: 'M',
-                      groupValue: _selectedGender,
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            _selectedGender = value;
-                          },
-                        );
-                      },
-                    ),
-                    const Text('Male'),
-                    const SizedBox(width: 16),
-                    Radio<String>(
-                      value: 'F',
-                      groupValue: _selectedGender,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGender = value;
-                        });
-                      },
-                    ),
-                    const Text('Female'),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Transform.translate(
-                  offset: Offset(-constraints.maxWidth * 0.025, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Transform.scale(
-                        scale: 0.75,
-                        child: Checkbox(
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
                           value: _isTermsChecked,
                           onChanged: (bool? value) {
                             setState(() {
@@ -114,55 +108,84 @@ class _RegisterPageState extends State<RegisterPage> {
                             });
                           },
                         ),
-                      ),
-                      const Text(
-                        'I agree to the terms and conditions',
-                        style: TextStyle(
-                          fontSize: 12.0,
+                        const Text(
+                          'I agree to the terms and conditions',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Transform.translate(
-                  offset: Offset(-constraints.maxWidth * 0.025,
-                      -constraints.maxHeight * 0.04),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Transform.scale(
-                        scale: 0.75,
-                        child: Checkbox(
-                          value: _isNewsletterChecked,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isNewsletterChecked = value!;
-                            });
-                          },
-                        ),
-                      ),
-                      const Text(
-                        'I would like to receive the newsletter',
-                        style: TextStyle(
-                          fontSize: 12.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Cancel'),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Register'),
+                    Transform.translate(
+                      offset: Offset(0, -constraints.maxHeight * 0.025),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: _isNewsletterChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _isNewsletterChecked = value!;
+                              });
+                            },
+                          ),
+                          const Text(
+                            'I would like to receive the newsletter',
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final email = _email.text;
+
+                      if (_password1.text == _password2.text) {
+                        final password = _password1.text;
+                        try {
+                          devtools.log('Creating user with email: $email');
+                          devtools
+                              .log('Creating user with password: $password');
+                          final userCredential = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                  email: email, password: password);
+                          devtools.log(userCredential.user.toString());
+                        } on FirebaseAuthException catch (e) {
+                          // ignore: avoid_devtools.log
+                          if (e.code == 'weak-password') {
+                            setState(() {
+                              _passwordError =
+                                  'The password provided is too weak.';
+                            });
+                          } else if (e.code == 'email-already-in-use') {
+                            devtools.log(
+                                'The account already exists for that email.');
+                          } else if (e.code == 'invalid-email') {
+                            devtools
+                                .log('The email address is badly formatted.');
+                          }
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
+                    child: const Text('Register'),
+                  ),
+                ),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Already have an account? Login',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
                 ),
               ],
             );
