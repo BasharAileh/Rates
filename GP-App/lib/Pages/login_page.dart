@@ -5,6 +5,7 @@ import 'package:rates/constants/routes.dart';
 import 'package:rates/pages/register_page.dart';
 import 'dart:developer' as devtools show log;
 import 'package:rates/pages/temp_logo.dart';
+import 'package:rates/services/text_width_fun.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    String noAccountMessage = 'don\'t have an account? Register';
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,9 +74,10 @@ class _LoginPageState extends State<LoginPage> {
                       return Container(
                         width: constraints.maxHeight,
                         height: constraints.maxHeight,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AspectRatios.width * 0.05,
-                          vertical: AspectRatios.height * 0.03,
+                        padding: EdgeInsets.only(
+                          left: AspectRatios.width * 0.05,
+                          right: AspectRatios.width * 0.05,
+                          top: AspectRatios.height * 0.03,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
@@ -137,9 +140,9 @@ class _LoginPageState extends State<LoginPage> {
                                   width: constraints.maxWidth * 0.75,
                                   height: constraints.maxHeight * 0.125,
                                   child: TextField(
-                                    controller: _password,
+                                    controller: _email,
                                     decoration: InputDecoration(
-                                      hintText: 'Password',
+                                      hintText: 'Email',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -198,69 +201,85 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             Positioned(
-                              top: constraints.maxHeight * 0.6,
-                              left: constraints.maxWidth * 0.1,
-                              right: constraints.maxWidth * 0.1,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) {
-                                          return Dialog(
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: SizedBox(
+                                top: constraints.maxHeight * 0.54,
+                                left: constraints.maxWidth * 0.02,
+                                child: GestureDetector(
+                                    onTap: () {},
+                                    child: const Text('Forgot password?'))),
+                            Positioned(
+                              top: constraints.maxHeight * 0.65,
+                              left: (constraints.maxWidth * 0.5) -
+                                  constraints.maxWidth * 0.5 / 2 -
+                                  AspectRatios.width * 0.05,
+                              child: SizedBox(
+                                width: constraints.maxWidth * 0.5,
+                                child: TextButton(
+                                  onPressed: () async {
+                                    final email = _email.text;
+                                    final password = _password.text;
+                                    try {
+                                      await FirebaseAuth.instance
+                                          .signInWithEmailAndPassword(
+                                        email: email,
+                                        password: password,
+                                      );
+                                      //todo: navigate to home page
+                                    } on FirebaseAuthException catch (e) {
+                                      if (e.code == 'invalid-credential') {
+                                        devtools.log('user not found');
+                                      } else {
+                                        devtools.log(
+                                            'something went wrong\n ${e.code}');
+                                      }
+                                    }
+                                  },
+                                  style: TextButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(100, 74, 98, 138),
+                                  ),
+                                  child: const Text('Login'),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: constraints.maxHeight * 0.75,
+                              left: (constraints.maxWidth * 0.5) -
+                                  measureTextWidth(noAccountMessage) / 2 -
+                                  AspectRatios.width * 0.05,
+                              child: SizedBox(
+                                height: constraints.maxHeight * 0.15,
+                                child: Row(
+                                  children: [
+                                    Text(noAccountMessage.split('Register')[0]),
+                                    GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: SizedBox(
                                                   width:
                                                       AspectRatios.width * 0.8,
                                                   height: AspectRatios.height *
                                                       0.65,
-                                                  child: const RegisterPage()),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(
-                                          100, 74, 98, 138),
-                                    ),
-                                    child: const Text('Register'),
-                                  ),
-                                  SizedBox(
-                                    width: constraints.maxWidth * 0.2,
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      final email = _email.text;
-                                      final password = _password.text;
-                                      try {
-                                        await FirebaseAuth.instance
-                                            .signInWithEmailAndPassword(
-                                          email: email,
-                                          password: password,
+                                                  child: const RegisterPage(),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         );
-                                        //todo: navigate to home page
-                                      } on FirebaseAuthException catch (e) {
-                                        if (e.code == 'invalid-credential') {
-                                          devtools.log('user not found');
-                                        } else {
-                                          devtools.log(
-                                              'something went wrong\n ${e.code}');
-                                        }
-                                      }
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(
-                                          100, 74, 98, 138),
-                                    ),
-                                    child: const Text('Login'),
-                                  ),
-                                ],
+                                      },
+                                      child: Text(
+                                        noAccountMessage.split('? ')[1],
+                                        style:
+                                            const TextStyle(color: Colors.blue),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ],

@@ -14,12 +14,12 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: firebaseInitRoute,
+      initialRoute: Routes.firebaseInitRoute,
       routes: {
-        firebaseInitRoute: (context) => const FirebaseInitPage(),
-        loginRoute: (context) => const LoginPage(),
-        registerRoute: (context) => const RegisterPage(),
-        splashScreenRoute: (context) => const SplashScreen(),
+        Routes.firebaseInitRoute: (context) => const FirebaseInitPage(),
+        Routes.loginRoute: (context) => const LoginPage(),
+        Routes.registerRoute: (context) => const RegisterPage(),
+        Routes.splashScreenRoute: (context) => const SplashScreen(),
       },
     ),
   );

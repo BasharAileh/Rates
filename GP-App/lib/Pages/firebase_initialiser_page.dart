@@ -5,9 +5,9 @@ import 'package:rates/firebase_options.dart';
 import 'package:rates/pages/home_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/pages/login_page.dart';
-
 import 'package:rates/pages/splash_screen.dart';
 import 'package:rates/pages/verification_page.dart';
+import 'dart:developer' as devtools show log;
 
 class FirebaseInitPage extends StatelessWidget {
   const FirebaseInitPage({super.key});
@@ -26,6 +26,7 @@ class FirebaseInitPage extends StatelessWidget {
             return const SplashScreen();
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
+            devtools.log('User: $user');
             if (user != null) {
               if (user.emailVerified) {
                 return const HomePage();
