@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/pages/register_page.dart';
+import 'package:rates/pop_ups/verification_popup.dart';
+import 'package:rates/services/temp_logo.dart';
 import 'dart:developer' as devtools show log;
-import 'package:rates/pages/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,6 +23,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (FirebaseAuth.instance.currentUser != null &&
+          FirebaseAuth.instance.currentUser!.emailVerified != true) {
+        devtools.log('${FirebaseAuth.instance.currentUser!.emailVerified}');
+        showVerificationDialog(context);
+      }
+    });
     super.initState();
   }
 
@@ -43,14 +51,12 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(top: AspectRatios.height * 0.2),
             child: Column(
               children: [
-                RatesLogo(),
+                const RatesLogo(),
                 SizedBox(height: AspectRatios.height * 0.13),
                 Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: AspectRatios.height * 0.4,
-                      maxWidth: AspectRatios.width * 0.8,
-                    ),
+                  child: Container(
+                    width: AspectRatios.width * 0.9,
+                    height: AspectRatios.height * 0.4,
                     child: LayoutBuilder(builder: (context, constraints) {
                       /* String loginText = "Login";
                       TextStyle style = const TextStyle(
@@ -263,8 +269,8 @@ class _LoginPageState extends State<LoginPage> {
                                                 child: SizedBox(
                                                   width:
                                                       AspectRatios.width * 0.8,
-                                                  height: AspectRatios.height *
-                                                      0.65,
+                                                  height:
+                                                      AspectRatios.height * 0.7,
                                                   child: const RegisterPage(),
                                                 ),
                                               ),
