@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 
-void main() {
-  runApp(const ShopsPage());
-}
-
-class ShopsPage extends StatelessWidget {
+class ShopsPage extends StatefulWidget {
   const ShopsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RestaurantListScreen(),
-    );
-  }
+  State<ShopsPage> createState() => _ShopsPageState();
 }
 
-class RestaurantListScreen extends StatelessWidget {
+class _ShopsPageState extends State<ShopsPage> {
   final List<Map<String, String>> restaurants = [
     {
       "name": "Calma Space",
@@ -54,8 +47,6 @@ class RestaurantListScreen extends StatelessWidget {
     // Add more restaurants as needed
   ];
 
-  RestaurantListScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,9 +64,14 @@ class RestaurantListScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          return RestaurantCard(
-            name: restaurants[index]['name']!,
-            logo: restaurants[index]['logo']!,
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(Routes.shopRoute);
+            },
+            child: RestaurantCard(
+              name: restaurants[index]['name']!,
+              logo: restaurants[index]['logo']!,
+            ),
           );
         },
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/Pages/nav_bar.dart';
+import 'package:rates/constants/routes.dart';
+import 'package:rates/pop_ups/nav_bar.dart';
+import 'dart:developer' as devtools show log;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,96 +29,94 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    'Monthly Finest',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-            TheFinest(
-                finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
-                finestPics: const [
-                  'assets/logo1.png',
-                  'assets/logo2.png',
-                  'assets/logo3.png'
-                ],
-                onTap: () {
-                  // Navigate to Monthly Finest details page
-                },
-              ),
-            
-            const Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    'Yearly Finest',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-            TheFinest(
-              finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
-              finestPics: const [
-                'assets/logo1.png',
-                'assets/logo2.png',
-                'assets/logo3.png'
-              ],
-              onTap: () {
-                // Navigate to Yearly Finest details page
-              },
-            ),
-            const Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Text(
-                    'Rating Experts',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-            TheFinest(
-              finestNames: const ['Mhmd', 'Baraa', 'Bashar'],
-              finestPics: const [
-                'assets/logo1.png',
-                'assets/logo2.png',
-                'assets/logo3.png'
-              ],
-              onTap: () {
-                // Navigate to Rating Experts details page
-              },
-            ),
-            Container(
-              padding: const EdgeInsets.all(0.1),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle Rate button press
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: AspectRatios.width * 0.4,
-                      vertical: AspectRatios.height * 0.01),
-                ),
-                child: const Text(
-                  'Rate',
-                  style: TextStyle(color: Colors.white),
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Monthly Finest',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
+            ],
+          ),
+          TheFinest(
+            finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
+            finestPics: const [
+              'assets/logo1.png',
+              'assets/logo2.png',
+              'assets/logo3.png'
+            ],
+            onTap: () {
+              Navigator.of(context).pushNamed(Routes.shopsRoute);
+            },
+          ),
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Yearly Finest',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          TheFinest(
+            finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
+            finestPics: const [
+              'assets/logo1.png',
+              'assets/logo2.png',
+              'assets/logo3.png'
+            ],
+            onTap: () {
+              // Navigate to Yearly Finest details page
+            },
+          ),
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16),
+                child: Text(
+                  'Rating Experts',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          TheFinest(
+            finestNames: const ['Mhmd', 'Baraa', 'Bashar'],
+            finestPics: const [
+              'assets/logo1.png',
+              'assets/logo2.png',
+              'assets/logo3.png'
+            ],
+            onTap: () {
+              // Navigate to Rating Experts details page
+            },
+          ),
+          Container(
+            padding: const EdgeInsets.all(0.1),
+            child: ElevatedButton(
+              onPressed: () {
+                // Handle Rate button press
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(
+                    horizontal: AspectRatios.width * 0.4,
+                    vertical: AspectRatios.height * 0.01),
+              ),
+              child: const Text(
+                'Rate',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ],
-        ),
-      
+          ),
+        ],
+      ),
       bottomNavigationBar: SafeArea(
         child: SizedBox(
           height: bottomAppBarHeight,
@@ -178,36 +178,33 @@ class TheFinest extends StatelessWidget {
     double avatarSize = containerHeight * 0.15;
     double orderRadius = 20;
 
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        width: AspectRatios.width,
-        height: containerHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(orderRadius),
-          color: Colors.grey[850],
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 1.0,
-              offset: Offset(1.0, 1.0),
+    return Container(
+      width: AspectRatios.width,
+      height: containerHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(orderRadius),
+        color: Colors.grey[850],
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 1.0,
+            offset: Offset(1.0, 1.0),
+          ),
+        ],
+      ),
+      margin: const EdgeInsets.all(15.0),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                buildPyramidWithAvatars(finestNames, finestPics, avatarSize),
+              ],
             ),
-          ],
-        ),
-        margin: const EdgeInsets.all(15.0),
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(3.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  buildPyramidWithAvatars(finestNames, finestPics, avatarSize),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
