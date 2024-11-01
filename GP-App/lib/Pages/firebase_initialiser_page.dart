@@ -7,7 +7,7 @@ import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/pages/login_page.dart';
 import 'package:rates/pages/splash_screen.dart';
 import 'package:rates/pages/verification_page.dart';
-import 'dart:developer' as devtools show log;
+
 
 class FirebaseInitPage extends StatelessWidget {
   const FirebaseInitPage({super.key});
