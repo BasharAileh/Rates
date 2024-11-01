@@ -8,6 +8,7 @@ import 'package:rates/pages/login_page.dart';
 
 import 'package:rates/pages/splash_screen.dart';
 import 'package:rates/pages/verification_page.dart';
+import 'package:rates/pages/favorite_page.dart';
 
 class FirebaseInitPage extends StatelessWidget {
   const FirebaseInitPage({super.key});
