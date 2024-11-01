@@ -68,18 +68,29 @@ class _ShopState extends State<Shop> {
             ),
           ),
           //lvt,u
-          Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Container(
+         
+           Padding(
+            padding: const EdgeInsets.all(15.0),
+              child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25), color: Colors.red),
-              padding: const EdgeInsets.all(0.0),
-              margin: const EdgeInsets.all(0.0),
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(50), // Adjust for an oval or rounded shape
+              ),
               height: 175,
-              child: GoogleMap(initialCameraPosition: CameraPosition(target: _pgoogleolex,zoom: 15),
-              markers: {
-                Marker(markerId: MarkerId("_currentlocation"),icon: BitmapDescriptor.defaultMarker,position:_pgoogleolex)
-              },)
+              width: 250, // Set width larger than height for an oval
+              child: ClipRRect( // Clip the content to match the rounded container shape
+                borderRadius: BorderRadius.circular(50),
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(target: _pgoogleolex, zoom: 15),
+                  markers: {
+                    Marker(
+                      markerId: MarkerId("_currentlocation"),
+                      icon: BitmapDescriptor.defaultMarker,
+                      position: _pgoogleolex,
+                    ),
+                  },
+                ),
+              ),
             ),
           ),
 
