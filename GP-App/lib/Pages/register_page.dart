@@ -64,6 +64,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: constraints.maxWidth,
                       height: constraints.maxHeight * 0.1,
                       child: const TextField(
+                        enableSuggestions: false,
+                        autocorrect: false,
                         decoration: InputDecoration(
                           labelText: 'First Name',
                           border: OutlineInputBorder(),
@@ -77,6 +79,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: constraints.maxWidth,
                       height: constraints.maxHeight * 0.1,
                       child: TextField(
+                        enableSuggestions: false,
+                        autocorrect: false,
                         controller: _email,
                         decoration: const InputDecoration(
                           labelText: 'Email',
@@ -89,6 +93,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: constraints.maxWidth,
                       height: constraints.maxHeight * 0.1,
                       child: TextField(
+                        enableSuggestions: false,
+                        autocorrect: false,
                         controller: _password1,
                         decoration: const InputDecoration(
                           labelText: 'Password',
@@ -101,6 +107,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       width: constraints.maxWidth,
                       height: constraints.maxHeight * 0.1 + 18,
                       child: TextField(
+                        enableSuggestions: false,
+                        autocorrect: false,
                         onChanged: (value) {
                           if (_password1.text != value) {
                             setState(() {

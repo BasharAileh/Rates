@@ -3,17 +3,21 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class Shop extends StatefulWidget {
+class ShopPage extends StatefulWidget {
+  const ShopPage({super.key});
+
   @override
-  State<Shop> createState() => _ShopState();
+  State<ShopPage> createState() => _ShopPageState();
 }
+
 //31.967460066377022, 35.87579288583264
-double x =31.967460066377022;
-double y =35.87579288583264;
-LatLng _pgoogleolex=LatLng(x, y);//locatin
-LatLng _pappleoark=LatLng(x, y);
-double initialRating = 4.8;//stars
-class _ShopState extends State<Shop> {
+double x = 31.967460066377022;
+double y = 35.87579288583264;
+LatLng _pgoogleolex = LatLng(x, y); //locatin
+LatLng _pappleoark = LatLng(x, y);
+double initialRating = 4.8; //stars
+
+class _ShopPageState extends State<ShopPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,14 +39,15 @@ class _ShopState extends State<Shop> {
                 SizedBox(
                   height: 15,
                 ),
-                 // Define your initial rating here
+                // Define your initial rating here
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     RatingBar.builder(
                       itemSize: 25,
-                      initialRating: initialRating, // Use the variable for initial rating
+                      initialRating:
+                          initialRating, // Use the variable for initial rating
                       minRating: 0.5,
                       direction: Axis.horizontal,
                       allowHalfRating: true,
@@ -52,36 +57,41 @@ class _ShopState extends State<Shop> {
                         color: Colors.amber,
                       ),
                       onRatingUpdate: (rating) {
-                        initialRating = rating; // Update the variable when the rating changes
+                        initialRating =
+                            rating; // Update the variable when the rating changes
                         print(rating);
                       },
                     ),
                     Container(
                       margin: const EdgeInsets.only(left: 10),
-                      child: Text("$initialRating",style: TextStyle(color: Colors.white),),
-                      
+                      child: Text(
+                        "$initialRating",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     )
                   ],
-                  
                 )
               ],
             ),
           ),
           //lvt,u
-         
-           Padding(
+
+          Padding(
             padding: const EdgeInsets.all(15.0),
-              child: Container(
+            child: Container(
               decoration: BoxDecoration(
                 color: Colors.red,
-                borderRadius: BorderRadius.circular(50), // Adjust for an oval or rounded shape
+                borderRadius: BorderRadius.circular(
+                    50), // Adjust for an oval or rounded shape
               ),
               height: 175,
               width: 250, // Set width larger than height for an oval
-              child: ClipRRect( // Clip the content to match the rounded container shape
+              child: ClipRRect(
+                // Clip the content to match the rounded container shape
                 borderRadius: BorderRadius.circular(50),
                 child: GoogleMap(
-                  initialCameraPosition: CameraPosition(target: _pgoogleolex, zoom: 15),
+                  initialCameraPosition:
+                      CameraPosition(target: _pgoogleolex, zoom: 15),
                   markers: {
                     Marker(
                       markerId: MarkerId("_currentlocation"),
@@ -136,8 +146,7 @@ class _ShopState extends State<Shop> {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start ,
-                
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const Text(
                       '0785017426',
@@ -170,7 +179,7 @@ class _ShopState extends State<Shop> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start ,  
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           'social media :',

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -7,7 +9,6 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -75,7 +76,10 @@ class NavBar extends StatelessWidget {
           ListTile(
             title: const Text('Log out'),
             leading: const Icon(Icons.exit_to_app),
-            onTap: () => null,
+            onTap: () => {
+              FirebaseAuth.instance.signOut(),
+              Navigator.of(context).pushNamed(Routes.loginRoute),
+            },
           ),
         ],
       ),

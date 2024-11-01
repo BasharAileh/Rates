@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/pages/register_page.dart';
+import 'package:rates/pop_ups/signup_options.dart';
 import 'package:rates/pop_ups/verification_popup.dart';
 import 'package:rates/services/temp_logo.dart';
 import 'dart:developer' as devtools show log;
@@ -27,7 +28,9 @@ class _LoginPageState extends State<LoginPage> {
       if (FirebaseAuth.instance.currentUser != null &&
           FirebaseAuth.instance.currentUser!.emailVerified != true) {
         devtools.log('${FirebaseAuth.instance.currentUser!.emailVerified}');
-        showVerificationDialog(context);
+        if (mounted) {
+          showVerificationDialog(context);
+        }
       }
     });
     super.initState();
@@ -146,7 +149,9 @@ class _LoginPageState extends State<LoginPage> {
                                   width: constraints.maxWidth * 0.75,
                                   height: constraints.maxHeight * 0.125,
                                   child: TextField(
+                                    enableSuggestions: false,
                                     controller: _email,
+                                    autocorrect: false,
                                     decoration: InputDecoration(
                                       hintText: 'Email',
                                       border: OutlineInputBorder(
@@ -195,6 +200,9 @@ class _LoginPageState extends State<LoginPage> {
                                   width: constraints.maxWidth * 0.75,
                                   height: constraints.maxHeight * 0.125,
                                   child: TextField(
+                                    enableSuggestions: false,
+                                    obscureText: true,
+                                    autocorrect: false,
                                     controller: _password,
                                     decoration: InputDecoration(
                                       hintText: 'Password',
@@ -229,7 +237,21 @@ class _LoginPageState extends State<LoginPage> {
                                         email: email,
                                         password: password,
                                       );
-                                      //todo: navigate to home page
+                                      final user =
+                                          FirebaseAuth.instance.currentUser;
+                                      if (user == null) return;
+                                      if (!user.emailVerified) {
+                                        if (mounted) {
+                                          showVerificationDialog(context);
+                                        }
+                                        return;
+                                      }
+                                      if (mounted) {
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                                Routes.homeRoute,
+                                                (route) => false);
+                                      }
                                     } on FirebaseAuthException catch (e) {
                                       if (e.code == 'invalid-credential') {
                                         devtools.log('user not found');
@@ -259,24 +281,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Text(noAccountMessage.split('Register')[0]),
                                     GestureDetector(
                                       onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Dialog(
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                child: SizedBox(
-                                                  width:
-                                                      AspectRatios.width * 0.8,
-                                                  height:
-                                                      AspectRatios.height * 0.7,
-                                                  child: const RegisterPage(),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
+                                        showSignUpOptions(context);
                                       },
                                       child: Text(
                                         noAccountMessage.split('? ')[1],
