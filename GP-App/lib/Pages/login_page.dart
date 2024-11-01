@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/pages/register_page.dart';
+import 'package:rates/pop_ups/verification_popup.dart';
+import 'package:rates/services/temp_logo.dart';
 import 'dart:developer' as devtools show log;
-import 'package:rates/pages/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,6 +23,10 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (FirebaseAuth.instance.currentUser != null &&
+          FirebaseAuth.instance.currentUser!.emailVerified != true) {}
+    });
     super.initState();
   }
 
@@ -43,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(top: AspectRatios.height * 0.2),
             child: Column(
               children: [
-                RatesLogo(),
+                const RatesLogo(),
                 SizedBox(height: AspectRatios.height * 0.13),
                 Center(
                   child: Container(

@@ -178,6 +178,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               final userCredential = await FirebaseAuth.instance
                                   .createUserWithEmailAndPassword(
                                       email: email, password: password);
+                              await userCredential.user!
+                                  .sendEmailVerification();
                               devtools.log(userCredential.user.toString());
                             } on FirebaseAuthException catch (e) {
                               // ignore: avoid_devtools.log
