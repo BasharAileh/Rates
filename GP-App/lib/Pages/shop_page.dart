@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Shop extends StatefulWidget {
   @override
   State<Shop> createState() => _ShopState();
 }
-
+//31.967460066377022, 35.87579288583264
+double x =31.967460066377022;
+double y =35.87579288583264;
+LatLng _pgoogleolex=LatLng(x, y);//locatin
+LatLng _pappleoark=LatLng(x, y);
+double initialRating = 4.8;//stars
 class _ShopState extends State<Shop> {
   @override
   Widget build(BuildContext context) {
@@ -29,20 +35,35 @@ class _ShopState extends State<Shop> {
                 SizedBox(
                   height: 15,
                 ),
-                RatingBar.builder(
-                  itemSize: 25,
-                  initialRating: 5,
-                  minRating: 0.5,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemBuilder: (context, _) => const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
+                 // Define your initial rating here
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RatingBar.builder(
+                      itemSize: 25,
+                      initialRating: initialRating, // Use the variable for initial rating
+                      minRating: 0.5,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      ignoreGestures: true,
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      onRatingUpdate: (rating) {
+                        initialRating = rating; // Update the variable when the rating changes
+                        print(rating);
+                      },
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      child: Text("$initialRating",style: TextStyle(color: Colors.white),),
+                      
+                    )
+                  ],
+                  
+                )
               ],
             ),
           ),
@@ -51,21 +72,18 @@ class _ShopState extends State<Shop> {
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25), color: Colors.red),
-              padding: const EdgeInsets.all(15.0),
-              margin: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(0.0),
+              margin: const EdgeInsets.all(0.0),
               height: 175,
-              child: const Center(
-                child: Text(
-                  "API",
-                  style: TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: GoogleMap(initialCameraPosition: CameraPosition(target: _pgoogleolex,zoom: 15),
+              markers: {
+                Marker(markerId: MarkerId("_currentlocation"),icon: BitmapDescriptor.defaultMarker,position:_pgoogleolex)
+              },)
             ),
           ),
 
           // Row with stacked CircleAvatar and Container
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
@@ -106,12 +124,14 @@ class _ShopState extends State<Shop> {
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start ,
+                
                   children: [
-                    Text(
+                    const Text(
                       '0785017426',
                       style: TextStyle(color: Colors.white, fontSize: 28),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     GestureDetector(
@@ -137,9 +157,14 @@ class _ShopState extends State<Shop> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'social media :',
-                      style: TextStyle(color: Colors.white),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start ,  
+                      children: [
+                        Text(
+                          'social media :',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                     Row(
                       children: [
