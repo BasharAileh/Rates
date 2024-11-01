@@ -25,7 +25,10 @@ class _LoginPageState extends State<LoginPage> {
     _password = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (FirebaseAuth.instance.currentUser != null &&
-          FirebaseAuth.instance.currentUser!.emailVerified != true) {}
+          FirebaseAuth.instance.currentUser!.emailVerified != true) {
+        devtools.log('${FirebaseAuth.instance.currentUser!.emailVerified}');
+        showVerificationDialog(context);
+      }
     });
     super.initState();
   }
