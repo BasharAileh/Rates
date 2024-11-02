@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double bottomAppBarHeight = AspectRatios.height * 0.07;
     return Scaffold(
+      endDrawer: const NavBar(),
       backgroundColor: Colors.grey[900],
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
@@ -27,6 +28,19 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(color: Colors.amber),
         ),
         centerTitle: true,
+        actions: [
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.filter_list),
+                color: Colors.amber,
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -136,7 +150,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      drawer: const NavBar(),
     );
   }
 
