@@ -9,80 +9,67 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: AspectRatios.width*0.6,
+      backgroundColor: Colors.grey[850],
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('mhmd adass'),
-            accountEmail: const Text('mohammadaladass63@gmail.com'),
+            accountName: const Text('mhmd adass', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            accountEmail: const Text('mohammadaladass63@gmail.com', style: TextStyle(fontSize: 14)),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.asset(
-                  '',
+                  'assets/path_to_your_image.png', 
                   fit: BoxFit.cover,
-                  width: AspectRatios.width,
-                  height: AspectRatios.height,
+                  width: AspectRatios.width*1, 
+                  height: AspectRatios.height*1, 
                 ),
               ),
             ),
             decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(fit: BoxFit.fill, image: AssetImage('')),
+              color: Colors.black,
+              image: DecorationImage(
+                fit: BoxFit.fill,
+                image: AssetImage('assets/path_to_background_image.png'), 
+              ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Favorites'),
-            onTap: () => null,
-            /*trailing: ClipOval(
-              child: Container(
-                color: Colors.red,
-                width: 20,
-                height: 20,
-                child: const Center(
-                  child: Text(
-                    '8',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ),*/
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Profile'),
-            onTap: () => null,
-          ),
+          _buildListTile(Icons.favorite, 'Favorites', () {
+            Navigator.of(context).pushNamed(Routes.favoritesRoute);
+          }),
+          _buildListTile(Icons.person, 'Profile', () {
+            // Add your Profile navigation logic here
+          }),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => null,
-          ),
-          ListTile(
-            leading: const Icon(Icons.help),
-            title: const Text('Help'),
-            onTap: () => null,
-          ),
-          ListTile(
-            leading: const Icon(Icons.description),
-            title: const Text('Policies'),
-            onTap: () => null,
-          ),
+          _buildListTile(Icons.settings, 'Settings', () {
+            // Add your Settings navigation logic here
+          }),
+          _buildListTile(Icons.help, 'Help', () {
+            // Add your Help navigation logic here
+          }),
+          _buildListTile(Icons.description, 'Policies', () {
+            // Add your Policies navigation logic here
+          }),
           const Divider(),
-          ListTile(
-            title: const Text('Log out'),
-            leading: const Icon(Icons.exit_to_app),
-            onTap: () => {
-              FirebaseAuth.instance.signOut(),
-              Navigator.of(context).pushNamed(Routes.loginRoute),
-            },
-          ),
+          _buildListTile(Icons.exit_to_app, 'Log out', () {
+            FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushNamed(Routes.loginRoute);
+          }),
         ],
       ),
+    );
+  }
+
+  ListTile _buildListTile(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, size: 28, color: Colors.amber), 
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white, fontSize: 16), 
+      ),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
     );
   }
 }
