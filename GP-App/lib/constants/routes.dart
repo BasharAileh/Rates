@@ -1,9 +1,7 @@
-class Routes {
-  static const String loginRoute = '/login/';
-  static const String registerRoute = '/register/';
-  static const String splashScreenRoute = '/splashscreen/';
-  static const String firebaseInitRoute = '/firebaseinit/';
-  static const String homeRoute = '/home/';
-  static const String shopsRoute = '/shops/';
-  static const String shopRoute = '/shop/';
-}
+const String loginRoute = '/login/';
+const String registerRoute = '/register/';
+const String splashScreenRoute = '/splashscreen/';
+const String firebaseInitRoute = '/firebaseinit/';
+const String homeRoute = '/home/';
+const String shopsRoute = '/shops/';
+const String shopRoute = '/shop/';
