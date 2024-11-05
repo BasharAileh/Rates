@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
-import 'package:rates/pop_ups/nav_bar.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:rates/dialogs/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,7 +51,7 @@ class _HomePageState extends State<HomePage> {
               'assets/logo3.png'
             ],
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.shopsRoute);
+              Navigator.of(context).pushNamed(shopsRoute);
             },
           ),
           const Row(
@@ -101,6 +102,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(0.1),
             child: ElevatedButton(
               onPressed: () {
+                Navigator.of(context).pushNamed(shopsRoute);
                 // Handle Rate button press
               },
               style: ElevatedButton.styleFrom(
