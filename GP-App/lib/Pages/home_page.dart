@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
               'assets/logo3.png'
             ],
             onTap: () {
-              // Navigate to Yearly Finest details page
+              Navigator.of(context).pushNamed(shopsRoute);
             },
           ),
           const Row(

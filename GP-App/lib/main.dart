@@ -20,7 +20,6 @@ void main() {
       ),
       initialRoute: firebaseInitRoute,
       routes: {
- pages/login-register
         firebaseInitRoute: (context) => const FirebaseInitPage(),
         loginRoute: (context) => const LoginPage(),
         registerRoute: (context) => const RegisterPage(),
