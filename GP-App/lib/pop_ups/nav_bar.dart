@@ -9,21 +9,27 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: AspectRatios.width*0.6,
+ pages/login-register
+      width: AspectRatios.width * 0.6,
+
       backgroundColor: Colors.grey[850],
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-            accountName: const Text('mhmd adass', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            accountEmail: const Text('mohammadaladass63@gmail.com', style: TextStyle(fontSize: 14)),
+pages/login-register
+            accountName: const Text('mhmd adass',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            accountEmail: const Text('mohammadaladass63@gmail.com',
+                style: TextStyle(fontSize: 14)),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.asset(
-                  'assets/path_to_your_image.png', 
+                  'assets/path_to_your_image.png',
                   fit: BoxFit.cover,
-                  width: AspectRatios.width*1, 
-                  height: AspectRatios.height*1, 
+                  width: AspectRatios.width * 1,
+                  height: AspectRatios.height * 1,
+
                 ),
               ),
             ),
@@ -31,13 +37,13 @@ class NavBar extends StatelessWidget {
               color: Colors.black,
               image: DecorationImage(
                 fit: BoxFit.fill,
-                image: AssetImage('assets/path_to_background_image.png'), 
+ pages/login-register
+                image: AssetImage('assets/path_to_background_image.png'),
               ),
             ),
           ),
-          _buildListTile(Icons.favorite, 'Favorites', () {
-            Navigator.of(context).pushNamed(Routes.favoritesRoute);
-          }),
+          _buildListTile(Icons.favorite, 'Favorites', () {}),
+
           _buildListTile(Icons.person, 'Profile', () {
             // Add your Profile navigation logic here
           }),
@@ -54,7 +60,9 @@ class NavBar extends StatelessWidget {
           const Divider(),
           _buildListTile(Icons.exit_to_app, 'Log out', () {
             FirebaseAuth.instance.signOut();
-            Navigator.of(context).pushNamed(Routes.loginRoute);
+ages/login-register
+            Navigator.of(context).pushNamed(loginRoute);
+
           }),
         ],
       ),
@@ -63,13 +71,16 @@ class NavBar extends StatelessWidget {
 
   ListTile _buildListTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, size: 28, color: Colors.amber), 
+pages/login-register
+      leading: Icon(icon, size: 28, color: Colors.amber),
       title: Text(
         title,
-        style: const TextStyle(color: Colors.white, fontSize: 16), 
+        style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), 
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+
     );
   }
 }
