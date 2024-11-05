@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rates/pop_ups/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-
-void main() => runApp(const FavoritesPage());
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -10,6 +9,7 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        endDrawer: const NavBar(),
         backgroundColor: const Color.fromARGB(255, 26, 26, 26),
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 26, 26, 26),
@@ -22,6 +22,19 @@ class FavoritesPage extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+          actions: [
+          Builder(
+            builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.filter_list),
+                color: Colors.amber,
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+              );
+            },
+          ),
+        ],
         ),
         body: Padding(
           padding: EdgeInsets.all(AspectRatios.width * 0.04),

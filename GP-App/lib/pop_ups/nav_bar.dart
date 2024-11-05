@@ -9,12 +9,15 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+ pages/login-register
       width: AspectRatios.width * 0.6,
+
       backgroundColor: Colors.grey[850],
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
+pages/login-register
             accountName: const Text('mhmd adass',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             accountEmail: const Text('mohammadaladass63@gmail.com',
@@ -26,6 +29,7 @@ class NavBar extends StatelessWidget {
                   fit: BoxFit.cover,
                   width: AspectRatios.width * 1,
                   height: AspectRatios.height * 1,
+
                 ),
               ),
             ),
@@ -33,11 +37,13 @@ class NavBar extends StatelessWidget {
               color: Colors.black,
               image: DecorationImage(
                 fit: BoxFit.fill,
+ pages/login-register
                 image: AssetImage('assets/path_to_background_image.png'),
               ),
             ),
           ),
           _buildListTile(Icons.favorite, 'Favorites', () {}),
+
           _buildListTile(Icons.person, 'Profile', () {
             // Add your Profile navigation logic here
           }),
@@ -54,7 +60,9 @@ class NavBar extends StatelessWidget {
           const Divider(),
           _buildListTile(Icons.exit_to_app, 'Log out', () {
             FirebaseAuth.instance.signOut();
+ages/login-register
             Navigator.of(context).pushNamed(loginRoute);
+
           }),
         ],
       ),
@@ -63,6 +71,7 @@ class NavBar extends StatelessWidget {
 
   ListTile _buildListTile(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
+pages/login-register
       leading: Icon(icon, size: 28, color: Colors.amber),
       title: Text(
         title,
@@ -71,6 +80,7 @@ class NavBar extends StatelessWidget {
       onTap: onTap,
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+
     );
   }
 }
