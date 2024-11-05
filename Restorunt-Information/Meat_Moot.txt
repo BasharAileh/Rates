@@ -1,0 +1,18 @@
+.R-name:
+   Meat moot
+
+.R-phone number:
+   +962796082000
+
+.O/C time:
+   open .. closed at 12am
+
+.Order from:
+   Talabat / Careem / own delivery  
+
+.Location:
+   https://maps.app.goo.gl/rCRN2qSttb6vnSC3A
+
+.social media links:
+  -Facebook :https://web.facebook.com/meatmoot.jo/?_rdc=1&_rdr#
+  -Instagram :https://www.instagram.com/meatmoot_jordan/

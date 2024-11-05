@@ -36,7 +36,7 @@ class _ShopPageState extends State<ShopPage> {
             width: double.infinity,
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 // Define your initial rating here
@@ -66,7 +66,7 @@ class _ShopPageState extends State<ShopPage> {
                       margin: const EdgeInsets.only(left: 10),
                       child: Text(
                         "$initialRating",
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     )
                   ],
@@ -94,7 +94,7 @@ class _ShopPageState extends State<ShopPage> {
                       CameraPosition(target: _pgoogleolex, zoom: 15),
                   markers: {
                     Marker(
-                      markerId: MarkerId("_currentlocation"),
+                      markerId: const MarkerId("_currentlocation"),
                       icon: BitmapDescriptor.defaultMarker,
                       position: _pgoogleolex,
                     ),
@@ -136,8 +136,8 @@ class _ShopPageState extends State<ShopPage> {
             ],
           ),
           Container(
-            padding: EdgeInsets.all(15),
-            margin: EdgeInsets.all(15),
+            padding: const EdgeInsets.all(15),
+            margin: const EdgeInsets.all(15),
             width: 50,
             height: 175,
             decoration: BoxDecoration(
@@ -178,7 +178,7 @@ class _ShopPageState extends State<ShopPage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(

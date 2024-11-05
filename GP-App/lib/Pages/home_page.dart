@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
-import 'dart:developer' as devtools show log;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

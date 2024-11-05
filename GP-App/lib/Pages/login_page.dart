@@ -395,7 +395,7 @@ class _LoginPageState extends State<LoginPage> {
                                                         height: AspectRatios
                                                                 .height *
                                                             0.7,
-                                                        child: RegisterPage(),
+                                                        child: const RegisterPage(),
                                                       ),
                                                     ),
                                                   );

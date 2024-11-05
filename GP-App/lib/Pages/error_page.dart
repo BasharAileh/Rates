@@ -36,7 +36,7 @@ class AlertPages extends StatelessWidget {
                       filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5), // Blur effect
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(138, 165, 232, 0.941), // Background color for dialog
+                          color: const Color.fromRGBO(138, 165, 232, 0.941), // Background color for dialog
                           borderRadius: BorderRadius.circular(20),
                         ),
                         padding: const EdgeInsets.all(20), // Add padding
@@ -78,9 +78,9 @@ class AlertPages extends StatelessWidget {
                 },
               );
             },
-            child: const Text("Show Alert"),
             color: const Color.fromRGBO(241, 159, 194, 1),
-            height: 50, // Adjust height for better visibility
+            height: 50,
+            child: const Text("Show Alert"), // Adjust height for better visibility
           ),
         )
       ],

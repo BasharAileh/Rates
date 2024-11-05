@@ -3,7 +3,7 @@ import 'dart:developer' as devtools show log;
 
 Widget registerDialog =
     LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-  return Container(
+  return SizedBox(
     width: constraints.maxWidth,
     height: constraints.maxHeight,
     child: Column(
