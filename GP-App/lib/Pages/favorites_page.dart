@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rates/pop_ups/nav_bar.dart';
+import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 
 class FavoritesPage extends StatelessWidget {
@@ -23,18 +23,18 @@ class FavoritesPage extends StatelessWidget {
             ),
           ),
           actions: [
-          Builder(
-            builder: (context) {
-              return IconButton(
-                icon: const Icon(Icons.filter_list),
-                color: Colors.amber,
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              );
-            },
-          ),
-        ],
+            Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  color: Colors.amber,
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                );
+              },
+            ),
+          ],
         ),
         body: Padding(
           padding: EdgeInsets.all(AspectRatios.width * 0.04),

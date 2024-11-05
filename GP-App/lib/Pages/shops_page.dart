@@ -66,7 +66,7 @@ class _ShopsPageState extends State<ShopsPage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.shopRoute);
+              Navigator.of(context).pushNamed(shopRoute);
             },
             child: RestaurantCard(
               name: restaurants[index]['name']!,

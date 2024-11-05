@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
-import 'package:rates/pop_ups/nav_bar.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:rates/dialogs/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+
           // Section to display "Monthly Finest" items
           buildFinest(
             'Monthly Finest',
@@ -70,6 +72,50 @@ class _HomePageState extends State<HomePage> {
             ['assets/logo1.png', 'assets/logo2.png', 'assets/logo3.png'],
             () {
               // Navigate to Yearly Finest route on tap
+
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Monthly Finest',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          TheFinest(
+            finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
+            finestPics: const [
+              'assets/logo1.png',
+              'assets/logo2.png',
+              'assets/logo3.png'
+            ],
+            onTap: () {
+              Navigator.of(context).pushNamed(shopsRoute);
+            },
+          ),
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Yearly Finest',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          TheFinest(
+            finestNames: const ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
+            finestPics: const [
+              'assets/logo1.png',
+              'assets/logo2.png',
+              'assets/logo3.png'
+            ],
+            onTap: () {
+              Navigator.of(context).pushNamed(shopsRoute);
+
             },
           ),
           // Section to display "Rating Experts" items
@@ -81,6 +127,7 @@ class _HomePageState extends State<HomePage> {
               // Navigate to Rating Experts route on tap
             },
           ),
+
           // Button to rating
           ElevatedButton(
             onPressed: () {},
@@ -89,6 +136,23 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(
                 horizontal: AspectRatios.width * 0.4,
                 vertical: AspectRatios.height * 0.01,
+          Container(
+            padding: const EdgeInsets.all(0.1),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(shopsRoute);
+                // Handle Rate button press
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(
+                    horizontal: AspectRatios.width * 0.4,
+                    vertical: AspectRatios.height * 0.01),
+              ),
+              child: const Text(
+                'Rate',
+                style: TextStyle(color: Colors.white),
+
               ),
             ),
             child: const Text(
