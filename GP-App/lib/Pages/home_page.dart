@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
               'assets/logo3.png'
             ],
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.shopsRoute);
+              Navigator.of(context).pushNamed(shopsRoute);
             },
           ),
           const Row(
@@ -101,6 +101,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(0.1),
             child: ElevatedButton(
               onPressed: () {
+                Navigator.of(context).pushNamed(shopsRoute);
                 // Handle Rate button press
               },
               style: ElevatedButton.styleFrom(

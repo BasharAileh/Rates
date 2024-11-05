@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/register_dialog.dart';
-import 'package:rates/dialogs/signup_options.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
 import 'package:rates/pages/register_page.dart';
 import 'package:rates/services/temp_logo.dart';
