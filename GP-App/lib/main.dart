@@ -26,6 +26,7 @@ void main() {
         homeRoute: (context) => const HomePage(),
         shopsRoute: (context) => const ShopsPage(),
         shopRoute: (context) => const ShopPage(),
+        favoritesRoute: (context) => const FavoritesPage(),
       },
     ),
   );
