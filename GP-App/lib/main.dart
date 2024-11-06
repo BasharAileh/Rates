@@ -17,7 +17,7 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: shopRoute,
+      initialRoute: firebaseInitRoute,
       routes: {
         firebaseInitRoute: (context) => const FirebaseInitPage(),
         loginRoute: (context) => const LoginPage(),
