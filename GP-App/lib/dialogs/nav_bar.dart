@@ -3,86 +3,112 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 
+/// Text style for profile details in the Drawer header.
+const TextStyle profileTextStyle = TextStyle(
+  color: Color.fromRGBO(0, 0, 0, 1),
+  fontSize: 15,
+  fontWeight: FontWeight.bold,
+);
+
+/// Navigation Drawer for the application.
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      // Set drawer width to 60% of the screen width for a responsive layout
+      width: AspectRatios.width * 0.6,
       child: ListView(
-        padding: EdgeInsets.zero,
         children: [
-          UserAccountsDrawerHeader(
-            accountName: const Text('mhmd adass'),
-            accountEmail: const Text('mohammadaladass63@gmail.com'),
+          // User Account Header with profile information
+          const UserAccountsDrawerHeader(
+            accountName: Text(
+              'mhmd adass',
+              style: profileTextStyle,
+            ),
+            accountEmail: Text(
+              'mohammadaladass63@gmail.com',
+              style: profileTextStyle,
+            ),
             currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                child: Image.asset(
-                  '',
-                  fit: BoxFit.cover,
-                  width: AspectRatios.width,
-                  height: AspectRatios.height,
-                ),
+              backgroundImage: AssetImage('assets/images/mhmd_adass.png'),
+            ),
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(33, 150, 243, 1),
+              image: DecorationImage(
+                fit: BoxFit.fill,
+                image: AssetImage('assets/images/Vertical_background.png'),
               ),
             ),
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(fit: BoxFit.fill, image: AssetImage('')),
-            ),
           ),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Favorites'),
-            onTap: () => null,
-            /*trailing: ClipOval(
-              child: Container(
-                color: Colors.red,
-                width: 20,
-                height: 20,
-                child: const Center(
-                  child: Text(
-                    '8',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ),*/
+          // Drawer Menu Items
+          buildListTile(
+            context: context,
+            icon: Icons.favorite,
+            title: 'Favorites',
+            onTap: () => Navigator.of(context).pushNamed(favoritesRoute),
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Profile'),
-            onTap: () => null,
+          buildListTile(
+            context: context,
+            icon: Icons.person,
+            title: 'Profile',
+            onTap: () => showDevelopmentSnackBar(context),
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => null,
+          const Divider(color: Color.fromRGBO(0, 0, 0, 1)), 
+
+          buildListTile(
+            context: context,
+            icon: Icons.settings,
+            title: 'Settings',
+            onTap: () => showDevelopmentSnackBar(context),
           ),
-          ListTile(
-            leading: const Icon(Icons.help),
-            title: const Text('Help'),
-            onTap: () => null,
+          buildListTile(
+            context: context,
+            icon: Icons.help,
+            title: 'Help',
+            onTap: () => showDevelopmentSnackBar(context),
           ),
-          ListTile(
-            leading: const Icon(Icons.description),
-            title: const Text('Policies'),
-            onTap: () => null,
+          buildListTile(
+            context: context,
+            icon: Icons.description,
+            title: 'Policies',
+            onTap: () => showDevelopmentSnackBar(context),
           ),
-          const Divider(),
-          ListTile(
-            title: const Text('Log out'),
-            leading: const Icon(Icons.exit_to_app),
-            onTap: () => {
-              FirebaseAuth.instance.signOut(),
-              Navigator.of(context).pushNamed(loginRoute),
+          const Divider(color: Color.fromRGBO(0, 0, 0, 1)),
+
+          buildListTile(
+            context: context,
+            icon: Icons.exit_to_app,
+            title: 'Log out',
+            onTap: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushNamed(loginRoute);
             },
           ),
         ],
       ),
+    );
+  }
+
+  // Creates a ListTile widget for items in the Drawer.
+  Widget buildListTile({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: onTap,
+    );
+  }
+
+  // Displays a SnackBar indicating the section is under development.
+  void showDevelopmentSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('This section is under development')),
     );
   }
 }
