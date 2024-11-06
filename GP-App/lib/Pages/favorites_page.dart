@@ -15,46 +15,46 @@ class FavoritesPageState extends State<FavoritesPage> {
   List<Map<String, String>> favoriteRestaurants = [
     // data of favorite restaurants
     {
-      'title': 'Nar Snack',
+      'title': 'FireFly',
       'address': '3 Greenwich Ave, New York',
       'rating': '(4.9)',
       'rates': '(132)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/FireFly_Logo.png',
     },
     {
-      'title': 'Pizza Palace',
+      'title': 'Shwarma3Saj',
       'address': '4 Main St, New York',
       'rating': '(4.7)',
       'rates': '(98)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/SawermaSaj_logo.png',
     },
     {
-      'title': 'Nar Snack',
+      'title': '4chicks',
       'address': '3 Greenwich Ave, New York',
       'rating': '(4.9)',
       'rates': '(132)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/_4chicks_logo.png',
     },
     {
-      'title': 'Pizza Palace',
+      'title': 'MeatMoot',
       'address': '4 Main St, New York',
       'rating': '(4.7)',
       'rates': '(98)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/MeatMoot_Logo.jpeg',
     },
     {
-      'title': 'Nar Snack',
+      'title': 'BurgarMaker',
       'address': '3 Greenwich Ave, New York',
       'rating': '(4.9)',
       'rates': '(132)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/BurgarMaker_Logo.jpeg',
     },
     {
-      'title': 'Pizza Palace',
+      'title': 'CloudShot',
       'address': '4 Main St, New York',
       'rating': '(4.7)',
       'rates': '(98)',
-      'restLogo': 'assets/images/golden_crown.png',
+      'restLogo': 'assets/images/CloudShot_logo.png',
     },
   ];
 
@@ -188,7 +188,7 @@ class FavoritesPageState extends State<FavoritesPage> {
               borderRadius: BorderRadius.circular(AspectRatios.width * 0.04),
               child: Image.asset(
                 restLogo,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 height: AspectRatios.height * 0.12,
                 width: AspectRatios.width * 0.2,
               ),
