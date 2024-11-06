@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/routes.dart';
 
@@ -31,7 +32,8 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       endDrawer:
           const NavBar(), // Drawer menu that opens from the end (right side)
-      backgroundColor: const Color.fromRGBO(48, 48, 48, 1), // Background color of the app
+      backgroundColor:
+          const Color.fromRGBO(48, 48, 48, 1), // Background color of the app
 
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 196, 154),
@@ -73,7 +75,11 @@ class HomePageState extends State<HomePage> {
             buildFinest(
               'Monthly Finest',
               ['FireFly', 'Shwarma3Saj', '4chicks'],
-              ['assets/images/FireFly_Logo.png', 'assets/images/SawermaSaj_logo.png', 'assets/images/_4chicks_logo.png'],
+              [
+                'assets/images/FireFly_Logo.png',
+                'assets/images/SawermaSaj_logo.png',
+                'assets/images/_4chicks_logo.png'
+              ],
               () {
                 Navigator.of(context)
                     .pushNamed(shopsRoute); // Navigate to shops route on tap
@@ -83,7 +89,11 @@ class HomePageState extends State<HomePage> {
             buildFinest(
               'Yearly Finest',
               ['FireFly', 'MeatMoot', 'BurgarMaker'],
-              ['assets/images/FireFly_Logo.png', 'assets/images/MeatMoot_Logo.jpeg', 'assets/images/BurgarMaker_Logo.jpeg'],
+              [
+                'assets/images/FireFly_Logo.png',
+                'assets/images/MeatMoot_Logo.jpeg',
+                'assets/images/BurgarMaker_Logo.jpeg'
+              ],
               () {
                 Navigator.of(context)
                     .pushNamed(shopsRoute); // Navigate to shops route on tap
@@ -180,7 +190,8 @@ class TheFinest extends StatelessWidget {
         height: containerHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8), // Semi-transparent background
+          color: const Color.fromRGBO(255, 255, 255, 1)
+              .withOpacity(0.8), // Semi-transparent background
           boxShadow: const [
             BoxShadow(
               color: Color.fromARGB(51, 0, 0, 0), // Subtle shadow effect
@@ -268,7 +279,8 @@ class TheFinest extends StatelessWidget {
                     ? const Color.fromARGB(255, 255, 193, 7)
                     : rank == 2
                         ? const Color.fromRGBO(158, 158, 158, 1)
-                        : const Color.fromRGBO(121, 85, 72, 1), // Set color based on rank
+                        : const Color.fromRGBO(
+                            121, 85, 72, 1), // Set color based on rank
                 size: radius * 0.7,
               ),
               Text(
@@ -276,7 +288,8 @@ class TheFinest extends StatelessWidget {
                 style: const TextStyle(
                   color: Color.fromRGBO(0, 0, 0, 1),
                   fontSize: 10,
-                  fontWeight: FontWeight.bold,                ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
