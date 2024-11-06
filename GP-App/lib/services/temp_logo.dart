@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class RatesLogo extends StatelessWidget {
+  const RatesLogo({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         // Star Icon

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'package:flutter/material.dart'; // Import Flutter Material package for UI components
 import 'package:newproject2/categories.dart';
 import 'package:newproject2/favorite_page.dart'; // Import the favorite page where the user can view their favorite restaurants
@@ -14,6 +15,20 @@ class Restaurants extends StatefulWidget {
 // Define the state for the Restaurants widget
 class _RestaurantsState extends State<Restaurants> {
   // List of restaurants with their names and logos
+=======
+import 'package:flutter/material.dart';
+import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
+
+class ShopsPage extends StatefulWidget {
+  const ShopsPage({super.key});
+
+  @override
+  State<ShopsPage> createState() => _ShopsPageState();
+}
+
+class _ShopsPageState extends State<ShopsPage> {
+>>>>>>> Rates
   final List<Map<String, String>> restaurants = [
     {
       "name": "4chicks", // Restaurant name
@@ -31,10 +46,32 @@ class _RestaurantsState extends State<Restaurants> {
       "name": "MeatMoot",
       "logo": "images/MeatMoot_Logo.jpeg",
     },
+<<<<<<< HEAD
     // More restaurants can be added here
+=======
+    {
+      "name": "Hattan Cafe",
+      "logo": "assets/images/R.png",
+    },
+    {
+      "name": "Hattan Cafe",
+      "logo": "assets/images/R.png",
+    },
+    {
+      "name": "Hattan Cafe",
+      "logo": "assets/images/R.png",
+    },
+    {
+      "name": "Hattan Cafe",
+      "logo": "assets/images/R.png",
+    },
+
+    // Add more restaurants as needed
+>>>>>>> Rates
   ];
   
 
+<<<<<<< HEAD
   // Lists to store favorite restaurant names and logos
   final List<String> favoriteRestaurants = [];
   final List<String> favoriteLogos = [];
@@ -117,6 +154,36 @@ class _RestaurantsState extends State<Restaurants> {
           },
         ),
       ),
+=======
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+        ],
+        backgroundColor: Colors.blueAccent,
+        title: const Text(
+          'Shops Page',
+          textAlign: TextAlign.center,
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: restaurants.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).pushNamed(shopRoute);
+            },
+            child: RestaurantCard(
+              name: restaurants[index]['name']!,
+              logo: restaurants[index]['logo']!,
+            ),
+          );
+        },
+      ),
+>>>>>>> Rates
     );
   }
 
@@ -125,6 +192,7 @@ class _RestaurantsState extends State<Restaurants> {
   Widget build(BuildContext context) {
      final totalHeight = MediaQuery.of(context).size.height;
     final totalWidth = MediaQuery.of(context).size.width;
+<<<<<<< HEAD
     return Scaffold(
       // Scaffold widget provides structure for the visual interface
       appBar: AppBar(
@@ -315,6 +383,54 @@ class _RestaurantCardState extends State<RestaurantCard> {
                     ),
                     onPressed:
                         widget.onFavoritePressed, // Call the provided callback when pressed
+=======
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AspectRatios.width * 0.05,
+          AspectRatios.height * 0.0415, AspectRatios.width * 0.05, 0),
+      child: Container(
+        height: totalHeight * 0.17,
+        width: totalWidth * 0.9, // Use a more reasonable width
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Colors.amber,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(left: totalWidth * 0.05),
+              //,
+              child: Image.asset(
+                logo,
+                width: totalWidth * 0.19,
+                height: totalHeight * 0.1,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 3,
+              child: Text(
+                name,
+                style:
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text(
+                    "Rate",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    onPressed: () {},
+>>>>>>> Rates
                   ),
                 ],
               ),

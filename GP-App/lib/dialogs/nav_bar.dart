@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar({super.key});
@@ -31,7 +33,7 @@ class NavBar extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.favorite),
             title: const Text('Favorites'),
-            onTap: () => null,
+            onTap: () {},
             /*trailing: ClipOval(
               child: Container(
                 color: Colors.red,
@@ -52,29 +54,32 @@ class NavBar extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.person),
             title: const Text('Profile'),
-            onTap: () => null,
+            onTap: () {},
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
-            onTap: () => null,
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.help),
             title: const Text('Help'),
-            onTap: () => null,
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.description),
             title: const Text('Policies'),
-            onTap: () => null,
+            onTap: () {},
           ),
           const Divider(),
           ListTile(
             title: const Text('Log out'),
             leading: const Icon(Icons.exit_to_app),
-            onTap: () => null,
+            onTap: () => {
+              FirebaseAuth.instance.signOut(),
+              Navigator.of(context).pushNamed(loginRoute),
+            },
           ),
         ],
       ),

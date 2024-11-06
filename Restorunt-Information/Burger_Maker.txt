@@ -1,0 +1,17 @@
+.R-name:
+   Burger Maker 
+
+.R-phone number:
+   (06)5005999
+.O/C time:
+   open .. closed at 3am
+
+.Order from:
+   Talabat / Careem / own delivery  
+
+.Location:
+   https://maps.app.goo.gl/D5aLird3FhZPkDsN8
+
+.social media links:
+  -Facebook :https://m.facebook.com/burgermakers.jo/
+  -Instagram :https://www.instagram.com/burgermakersjo?igsh=YjBocHcwNjkzcXlh
