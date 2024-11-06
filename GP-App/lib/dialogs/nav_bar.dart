@@ -42,6 +42,7 @@ class NavBar extends StatelessWidget {
               ),
             ),
           ),
+
           // Drawer Menu Items
           buildListTile(
             context: context,
@@ -74,6 +75,8 @@ class NavBar extends StatelessWidget {
             icon: Icons.description,
             title: 'Policies',
             onTap: () => showDevelopmentSnackBar(context),
+
+         
           ),
           const Divider(color: Color.fromRGBO(0, 0, 0, 1)),
 

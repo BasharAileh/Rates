@@ -41,6 +41,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   google_maps_flutter: ^2.9.0
   flutter_overlay_window: ^0.4.5
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -82,10 +83,10 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   #fonts:
-   # - family: nexa
-    #  fonts:
-     #   - asset: assets/fonts/Nexa-Heavy.tff
-      #  - asset: assets/fonts/Nexa-ExtraLight.tff
+   #- family: nexa
+    # fonts:
+     #  - asset: assets/fonts/Nexa-Heavy.tff
+      # - asset: assets/fonts/Nexa-ExtraLight.tff
 
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

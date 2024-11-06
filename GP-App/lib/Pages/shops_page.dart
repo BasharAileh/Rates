@@ -128,7 +128,7 @@ class RestaurantCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
+                  const Text(
                     "Rate",
                     style: TextStyle(fontSize: 16),
                   ),
