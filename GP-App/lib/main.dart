@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rates/Pages/favorites_page.dart';
 import 'package:rates/Pages/login_page.dart';
 import 'package:rates/Pages/shop_page.dart';
 import 'package:rates/constants/routes.dart';

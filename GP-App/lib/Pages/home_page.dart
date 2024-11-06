@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/constants/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
 // Style for titles in the the finests
@@ -16,7 +17,7 @@ const TextStyle titleStyle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   int selectedIndex =
       0; // Index to track the selected item in the bottom navigation bar
   final List<String> pageTitles = [
@@ -71,8 +72,8 @@ class _HomePageState extends State<HomePage> {
             // Section to display "Monthly Finest" items
             buildFinest(
               'Monthly Finest',
-              ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
-              ['assets/logo1.png', 'assets/logo2.png', 'assets/logo3.png'],
+              ['FireFly', 'Shwarma3Saj', '4chicks'],
+              ['assets/images/FireFly_Logo.png', 'assets/images/SawermaSaj_logo.png', 'assets/images/_4chicks_logo.png'],
               () {
                 Navigator.of(context)
                     .pushNamed(shopsRoute); // Navigate to shops route on tap
@@ -81,8 +82,8 @@ class _HomePageState extends State<HomePage> {
             // Section to display "Yearly Finest" items
             buildFinest(
               'Yearly Finest',
-              ['FireFly', 'Shwarma3Saj', 'Nar Snack'],
-              ['assets/logo1.png', 'assets/logo2.png', 'assets/logo3.png'],
+              ['FireFly', 'MeatMoot', 'BurgarMaker'],
+              ['assets/images/FireFly_Logo.png', 'assets/images/MeatMoot_Logo.jpeg', 'assets/images/BurgarMaker_Logo.jpeg'],
               () {
                 Navigator.of(context)
                     .pushNamed(shopsRoute); // Navigate to shops route on tap
@@ -94,8 +95,8 @@ class _HomePageState extends State<HomePage> {
               ['Mhmd', 'Baraa', 'Bashar'],
               [
                 'assets/images/mhmd_adass.png',
-                'assets/logo2.png',
-                'assets/logo3.png'
+                'assets/images/Bara.jpeg',
+                'assets/images/Bashar_Akileh.jpg'
               ],
               () {
                 // Navigate to Rating Experts route on tap
@@ -244,9 +245,9 @@ class TheFinest extends StatelessWidget {
               if (showCrown)
                 Positioned(
                   top: radius * -0.2,
-                  right: radius * -0.3,
+                  right: radius * -0.34,
                   child: Transform.rotate(
-                    angle: radius * 0.037,
+                    angle: radius * 0.034,
                     child: Image.asset(
                       'assets/images/golden_crown.png',
                       color: const Color.fromRGBO(255, 193, 7, 1),
@@ -275,7 +276,7 @@ class TheFinest extends StatelessWidget {
                 style: const TextStyle(
                   color: Color.fromRGBO(0, 0, 0, 1),
                   fontSize: 10,
-                ),
+                  fontWeight: FontWeight.bold,                ),
               ),
             ],
           ),
