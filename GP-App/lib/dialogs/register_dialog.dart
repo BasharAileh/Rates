@@ -124,8 +124,32 @@ class _RegisterDialogState extends State<RegisterDialog> {
                       SizedBox(height: constraints.maxHeight * 0.02),
                       _buildTextField('Password', true, _password1),
                       SizedBox(height: constraints.maxHeight * 0.02),
-                      _buildTextField(
-                          'Confirm Password', true, _password2, true),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white.withOpacity(0.75),
+                        ),
+                        child: TextField(
+                          controller: _password2,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
                       if (_passwordError.isNotEmpty)
                         Text(
                           _passwordError,
@@ -193,7 +217,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
 
 // Method to build a text field
 Widget _buildTextField(String labelText, bool isPassword,
-    [TextEditingController? controller, bool? compare = false]) {
+    [TextEditingController? controller]) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),

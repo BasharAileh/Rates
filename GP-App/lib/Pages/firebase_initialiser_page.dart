@@ -27,7 +27,6 @@ class FirebaseInitPage extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            devtools.log('1');
             return const SplashScreen();
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
@@ -39,7 +38,7 @@ class FirebaseInitPage extends StatelessWidget {
                 return const LoginPage();
               }
             } else {
-              return const HomePage();
+              return const LoginPage();
             }
 
           default:

@@ -10,6 +10,12 @@ void showVerificationDialog(BuildContext context) {
         content: const Text('Please verify your email to continue.'),
         actions: [
           TextButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Log out')),
+          TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.currentUser!.sendEmailVerification();
             },
