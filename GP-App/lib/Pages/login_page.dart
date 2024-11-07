@@ -333,7 +333,6 @@ class _LoginPageState extends State<LoginPage> {
                                           ],
                                         ),
                                       ),
-
                                       Positioned(
                                         top: constraints.maxHeight * 0.425,
                                         left: constraints.maxWidth * 0.02,
@@ -394,22 +393,22 @@ class _LoginPageState extends State<LoginPage> {
                                                           'e.code: ${e.code}');
                                                       switch (e.code) {
                                                         case 'invalid-email':
-                                                          showErrorDialog(
+                                                          await showErrorDialog(
                                                               context,
                                                               'The email address is badly formatted');
                                                           break;
                                                         case 'invalid-credential':
-                                                          showErrorDialog(
+                                                          await showErrorDialog(
                                                               context,
                                                               'User not found');
                                                           break;
                                                         case 'wrong-password':
-                                                          showErrorDialog(
+                                                          await showErrorDialog(
                                                               context,
                                                               'Wrong password');
                                                           break;
                                                         default:
-                                                          showErrorDialog(
+                                                          await showErrorDialog(
                                                               context,
                                                               'An error occurred : ${e.code}');
                                                       }
@@ -477,8 +476,9 @@ class _LoginPageState extends State<LoginPage> {
                                               Text(noAccountMessage
                                                   .split('Register')[0]),
                                               GestureDetector(
-                                                onTap: () {
-                                                  showDialog(
+                                                onTap: () async {
+                                                  Map results =
+                                                      await showDialog(
                                                     context: context,
                                                     builder: (context) {
                                                       return Dialog(
@@ -491,6 +491,10 @@ class _LoginPageState extends State<LoginPage> {
                                                               const RegisterDialog());
                                                     },
                                                   );
+                                                  if (results != null) {
+                                                    devtools.log(
+                                                        'results: ${results.keys}');
+                                                  }
                                                 },
                                                 child: Text(
                                                   noAccountMessage

@@ -1,10 +1,6 @@
 import 'dart:ui';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
-import 'package:flutter/services.dart';
+import 'package:rates/constants/decorations.dart';
 
 class RegisterDialog extends StatefulWidget {
   const RegisterDialog({super.key});
@@ -14,39 +10,8 @@ class RegisterDialog extends StatefulWidget {
 }
 
 class _RegisterDialogState extends State<RegisterDialog> {
-  //register method
-  Future<void> register(
-    TextEditingController gEmail,
-    TextEditingController password1,
-    TextEditingController password2,
-  ) async {
-    final email = gEmail.text;
-
-    if (password1.text == password2.text) {
-      final password = password1.text;
-      try {
-        devtools.log('Creating user with email: $email');
-        devtools.log('Creating user with password: $password');
-        final userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password);
-        await userCredential.user!.sendEmailVerification();
-        devtools.log(userCredential.user.toString());
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          setState(() {
-            _passwordError = 'The password provided is too weak.';
-          });
-        } else if (e.code == 'email-already-in-use') {
-          devtools.log('The account already exists for that email.');
-        } else if (e.code == 'invalid-email') {
-          devtools.log('The email address is badly formatted.');
-        }
-        Navigator.of(context).pop();
-      }
-    }
-  }
-
 //controllers
+  late final TextEditingController _username;
   late final TextEditingController _email;
   late final TextEditingController _password1;
   late final TextEditingController _password2;
@@ -54,6 +19,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
 
   @override
   void initState() {
+    _username = TextEditingController();
     _email = TextEditingController();
     _password1 = TextEditingController();
     _password2 = TextEditingController();
@@ -62,6 +28,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
 
   @override
   void dispose() {
+    _username.dispose();
     _email.dispose();
     _password1.dispose();
     _password2.dispose();
@@ -70,6 +37,7 @@ class _RegisterDialogState extends State<RegisterDialog> {
 
   bool _isTermsChecked = false;
   bool _isNewsletterChecked = false;
+  bool enabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +86,54 @@ class _RegisterDialogState extends State<RegisterDialog> {
                       SizedBox(
                           height: constraints.maxHeight *
                               0.02), // Responsive spacing
-                      _buildTextField('First Name', false),
+                      Container(
+                        decoration: Constants.textFieldContainerBoxDecoration(),
+                        child: TextField(
+                          controller: _username,
+                          decoration: Constants.textFieldDecoration(
+                              labelText: 'Username'),
+                        ),
+                      ),
                       SizedBox(height: constraints.maxHeight * 0.02),
-                      _buildTextField('Email', false, _email),
+                      Container(
+                        decoration: Constants.textFieldContainerBoxDecoration(),
+                        child: TextField(
+                          controller: _email,
+                          decoration:
+                              Constants.textFieldDecoration(labelText: 'Email'),
+                        ),
+                      ),
                       SizedBox(height: constraints.maxHeight * 0.02),
-                      _buildTextField('Password', true, _password1),
+                      Container(
+                        decoration: Constants.textFieldContainerBoxDecoration(),
+                        child: TextField(
+                          controller: _password1,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          onChanged: (value) {
+                            if (_password2.text.isNotEmpty &&
+                                _password2.text != value) {
+                              setState(() {
+                                _passwordError = 'Passwords do not match';
+                                enabled = false;
+                              });
+                            } else {
+                              setState(() {
+                                _passwordError = '';
+                                if (_isTermsChecked &&
+                                    _username.text.isNotEmpty &&
+                                    _email.text.isNotEmpty &&
+                                    _password2.text.isNotEmpty) {
+                                  enabled = true;
+                                }
+                              });
+                            }
+                          },
+                          decoration: Constants.textFieldDecoration(
+                              labelText: 'Password'),
+                        ),
+                      ),
                       SizedBox(height: constraints.maxHeight * 0.02),
                       Container(
                         decoration: BoxDecoration(
@@ -134,20 +145,25 @@ class _RegisterDialogState extends State<RegisterDialog> {
                           obscureText: true,
                           enableSuggestions: false,
                           autocorrect: false,
-                          decoration: InputDecoration(
-                            labelText: 'Confirm Password',
-                            border: const OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
+                          onChanged: (value) {
+                            if (_password1.text != value) {
+                              setState(() {
+                                _passwordError = 'Passwords do not match';
+                                enabled = false;
+                              });
+                            } else {
+                              setState(() {
+                                _passwordError = '';
+                                if (_isTermsChecked &&
+                                    _email.text.isNotEmpty &&
+                                    _password1.text.isNotEmpty) {
+                                  enabled = true;
+                                }
+                              });
+                            }
+                          },
+                          decoration: Constants.textFieldDecoration(
+                              labelText: 'Confirm Password'),
                         ),
                       ),
                       if (_passwordError.isNotEmpty)
@@ -176,7 +192,18 @@ class _RegisterDialogState extends State<RegisterDialog> {
                         child: Column(
                           children: [
                             ElevatedButton(
-                              onPressed: () => {},
+                              onPressed: enabled == false
+                                  ? null
+                                  : () => {
+                                        if (context.mounted)
+                                          {
+                                            Navigator.of(context).pop({
+                                              'register': true,
+                                              'email': _email,
+                                              'password1': _password1,
+                                            }),
+                                          }
+                                      },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(
                                     150, 244, 143, 66), // Orange button
@@ -213,37 +240,6 @@ class _RegisterDialogState extends State<RegisterDialog> {
       },
     );
   }
-}
-
-// Method to build a text field
-Widget _buildTextField(String labelText, bool isPassword,
-    [TextEditingController? controller]) {
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: Colors.white.withOpacity(0.75),
-    ),
-    child: TextField(
-      controller: controller,
-      obscureText: isPassword,
-      enableSuggestions: !isPassword,
-      autocorrect: !isPassword,
-      decoration: InputDecoration(
-        labelText: labelText,
-        border: const OutlineInputBorder(),
-        filled: true,
-        fillColor: Colors.transparent,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    ),
-  );
 }
 
 // Method to build checkbox rows
