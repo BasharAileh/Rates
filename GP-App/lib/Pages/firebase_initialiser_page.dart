@@ -3,6 +3,8 @@ import 'dart:developer' as devtools show log;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:rates/Pages/favorites_page.dart';
+import 'package:rates/Pages/shop_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/firebase_options.dart';
 import 'package:rates/pages/home_page.dart';
@@ -37,7 +39,7 @@ class FirebaseInitPage extends StatelessWidget {
                 return const LoginPage();
               }
             } else {
-              return const LoginPage();
+              return const HomePage();
             }
 
           default:

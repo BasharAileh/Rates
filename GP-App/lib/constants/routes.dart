@@ -6,3 +6,4 @@ const String firebaseInitRoute = '/firebaseinit/';
 const String homeRoute = '/home/';
 const String shopsRoute = '/shops/';
 const String shopRoute = '/shop/';
+const String favoritesRoute='/favorites/';

@@ -1,12 +1,11 @@
 import 'dart:developer' as devtools show log;
 import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/dialogs/register_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
-import 'package:rates/pages/register_page.dart';
 import 'package:rates/services/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
 
@@ -425,22 +424,13 @@ class _LoginPageState extends State<LoginPage> {
                                                     context: context,
                                                     builder: (context) {
                                                       return Dialog(
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                          child: SizedBox(
-                                                            width: AspectRatios
-                                                                    .width *
-                                                                0.8,
-                                                            height: AspectRatios
-                                                                    .height *
-                                                                0.7,
-                                                            child:
-                                                                const RegisterPage(),
-                                                          ),
-                                                        ),
-                                                      );
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                          child:
+                                                              RegisterDialog());
                                                     },
                                                   );
                                                 },

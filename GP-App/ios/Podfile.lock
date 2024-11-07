@@ -125,6 +125,8 @@ PODS:
   - nanopb/encode (3.30910.0)
   - PromisesObjC (2.4.0)
   - RecaptchaInterop (100.0.0)
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Firebase/Analytics
@@ -135,6 +137,7 @@ DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - GoogleMaps
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
@@ -165,6 +168,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
@@ -188,6 +193,7 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
+  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
 PODFILE CHECKSUM: 7227108e1b8de4e3d6cdca85a2f4a3cd9e274ba3
 
