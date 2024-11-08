@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
@@ -75,7 +76,7 @@ class FavoritesPageState extends State<FavoritesPage> {
         // End drawer for navigation menu
         endDrawer: const NavBar(),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 255, 196, 154),
+          backgroundColor: AppColors.appBarColor,
           elevation: 0,
           title: const Text(
             "Favourites", // Title of the page
@@ -110,7 +111,8 @@ class FavoritesPageState extends State<FavoritesPage> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.all(AspectRatios.width * 0.04), // Padding around the content
+            padding: EdgeInsets.all(
+                AspectRatios.width * 0.04), // Padding around the content
             child: Column(
               children: [
                 // Search TextField
@@ -119,20 +121,26 @@ class FavoritesPageState extends State<FavoritesPage> {
                     prefixIcon: const Icon(Icons.search,
                         color: Color.fromRGBO(0, 0, 0, 1)),
                     hintText: "Search",
-                    hintStyle: const TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                    hintStyle:
+                        const TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
                     filled: true,
-                    fillColor: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
+                    fillColor:
+                        const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AspectRatios.width * 0.075),
+                      borderRadius:
+                          BorderRadius.circular(AspectRatios.width * 0.075),
                       borderSide: BorderSide.none,
                     ),
                   ),
                 ),
-                SizedBox(height: AspectRatios.height * 0.02), // Spacer between the search bar and list
+                SizedBox(
+                    height: AspectRatios.height *
+                        0.02), // Spacer between the search bar and list
                 Expanded(
                   // build the List of favorite restaurants
                   child: ListView.builder(
-                    itemCount: favoriteRestaurants.length, // Number of items in the list
+                    itemCount: favoriteRestaurants
+                        .length, // Number of items in the list
                     itemBuilder: (context, index) {
                       var restaurant = favoriteRestaurants[index];
                       return buildListItem(
@@ -193,7 +201,9 @@ class FavoritesPageState extends State<FavoritesPage> {
                 width: AspectRatios.width * 0.2,
               ),
             ),
-            SizedBox(width: AspectRatios.width * 0.04), // Spacer between logo and text
+            SizedBox(
+                width:
+                    AspectRatios.width * 0.04), // Spacer between logo and text
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,7 +235,8 @@ class FavoritesPageState extends State<FavoritesPage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Close the dialog
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
                                     },
                                     child: const Text('Cancel'),
                                   ),
@@ -235,7 +246,8 @@ class FavoritesPageState extends State<FavoritesPage> {
                                         // Remove the restaurant from the list
                                         favoriteRestaurants.removeAt(index);
                                       });
-                                      Navigator.of(context).pop(); // Close the dialog after deletion
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog after deletion
                                     },
                                     child: const Text('Delete'),
                                   ),
@@ -247,7 +259,9 @@ class FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: AspectRatios.height * 0.005), // Spacer between name and address
+                  SizedBox(
+                      height: AspectRatios.height *
+                          0.005), // Spacer between name and address
                   Row(
                     children: [
                       const Icon(Icons.location_on,
@@ -261,7 +275,9 @@ class FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: AspectRatios.height * 0.005), // Spacer between address and rating
+                  SizedBox(
+                      height: AspectRatios.height *
+                          0.005), // Spacer between address and rating
                   Row(
                     children: [
                       Text(

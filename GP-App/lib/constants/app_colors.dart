@@ -7,4 +7,5 @@ class AppColors {
   static const Color shadowColor =
       Color.fromARGB(51, 0, 0, 0); // 20% opacity black
   static const Color textColor = Colors.black;
+  static const Color backgroundColor = Color.fromARGB(175, 255, 255, 230);
 }

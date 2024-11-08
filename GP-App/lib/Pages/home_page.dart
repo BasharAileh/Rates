@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
-import 'package:rates/constants/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -62,11 +62,7 @@ class HomePageState extends State<HomePage> {
         width: double.infinity, // Ensures the image covers the full width
         height: double.infinity, // Ensures the image covers the full height
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                'assets/images/Horizontal_background.png'), // Path to your image
-            fit: BoxFit.cover, // Ensures the image covers the entire area
-          ),
+          color: AppColors.backgroundColor, // Background color of the app
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -192,6 +188,10 @@ class TheFinest extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: const Color.fromRGBO(255, 255, 255, 1)
               .withOpacity(0.8), // Semi-transparent background
+          image: DecorationImage(
+            image: AssetImage('assets/images/podium.png'), // Path to your image
+            fit: BoxFit.cover, // Ensures the image covers the entire area
+          ),
           boxShadow: const [
             BoxShadow(
               color: Color.fromARGB(51, 0, 0, 0), // Subtle shadow effect
