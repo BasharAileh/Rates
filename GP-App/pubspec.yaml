@@ -82,11 +82,19 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  #fonts:
-   #- family: nexa
-    # fonts:
-     #  - asset: assets/fonts/Nexa-Heavy.tff
-      # - asset: assets/fonts/Nexa-ExtraLight.tff
+# <<<<<<< HEAD
+#   # fonts:
+#   #   - family: nexa
+#   #     fonts:
+#   #       - asset: assets/fonts/Nexa-Heavy.tff
+#   #       - asset: assets/fonts/Nexa-ExtraLight.tff
+# =======
+#   #fonts:
+#    #- family: nexa
+#     # fonts:
+#      #  - asset: assets/fonts/Nexa-Heavy.tff
+#       # - asset: assets/fonts/Nexa-ExtraLight.tff
+# >>>>>>> 3ea017419b0f0a645deb004b11bbc45a25a6d235
 
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

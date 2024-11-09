@@ -1,11 +1,14 @@
 import 'dart:developer' as devtools show log;
+import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/dialogs/error_dialog.dart';
 import 'package:rates/dialogs/register_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
+import 'package:rates/pages/t.dart';
 import 'package:rates/services/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
 
@@ -21,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _password;
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
+  bool enabled = false;
   @override
   void initState() {
     _email = TextEditingController();
@@ -188,6 +192,19 @@ class _LoginPageState extends State<LoginPage> {
                                                 controller: _email,
                                                 focusNode: _emailFocusNode,
                                                 autocorrect: false,
+                                                onChanged: (value) {
+                                                  if (value.isNotEmpty &&
+                                                      _password
+                                                          .text.isNotEmpty) {
+                                                    setState(() {
+                                                      enabled = true;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      enabled = false;
+                                                    });
+                                                  }
+                                                },
                                                 onSubmitted: (_) {
                                                   FocusScope.of(context)
                                                       .requestFocus(
@@ -280,6 +297,18 @@ class _LoginPageState extends State<LoginPage> {
                                                 autocorrect: false,
                                                 controller: _password,
                                                 focusNode: _passwordFocusNode,
+                                                onChanged: (value) {
+                                                  if (value.isNotEmpty &&
+                                                      _email.text.isNotEmpty) {
+                                                    setState(() {
+                                                      enabled = true;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      enabled = false;
+                                                    });
+                                                  }
+                                                },
                                                 decoration: InputDecoration(
                                                   hintText: 'Password',
                                                   border: OutlineInputBorder(
@@ -304,7 +333,6 @@ class _LoginPageState extends State<LoginPage> {
                                           ],
                                         ),
                                       ),
-
                                       Positioned(
                                         top: constraints.maxHeight * 0.425,
                                         left: constraints.maxWidth * 0.02,
@@ -328,46 +356,75 @@ class _LoginPageState extends State<LoginPage> {
                                         child: SizedBox(
                                           width: constraints.maxWidth * 0.5,
                                           child: TextButton(
-                                            onPressed: () async {
-                                              final email = _email.text;
-                                              final password = _password.text;
-                                              try {
-                                                await FirebaseAuth.instance
-                                                    .signInWithEmailAndPassword(
-                                                  email: email,
-                                                  password: password,
-                                                );
-                                                final user = FirebaseAuth
-                                                    .instance.currentUser;
-                                                if (user == null) return;
-                                                if (!user.emailVerified) {
-                                                  if (mounted) {
-                                                    showVerificationDialog(
-                                                        context);
-                                                  }
-                                                  return;
-                                                }
-                                                if (mounted) {
-                                                  Navigator.of(context)
-                                                      .pushNamedAndRemoveUntil(
-                                                          homeRoute,
-                                                          (route) => false);
-                                                }
-                                              } on FirebaseAuthException catch (e) {
-                                                if (e.code ==
-                                                    'invalid-credential') {
-                                                  devtools
-                                                      .log('user not found');
-                                                } else {
-                                                  devtools.log(
-                                                      'something went wrong\n ${e.code}');
-                                                }
-                                              }
-                                            },
+                                            onPressed: enabled == false
+                                                ? null
+                                                : () async {
+                                                    final email = _email.text;
+                                                    final password =
+                                                        _password.text;
+                                                    try {
+                                                      await FirebaseAuth
+                                                          .instance
+                                                          .signInWithEmailAndPassword(
+                                                        email: email,
+                                                        password: password,
+                                                      );
+                                                      final user = FirebaseAuth
+                                                          .instance.currentUser;
+                                                      if (user == null) return;
+                                                      if (!user.emailVerified) {
+                                                        if (mounted) {
+                                                          showVerificationDialog(
+                                                              context);
+                                                        }
+                                                        return;
+                                                      }
+                                                      if (mounted) {
+                                                        Navigator.of(context)
+                                                            .pushNamedAndRemoveUntil(
+                                                                homeRoute,
+                                                                (route) =>
+                                                                    false);
+                                                      }
+                                                    } on FirebaseAuthException catch (e) {
+                                                      devtools.log(
+                                                          '${_email.text} ${_password.text}');
+                                                      devtools.log(
+                                                          'e.code: ${e.code}');
+                                                      switch (e.code) {
+                                                        case 'invalid-email':
+                                                          await showErrorDialog(
+                                                              context,
+                                                              'The email address is badly formatted');
+                                                          break;
+                                                        case 'invalid-credential':
+                                                          await showErrorDialog(
+                                                              context,
+                                                              'User not found');
+                                                          break;
+                                                        case 'wrong-password':
+                                                          await showErrorDialog(
+                                                              context,
+                                                              'Wrong password');
+                                                          break;
+                                                        default:
+                                                          await showErrorDialog(
+                                                              context,
+                                                              'An error occurred : ${e.code}');
+                                                      }
+                                                    } catch (e) {
+                                                      showErrorDialog(context,
+                                                          e.toString());
+                                                    }
+                                                  },
                                             style: TextButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(150, 244,
-                                                      143, 66), // Orange button
+                                              backgroundColor: enabled == false
+                                                  ? Colors.grey.withOpacity(0.5)
+                                                  : const Color.fromARGB(
+                                                      150,
+                                                      244,
+                                                      143,
+                                                      66), // Orange button
                                             ),
                                             child: const Text('Login',
                                                 style: TextStyle(
@@ -419,8 +476,9 @@ class _LoginPageState extends State<LoginPage> {
                                               Text(noAccountMessage
                                                   .split('Register')[0]),
                                               GestureDetector(
-                                                onTap: () {
-                                                  showDialog(
+                                                onTap: () async {
+                                                  Map results =
+                                                      await showDialog(
                                                     context: context,
                                                     builder: (context) {
                                                       return Dialog(
@@ -430,9 +488,13 @@ class _LoginPageState extends State<LoginPage> {
                                                                       .circular(
                                                                           20)),
                                                           child:
-                                                              RegisterDialog());
+                                                              const RegisterDialog());
                                                     },
                                                   );
+                                                  if (results != null) {
+                                                    devtools.log(
+                                                        'results: ${results.keys}');
+                                                  }
                                                 },
                                                 child: Text(
                                                   noAccountMessage

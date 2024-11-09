@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/app_colors.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
@@ -91,6 +92,7 @@ class FavoritesPageState extends State<FavoritesPage> {
         // End drawer for navigation menu
         endDrawer: const NavBar(),
         appBar: AppBar(
+
         backgroundColor: AppColors.appBarColor,
         title: Text(
           titles[currentIndex], // Dynamically change the title
@@ -140,6 +142,7 @@ class FavoritesPageState extends State<FavoritesPage> {
                     hintText: "Search",
                     hintStyle:
                         const TextStyle(color: AppColors.textColor),
+
                     filled: true,
                     fillColor:
                         const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
@@ -214,7 +217,6 @@ class FavoritesPageState extends State<FavoritesPage> {
                 restLogo,
               ),
             ),
-
             SizedBox(
                 width:
                     AspectRatios.width * 0.04), // Spacer between logo and text

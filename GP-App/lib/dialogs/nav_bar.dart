@@ -60,6 +60,7 @@ class NavBar extends StatelessWidget {
           ),
           const Divider(color: Color.fromARGB(255, 0, 0, 0)), 
 
+
           buildListTile(
             context: context,
             icon: Icons.settings,
@@ -77,8 +78,6 @@ class NavBar extends StatelessWidget {
             icon: Icons.description,
             title: 'Policies',
             onTap: () => showDevelopmentSnackBar(context),
-
-         
           ),
           const Divider(color: Color.fromARGB(255, 0, 0, 0)),
 
@@ -86,8 +85,8 @@ class NavBar extends StatelessWidget {
             context: context,
             icon: Icons.exit_to_app,
             title: 'Log out',
-            onTap: () {
-              FirebaseAuth.instance.signOut();
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
               Navigator.of(context).pushNamed(loginRoute);
             },
           ),
