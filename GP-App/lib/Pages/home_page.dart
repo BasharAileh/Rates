@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
-import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,34 +13,29 @@ class HomePage extends StatefulWidget {
 
 // Style for titles in the the finests
 const TextStyle titleStyle = TextStyle(
-  color: Color.fromRGBO(0, 0, 0, 1),
+  color: AppColors.textColor,
   fontSize: 15,
   fontWeight: FontWeight.bold,
 );
 
 class HomePageState extends State<HomePage> {
-  int selectedIndex =
-      0; // Index to track the selected item in the bottom navigation bar
-  final List<String> pageTitles = [
-    'Categories',
-    'Food',
-    'Profile'
-  ]; // Titles for pages in the navigation bar
+  int currentIndex = 0; // Track the selected index for bottom navigation bar
+
+  // List of titles for the app bar based on selected tab
+  final List<String> titles = ["Food", "Category", "Profile"];
+
+  // List of routes for navigation(others routs not ready yet)
+  final List<String> routes = [homeRoute];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer:
-          const NavBar(), // Drawer menu that opens from the end (right side)
-      backgroundColor:
-          const Color.fromRGBO(48, 48, 48, 1), // Background color of the app
-
+      endDrawer: const NavBar(), // Drawer menu that opens from the end (right side)
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 196, 154),
+        backgroundColor: AppColors.appBarColor,
         title: Text(
-          pageTitles[
-              selectedIndex], // Display title based on selected index frm the bottom bar
-          style: const TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+          titles[currentIndex], // Dynamically change the title
+          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -49,7 +44,7 @@ class HomePageState extends State<HomePage> {
             builder: (context) {
               return IconButton(
                 icon: const Icon(Icons.filter_list),
-                color: const Color.fromRGBO(0, 0, 0, 1),
+                color: const Color.fromARGB(255, 0, 0, 0),
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer(); // Opens the end drawer
                 },
@@ -63,8 +58,7 @@ class HomePageState extends State<HomePage> {
         height: double.infinity, // Ensures the image covers the full height
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-                'assets/images/Horizontal_background.png'), // Path to your image
+            image: AssetImage('assets/images/Horizontal_background.png'), // Path to your image
             fit: BoxFit.cover, // Ensures the image covers the entire area
           ),
         ),
@@ -81,8 +75,7 @@ class HomePageState extends State<HomePage> {
                 'assets/images/_4chicks_logo.png'
               ],
               () {
-                Navigator.of(context)
-                    .pushNamed(shopsRoute); // Navigate to shops route on tap
+                Navigator.of(context).pushNamed(shopsRoute); // Navigate to shops route on tap
               },
             ),
             // Section to display "Yearly Finest" items
@@ -95,8 +88,7 @@ class HomePageState extends State<HomePage> {
                 'assets/images/BurgarMaker_Logo.jpeg'
               ],
               () {
-                Navigator.of(context)
-                    .pushNamed(shopsRoute); // Navigate to shops route on tap
+                Navigator.of(context).pushNamed(shopsRoute); // Navigate to shops route on tap
               },
             ),
             // Section to display "Rating Experts" items
@@ -116,9 +108,7 @@ class HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 244, 143, 66), // Orange button
-
+                backgroundColor: const Color.fromARGB(255, 244, 143, 66), // Orange button
                 padding: EdgeInsets.symmetric(
                   horizontal: AspectRatios.width * 0.4,
                   vertical: AspectRatios.height * 0.01,
@@ -126,7 +116,7 @@ class HomePageState extends State<HomePage> {
               ),
               child: const Text(
                 'Rate',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: AppColors.textColor),
               ),
             ),
           ],
@@ -134,13 +124,21 @@ class HomePageState extends State<HomePage> {
       ),
       // Bottom navigation bar with three items
       bottomNavigationBar: NavigationBar(
-          backgroundColor: const Color.fromARGB(255, 255, 196, 154),
-          height: AspectRatios.height * 0.07,
-          destinations: const [
-            NavigationDestination(icon: Icon(Icons.home), label: "home"),
-            NavigationDestination(icon: Icon(Icons.face), label: "test"),
-            NavigationDestination(icon: Icon(Icons.menu), label: "menu"),
-          ]),
+        backgroundColor: AppColors.appBarColor,
+        height: AspectRatios.height * 0.07,
+        selectedIndex: currentIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentIndex = index; // Update the selected index
+          });
+          Navigator.of(context).pushNamed(routes[index]); // Navigate to the respective route
+        },
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+          NavigationDestination(icon: Icon(Icons.category), label: "Category"),
+          NavigationDestination(icon: Icon(Icons.person_2), label: "Profile"),
+        ],
+      ),
     );
   }
 
@@ -190,13 +188,12 @@ class TheFinest extends StatelessWidget {
         height: containerHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: const Color.fromRGBO(255, 255, 255, 1)
-              .withOpacity(0.8), // Semi-transparent background
+          color: AppColors.cardBackgroundOpacity, // Semi-transparent background
           boxShadow: const [
             BoxShadow(
-              color: Color.fromARGB(51, 0, 0, 0), // Subtle shadow effect
+              color: AppColors.shadowColor, // Subtle shadow effect
               blurRadius: 5.0,
-              offset: Offset(1.0, 1.0), // Shadow effect
+              offset: Offset(5.0, 5.0), // Shadow effect
             ),
           ],
         ),
@@ -261,7 +258,7 @@ class TheFinest extends StatelessWidget {
                     angle: radius * 0.034,
                     child: Image.asset(
                       'assets/images/golden_crown.png',
-                      color: const Color.fromRGBO(255, 193, 7, 1),
+                      color: const Color.fromARGB(255, 255, 193, 7),
                       width: radius * 1.25,
                       height: radius * 1.25,
                     ),
@@ -278,15 +275,14 @@ class TheFinest extends StatelessWidget {
                 color: rank == 1
                     ? const Color.fromARGB(255, 255, 193, 7)
                     : rank == 2
-                        ? const Color.fromRGBO(158, 158, 158, 1)
-                        : const Color.fromRGBO(
-                            121, 85, 72, 1), // Set color based on rank
+                        ? const Color.fromARGB(255, 158, 158, 158)
+                        : const Color.fromARGB(255, 121, 85, 72), // Set color based on rank
                 size: radius * 0.7,
               ),
               Text(
                 name,
                 style: const TextStyle(
-                  color: Color.fromRGBO(0, 0, 0, 1),
+                  color: AppColors.textColor,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),

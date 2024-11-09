@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/app_colors.dart';
+
 
 /// Text style for profile details in the Drawer header.
 const TextStyle profileTextStyle = TextStyle(
-  color: Color.fromRGBO(0, 0, 0, 1),
+  color: AppColors.textColor,
   fontSize: 15,
   fontWeight: FontWeight.bold,
 );
@@ -35,7 +37,7 @@ class NavBar extends StatelessWidget {
               backgroundImage: AssetImage('assets/images/mhmd_adass.png'),
             ),
             decoration: BoxDecoration(
-              color: Color.fromRGBO(33, 150, 243, 1),
+              color: Color.fromARGB(255, 33, 150, 243),
               image: DecorationImage(
                 fit: BoxFit.fill,
                 image: AssetImage('assets/images/Vertical_background.png'),
@@ -56,7 +58,7 @@ class NavBar extends StatelessWidget {
             title: 'Profile',
             onTap: () => showDevelopmentSnackBar(context),
           ),
-          const Divider(color: Color.fromRGBO(0, 0, 0, 1)), 
+          const Divider(color: Color.fromARGB(255, 0, 0, 0)), 
 
           buildListTile(
             context: context,
@@ -78,7 +80,7 @@ class NavBar extends StatelessWidget {
 
          
           ),
-          const Divider(color: Color.fromRGBO(0, 0, 0, 1)),
+          const Divider(color: Color.fromARGB(255, 0, 0, 0)),
 
           buildListTile(
             context: context,

@@ -39,7 +39,7 @@ class FirebaseInitPage extends StatelessWidget {
                 return const LoginPage();
               }
             } else {
-              return const HomePage();
+              return const LoginPage();
             }
 
           default:

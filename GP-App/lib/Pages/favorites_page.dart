@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/app_colors.dart';
+
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -11,6 +13,13 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class FavoritesPageState extends State<FavoritesPage> {
+  int currentIndex = 0; // Track the selected index for bottom navigation bar
+
+  // List of titles for the app bar based on selected tab
+  final List<String> titles = ["Favorites"];
+
+  // List of routes for navigation(others routs not ready yet)
+  final List<String> routes = [homeRoute];
   // List of the favorite restaurants
   List<Map<String, String>> favoriteRestaurants = [
     // data of favorite restaurants
@@ -64,26 +73,35 @@ class FavoritesPageState extends State<FavoritesPage> {
       home: Scaffold(
         // Bottom navigation bar
         bottomNavigationBar: NavigationBar(
-          backgroundColor: const Color.fromARGB(255, 255, 196, 154),
-          height: AspectRatios.height * 0.07, // Height based on AspectRatios
+          backgroundColor: AppColors.appBarColor,
+          height: AspectRatios.height * 0.07,
+          selectedIndex: currentIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentIndex = index; // Update the selected index
+          });
+          Navigator.of(context).pushNamed(routes[index]); // Navigate to the respective route
+        }, // Height based on AspectRatios
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: "home"),
-            NavigationDestination(icon: Icon(Icons.face), label: "test"),
-            NavigationDestination(icon: Icon(Icons.menu), label: "menu"),
+            NavigationDestination(icon: Icon(Icons.category), label: "Category"),
+            NavigationDestination(icon: Icon(Icons.person_2), label: "Profile"),
           ],
         ),
         // End drawer for navigation menu
         endDrawer: const NavBar(),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 255, 196, 154),
-          elevation: 0,
-          title: const Text(
-            "Favourites", // Title of the page
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(0, 0, 0, 1),
-            ),
+        backgroundColor: AppColors.appBarColor,
+        title: Text(
+          titles[currentIndex], // Dynamically change the title
+          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop(); // Go back to the previous screen
+            },
           ),
           actions: [
             // Filter button to open the navigation drawer
@@ -91,7 +109,7 @@ class FavoritesPageState extends State<FavoritesPage> {
               builder: (context) {
                 return IconButton(
                   icon: const Icon(Icons.filter_list),
-                  color: const Color.fromRGBO(0, 0, 0, 1),
+                  color: const Color.fromARGB(255, 0, 0, 0),
                   onPressed: () {
                     Scaffold.of(context).openEndDrawer(); // Open the end drawer
                   },
@@ -110,29 +128,36 @@ class FavoritesPageState extends State<FavoritesPage> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.all(AspectRatios.width * 0.04), // Padding around the content
+            padding: EdgeInsets.all(
+                AspectRatios.width * 0.04), // Padding around the content
             child: Column(
               children: [
                 // Search TextField
                 TextField(
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.search,
-                        color: Color.fromRGBO(0, 0, 0, 1)),
+                        color: AppColors.textColor),
                     hintText: "Search",
-                    hintStyle: const TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                    hintStyle:
+                        const TextStyle(color: AppColors.textColor),
                     filled: true,
-                    fillColor: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
+                    fillColor:
+                        const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AspectRatios.width * 0.075),
+                      borderRadius:
+                          BorderRadius.circular(AspectRatios.width * 0.075),
                       borderSide: BorderSide.none,
                     ),
                   ),
                 ),
-                SizedBox(height: AspectRatios.height * 0.02), // Spacer between the search bar and list
+                SizedBox(
+                    height: AspectRatios.height *
+                        0.02), // Spacer between the search bar and list
                 Expanded(
                   // build the List of favorite restaurants
                   child: ListView.builder(
-                    itemCount: favoriteRestaurants.length, // Number of items in the list
+                    itemCount: favoriteRestaurants
+                        .length, // Number of items in the list
                     itemBuilder: (context, index) {
                       var restaurant = favoriteRestaurants[index];
                       return buildListItem(
@@ -167,7 +192,7 @@ class FavoritesPageState extends State<FavoritesPage> {
   ) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(shopRoute); // Navigate to the shop page
+        Navigator.of(context).pushNamed(shopRoute);
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(
@@ -178,22 +203,21 @@ class FavoritesPageState extends State<FavoritesPage> {
         ),
         padding: EdgeInsets.all(AspectRatios.width * 0.03),
         decoration: BoxDecoration(
-          color: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
+          color: AppColors.cardBackgroundOpacity,
           borderRadius: BorderRadius.circular(AspectRatios.width * 0.05),
         ),
         child: Row(
           children: [
-            // Restaurant logo
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AspectRatios.width * 0.04),
-              child: Image.asset(
+            CircleAvatar(
+              radius: AspectRatios.width * 0.125,
+              backgroundImage: AssetImage(
                 restLogo,
-                fit: BoxFit.fill,
-                height: AspectRatios.height * 0.12,
-                width: AspectRatios.width * 0.2,
               ),
             ),
-            SizedBox(width: AspectRatios.width * 0.04), // Spacer between logo and text
+
+            SizedBox(
+                width:
+                    AspectRatios.width * 0.04), // Spacer between logo and text
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +228,7 @@ class FavoritesPageState extends State<FavoritesPage> {
                       Text(
                         title,
                         style: TextStyle(
-                          color: const Color.fromRGBO(0, 0, 0, 1),
+                          color: AppColors.textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: AspectRatios.width * 0.045,
                         ),
@@ -212,7 +236,7 @@ class FavoritesPageState extends State<FavoritesPage> {
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.favorite,
-                            color: Color.fromRGBO(244, 67, 54, 1), size: 30),
+                            color: Color.fromARGB(255, 244, 67, 54), size: 30),
                         onPressed: () {
                           // Show confirmation dialog before deleting the restaurant
                           showDialog(
@@ -225,7 +249,8 @@ class FavoritesPageState extends State<FavoritesPage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Close the dialog
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog
                                     },
                                     child: const Text('Cancel'),
                                   ),
@@ -235,7 +260,8 @@ class FavoritesPageState extends State<FavoritesPage> {
                                         // Remove the restaurant from the list
                                         favoriteRestaurants.removeAt(index);
                                       });
-                                      Navigator.of(context).pop(); // Close the dialog after deletion
+                                      Navigator.of(context)
+                                          .pop(); // Close the dialog after deletion
                                     },
                                     child: const Text('Delete'),
                                   ),
@@ -247,36 +273,40 @@ class FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: AspectRatios.height * 0.005), // Spacer between name and address
+                  SizedBox(
+                      height: AspectRatios.height *
+                          0.005), // Spacer between name and address
                   Row(
                     children: [
                       const Icon(Icons.location_on,
-                          color: Color.fromRGBO(0, 0, 0, 1), size: 14),
+                          color: Color.fromARGB(255, 0, 0, 0), size: 14),
                       Text(
                         address,
                         style: TextStyle(
-                          color: const Color.fromRGBO(0, 0, 0, 1),
+                          color: AppColors.textColor,
                           fontSize: AspectRatios.width * 0.035,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: AspectRatios.height * 0.005), // Spacer between address and rating
+                  SizedBox(
+                      height: AspectRatios.height *
+                          0.005), // Spacer between address and rating
                   Row(
                     children: [
                       Text(
                         rates,
-                        style:
-                            const TextStyle(color: Color.fromRGBO(0, 0, 0, 1)),
+                        style: const TextStyle(
+                            color: AppColors.textColor),
                       ),
                       SizedBox(width: AspectRatios.width * 0.01),
                       const Icon(Icons.favorite,
-                          color: Color.fromRGBO(244, 67, 54, 1), size: 14),
+                          color: Color.fromARGB(255, 244, 67, 54), size: 14),
                       const Spacer(),
                       Text(
                         rating,
                         style: TextStyle(
-                          color: const Color.fromRGBO(0, 0, 0, 1),
+                          color: AppColors.textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: AspectRatios.width * 0.04,
                         ),
