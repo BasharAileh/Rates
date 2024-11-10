@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:rates/Pages/shops_page.dart';
 
-class favoritepage extends StatefulWidget {
+class FavoritePage extends StatefulWidget {
   final List<String> favoriteRestaurants; // To hold the list of favorite restaurant names
   final List<String> favoriteLogos; // To hold the list of favorite restaurant logos
   final Function(String, String) onRemoveFavorite; // Callback to handle removal from favorites
 
-  const favoritepage({
-    Key? key,
+  const FavoritePage({
+    super.key,
     required this.favoriteRestaurants,
     required this.favoriteLogos,
     required this.onRemoveFavorite, // Receive the removal function
-  }) : super(key: key);
+  });
 
   @override
-  State<favoritepage> createState() => _favoritepageState();
+  State<FavoritePage> createState() => _FavoritePageState();
 }
 
-class _favoritepageState extends State<favoritepage> {
+class _FavoritePageState extends State<FavoritePage> {
   void _showRemoveFavoriteDialog(BuildContext context, String name, String logo) {
     showDialog(
       context: context,
