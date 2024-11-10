@@ -9,6 +9,7 @@ import 'package:rates/dialogs/error_dialog.dart';
 import 'package:rates/dialogs/register_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
 import 'package:rates/pages/t.dart';
+import 'package:rates/services/firebase%20methods/register_method.dart';
 import 'package:rates/services/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
 
@@ -388,6 +389,8 @@ class _LoginPageState extends State<LoginPage> {
                                                       }
                                                     } on FirebaseAuthException catch (e) {
                                                       devtools.log(
+                                                          'Error occurred: ${e.code}');
+                                                      devtools.log(
                                                           '${_email.text} ${_password.text}');
                                                       devtools.log(
                                                           'e.code: ${e.code}');
@@ -491,9 +494,17 @@ class _LoginPageState extends State<LoginPage> {
                                                               const RegisterDialog());
                                                     },
                                                   );
-                                                  devtools.log(
-                                                      'results: ${results.keys}');
-                                                                                                },
+                                                  if (results['register'] ==
+                                                      true) {
+                                                    if (context.mounted) {
+                                                      await register(
+                                                          context,
+                                                          results['email'],
+                                                          results['password']);
+                                                      setState(() {});
+                                                    }
+                                                  }
+                                                },
                                                 child: Text(
                                                   noAccountMessage
                                                       .split('? ')[1],

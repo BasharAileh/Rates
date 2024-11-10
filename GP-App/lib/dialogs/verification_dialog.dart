@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rates/constants/routes.dart';
 
-void showVerificationDialog(BuildContext context) {
-  showDialog(
+Future<void> showVerificationDialog(BuildContext context) async {
+  await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Email not verified'),
+        title: const Text('Check your email'),
         content: const Text('Please verify your email to continue.'),
         actions: [
           TextButton(
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text('Log out')),
           TextButton(
@@ -21,6 +24,12 @@ void showVerificationDialog(BuildContext context) {
             },
             child: const Text('Send verification email'),
           ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+              },
+              child: const Text('I have verified my email')),
         ],
       );
     },

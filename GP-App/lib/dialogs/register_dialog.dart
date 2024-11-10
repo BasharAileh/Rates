@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/decorations.dart';
+import 'package:rates/dialogs/error_dialog.dart';
 
 class RegisterDialog extends StatefulWidget {
   const RegisterDialog({super.key});
@@ -92,6 +93,22 @@ class _RegisterDialogState extends State<RegisterDialog> {
                           controller: _username,
                           decoration: Constants.textFieldDecoration(
                               labelText: 'Username'),
+                          onChanged: (value) {
+                            if (_passwordError == '' &&
+                                _username.text.isNotEmpty &&
+                                _email.text.isNotEmpty &&
+                                _password1.text.isNotEmpty &&
+                                _password2.text.isNotEmpty &&
+                                _isTermsChecked) {
+                              setState(() {
+                                enabled = true;
+                              });
+                            } else {
+                              setState(() {
+                                enabled = false;
+                              });
+                            }
+                          },
                         ),
                       ),
                       SizedBox(height: constraints.maxHeight * 0.02),
@@ -101,6 +118,22 @@ class _RegisterDialogState extends State<RegisterDialog> {
                           controller: _email,
                           decoration:
                               Constants.textFieldDecoration(labelText: 'Email'),
+                          onChanged: (value) {
+                            if (_passwordError == '' &&
+                                _username.text.isNotEmpty &&
+                                _email.text.isNotEmpty &&
+                                _password1.text.isNotEmpty &&
+                                _password2.text.isNotEmpty &&
+                                _isTermsChecked) {
+                              setState(() {
+                                enabled = true;
+                              });
+                            } else {
+                              setState(() {
+                                enabled = false;
+                              });
+                            }
+                          },
                         ),
                       ),
                       SizedBox(height: constraints.maxHeight * 0.02),
@@ -178,6 +211,15 @@ class _RegisterDialogState extends State<RegisterDialog> {
                           _isTermsChecked, (value) {
                         setState(() {
                           _isTermsChecked = value!;
+                          if (_isTermsChecked &&
+                              _username.text.isNotEmpty &&
+                              _email.text.isNotEmpty &&
+                              _password1.text.isNotEmpty &&
+                              _password2.text.isNotEmpty) {
+                            enabled = true;
+                          } else {
+                            enabled = false;
+                          }
                         });
                       }),
                       _buildCheckboxRow(
@@ -194,16 +236,21 @@ class _RegisterDialogState extends State<RegisterDialog> {
                             ElevatedButton(
                               onPressed: enabled == false
                                   ? null
-                                  : () => {
-                                        if (context.mounted)
-                                          {
-                                            Navigator.of(context).pop({
+                                  : () {
+                                      try {
+                                        if (context.mounted) {
+                                          Navigator.of(context).pop(
+                                            {
                                               'register': true,
                                               'email': _email,
-                                              'password1': _password1,
-                                            }),
-                                          }
-                                      },
+                                              'password': _password1,
+                                            },
+                                          );
+                                        }
+                                      } catch (e) {
+                                        showErrorDialog(context, e.toString());
+                                      }
+                                    },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(
                                     150, 244, 143, 66), // Orange button
