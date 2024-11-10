@@ -50,7 +50,7 @@ class NavBar extends StatelessWidget {
             context: context,
             icon: Icons.favorite,
             title: 'Favorites',
-            onTap: () => Navigator.of(context).pushNamed(favoritesRoute),
+            onTap: () => Navigator.of(context).pushNamed(favoriteRoute),
           ),
           buildListTile(
             context: context,
