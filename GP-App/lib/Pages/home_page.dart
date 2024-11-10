@@ -3,8 +3,6 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
-import 'package:rates/constants/app_colors.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,12 +30,14 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const NavBar(), // Drawer menu that opens from the end (right side)
+      endDrawer:
+          const NavBar(), // Drawer menu that opens from the end (right side)
       appBar: AppBar(
         backgroundColor: AppColors.appBarColor,
         title: Text(
           titles[currentIndex], // Dynamically change the title
-          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: AppColors.textColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -60,7 +60,8 @@ class HomePageState extends State<HomePage> {
         height: double.infinity, // Ensures the image covers the full height
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/Horizontal_background.png'), // Path to your image
+            image: AssetImage(
+                'assets/images/Horizontal_background.png'), // Path to your image
             fit: BoxFit.cover, // Ensures the image covers the entire area
           ),
         ),
@@ -77,7 +78,8 @@ class HomePageState extends State<HomePage> {
                 'assets/images/_4chicks_logo.png'
               ],
               () {
-                Navigator.of(context).pushNamed(shopsRoute); // Navigate to shops route on tap
+                Navigator.of(context)
+                    .pushNamed(shopsRoute); // Navigate to shops route on tap
               },
             ),
             // Section to display "Yearly Finest" items
@@ -90,7 +92,8 @@ class HomePageState extends State<HomePage> {
                 'assets/images/BurgarMaker_Logo.jpeg'
               ],
               () {
-                Navigator.of(context).pushNamed(shopsRoute); // Navigate to shops route on tap
+                Navigator.of(context)
+                    .pushNamed(shopsRoute); // Navigate to shops route on tap
               },
             ),
             // Section to display "Rating Experts" items
@@ -110,7 +113,8 @@ class HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 244, 143, 66), // Orange button
+                backgroundColor:
+                    const Color.fromARGB(255, 244, 143, 66), // Orange button
                 padding: EdgeInsets.symmetric(
                   horizontal: AspectRatios.width * 0.4,
                   vertical: AspectRatios.height * 0.01,
@@ -133,7 +137,8 @@ class HomePageState extends State<HomePage> {
           setState(() {
             currentIndex = index; // Update the selected index
           });
-          Navigator.of(context).pushNamed(routes[index]); // Navigate to the respective route
+          Navigator.of(context)
+              .pushNamed(routes[index]); // Navigate to the respective route
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
@@ -189,6 +194,10 @@ class TheFinest extends StatelessWidget {
         width: AspectRatios.width,
         height: containerHeight,
         decoration: BoxDecoration(
+          image: const DecorationImage(
+            image: AssetImage('assets/images/podium.png'),
+            fit: BoxFit.fill,
+          ),
           borderRadius: BorderRadius.circular(20),
           color: AppColors.cardBackgroundOpacity, // Semi-transparent background
           boxShadow: const [
@@ -204,29 +213,44 @@ class TheFinest extends StatelessWidget {
           children: [
             // Row to display three avatars (second, first, third place) with padding to position them in a podium
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Second avatar (Silver)
-                Padding(
-                  padding: EdgeInsets.only(top: containerHeight * 0.15),
-                  child: buildAvatarAndName(
-                      finestNames[1], finestPics[1], avatarSize, 2),
-                ),
-                // First avatar (Gold)
-                Padding(
-                  padding: EdgeInsets.only(bottom: containerHeight * 0.5),
-                  child: buildAvatarAndName(
-                      finestNames[0], finestPics[0], avatarSize, 1,
-                      showCrown: true),
-                ),
-                // Third avatar (Bronze)
-                Padding(
-                  padding: EdgeInsets.only(top: containerHeight * 0.4),
-                  child: buildAvatarAndName(
-                      finestNames[2], finestPics[2], avatarSize, 3),
-                ),
-              ],
-            ),
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    // Second avatar (Silver) - Left podium
+    Expanded(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: containerHeight * 0.15), // Adjusted for left position
+          child: buildAvatarAndName(
+              finestNames[1], finestPics[1], avatarSize, 2),
+        ),
+      ),
+    ),
+    // First avatar (Gold) - Center podium
+    Expanded(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: containerHeight * 0.3), // Higher position for center
+          child: buildAvatarAndName(
+              finestNames[0], finestPics[0], avatarSize, 1, showCrown: true),
+        ),
+      ),
+    ),
+    // Third avatar (Bronze) - Right podium
+    Expanded(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: containerHeight * 0.15), // Adjusted for right position
+          child: buildAvatarAndName(
+              finestNames[2], finestPics[2], avatarSize, 3),
+        ),
+      ),
+    ),
+  ],
+),
+
           ],
         ),
       ),
@@ -278,7 +302,8 @@ class TheFinest extends StatelessWidget {
                     ? const Color.fromARGB(255, 255, 193, 7)
                     : rank == 2
                         ? const Color.fromARGB(255, 158, 158, 158)
-                        : const Color.fromARGB(255, 121, 85, 72), // Set color based on rank
+                        : const Color.fromARGB(
+                            255, 121, 85, 72), // Set color based on rank
                 size: radius * 0.7,
               ),
               Text(
