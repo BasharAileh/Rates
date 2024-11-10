@@ -491,11 +491,9 @@ class _LoginPageState extends State<LoginPage> {
                                                               const RegisterDialog());
                                                     },
                                                   );
-                                                  if (results != null) {
-                                                    devtools.log(
-                                                        'results: ${results.keys}');
-                                                  }
-                                                },
+                                                  devtools.log(
+                                                      'results: ${results.keys}');
+                                                                                                },
                                                 child: Text(
                                                   noAccountMessage
                                                       .split('? ')[1],
