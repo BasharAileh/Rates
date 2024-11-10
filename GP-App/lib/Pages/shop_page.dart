@@ -231,14 +231,14 @@ class _ShopPageState extends State<ShopPage> {
                               CircleAvatar(
                                 
                                 // backgroundImage: AssetImage('assets/images/Talbat_Logo.png', ),
-                                backgroundImage: NetworkImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP4AAADGCAMAAADFYc2jAAAAn1BMVEX/WgD+/v7/SwD/VwD/r5D/UAD+/vz+7OD/hVT/YCj/Xx/+8en/TgD/VQD+/Pj/RAD/QAD+vab/gFj/18T+5tf+6t7/fEn/jGP+8Of/i1r++PL/oHz/tJP/wqT/zLL+4tH/lmr+1sf/pYT/uaD/bzX/sZb/WB7/ZS//XxX/ZSL/aS3/dUP/hWD/lG//nHX/rYn/ajj/yrD/oIH+3cn/vp55yFu0AAAC/klEQVR4nO3ca1PiMBSA4TYxoNCSIixgvQEq4o1lV///b1tQcVxoKMM6dvac9/niF8bJO4RLQ9IoAgAAAAAAAAAAAAAAAAAAAAAAgD42tVUPoQqp8dmCN05dvjWmcXx6dn7Ruazn8Y2pejzfyprGcDRoxSsHqvK9befxZ5ryrRk341hrfmp+xev05KeTy416PfnWdDbr9eT7q4J6NfnuuKU5Pyua+mry0+vCei355kZ1fjJSnT/pas63R3XN+entgHzydebbW9WvffJV5+v+4COffPI38n36TtzvPXZpWeacmfwI5CcfjzY+rXK0X2qRnEbTu/vrh97xY/9ptrHA/67WWsm7Lz0vZAokB81BcynP81arVituX9dqOxkTwLR3C17XScr/939g3/z4wlc99K+wd37ck/D8758/0p0/uBXw7r9/fu3RVT34fxda1t/BTMDXYNffO/+ngPd+m+blocXOs6oH/wX82b75FxLybSNwjVOqK2DyL17993tO/9wI+ORbXPXMAz/rlahFMi570mz43KytBGvXxdcy8hcTwM17h2/6gV952qsHfOhPRUz+V9a9SYKrPZlbJ6f+A0ud5JNPPvnkk08++VUP7TuQTz755JNPPvnkk1/10L5DML+tJD+w0itiM0e50EmuwVzguvamosPrryTsZijnngP5Ayk7ObcK5sdjDU9/UnyAe6H1oODdb8tWr8GRgL1cJZLTYH7cnYqf/y5wfv9VPnbeJEkiaUf/36zZutel3h6eHJ4Mzy/vhH4OZJv37CnQbAjNT/q7nGkQmx+F9ncoyTcz1fnWBU4z6ciPzG/V+ZEfqc53D6X7XCXnR6Z0l7/o/MiXHfKQnV/aLzw/yrb3S8+P/JYrXwX5kb8PrXou5OLzIzcZh65+8rHUC/5PrL+7KvoGkLenIs7xlEpNYzb6+xKgOTqdyjjFs4vUmPnTeae+vH9prf78MpsbPfGvbJJlPnGpS/zir672FSvxni0AAAAAAAAAAAAAAAAAAAAAAAD47A9Dmy3XPkR0YAAAAABJRU5ErkJggg=="),
+                                backgroundImage: AssetImage('assets/images/Talabat_logo.jpg'),
                             
                                 radius: 18.5,
                                 
                               ),
                               SizedBox(width: 8),
                               CircleAvatar(
-                                backgroundImage: AssetImage('assets/images/Careem_Logo.jpeg'),
+                                backgroundImage: AssetImage('assets/images/Careem_logo.jpeg'),
                                 radius: 18.5,
                               ),
                               SizedBox(width: 8),

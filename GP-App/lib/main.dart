@@ -7,6 +7,8 @@ import 'package:rates/pages/firebase_initialiser_page.dart';
 import 'package:rates/pages/home_page.dart';
 import 'package:rates/pages/shops_page.dart';
 import 'package:rates/pages/splash_screen.dart';
+import 'package:rates/Pages/favorite_hamza.dart';
+import 'package:rates/Pages/categories.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,12 @@ void main() {
         shopsRoute: (context) => const ShopsPage(),
         shopRoute: (context) => const ShopPage(),
         favoritesRoute: (context) => const FavoritesPage(),
+        favoriteRoute: (context) => FavoritePage(
+          favoriteRestaurants: const [],
+          favoriteLogos: const [],
+          onRemoveFavorite: (String restaurantId, String logoUrl) {},
+        ),
+        categoriesRoute: (context) => const Categories(),
       },
     ),
   );

@@ -25,7 +25,7 @@ class HomePageState extends State<HomePage> {
   final List<String> titles = ["Food", "Category", "Profile"];
 
   // List of routes for navigation(others routs not ready yet)
-  final List<String> routes = [homeRoute];
+  final List<String> routes = [homeRoute,categoriesRoute];
 
   @override
   Widget build(BuildContext context) {
