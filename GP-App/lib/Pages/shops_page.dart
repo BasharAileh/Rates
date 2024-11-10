@@ -96,7 +96,7 @@ class _RestaurantsState extends State<ShopsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => favoritepage(
+        builder: (context) => FavoritePage(
           favoriteRestaurants: favoriteRestaurants, // Pass favorite restaurants to FavoritesPage
           favoriteLogos: favoriteLogos, // Pass favorite logos to FavoritesPage
           onRemoveFavorite: (name, logo) {
