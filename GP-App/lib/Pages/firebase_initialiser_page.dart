@@ -32,6 +32,9 @@ class FirebaseInitPage extends StatelessWidget {
             final user = FirebaseAuth.instance.currentUser;
             devtools.log('User: $user');
             if (user != null) {
+              if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
+                return const HomePage();
+              }
               if (user.emailVerified) {
                 return const HomePage();
               } else {
