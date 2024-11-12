@@ -13,3 +13,8 @@ class EmailAlreadyInUseAuthException implements Exception {}
 class GenericAuthException implements Exception {}
 
 class UserNotLoggedInException implements Exception {}
+
+//verify email exceptions
+class EmailNotVerifiedAuthException implements Exception {}
+
+class TooManyRequestsAuthException implements Exception {}

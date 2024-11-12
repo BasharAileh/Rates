@@ -1,16 +1,13 @@
 import 'dart:developer' as devtools show log;
-import 'dart:math';
 import 'dart:ui';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/error_dialog.dart';
 import 'package:rates/dialogs/register_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
-import 'package:rates/pages/t.dart';
-import 'package:rates/services/auth/auth_user.dart';
-import 'package:rates/services/firebase%20methods/guset.dart';
+import 'package:rates/services/auth/auth_exception.dart';
+import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/firebase%20methods/register_method.dart';
 import 'package:rates/services/temp_logo.dart';
 import 'package:rates/services/text_width_fun.dart';
@@ -33,9 +30,9 @@ class _LoginPageState extends State<LoginPage> {
     _email = TextEditingController();
     _password = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (FirebaseAuth.instance.currentUser != null &&
-          FirebaseAuth.instance.currentUser!.emailVerified != true) {
-        devtools.log('${FirebaseAuth.instance.currentUser!.emailVerified}');
+      if (AuthService.firebase().currentUser != null &&
+          AuthService.firebase().currentUser?.isEmailVerified != true) {
+        devtools.log('${AuthService.firebase().currentUser}');
         if (mounted) {
           showVerificationDialog(context);
         }
@@ -388,66 +385,55 @@ class _LoginPageState extends State<LoginPage> {
                                                         final password =
                                                             _password.text;
                                                         try {
-                                                          await FirebaseAuth
-                                                              .instance
-                                                              .signInWithEmailAndPassword(
+                                                          await AuthService
+                                                                  .firebase()
+                                                              .logIn(
                                                             email: email,
                                                             password: password,
                                                           );
                                                           final user =
-                                                              FirebaseAuth
-                                                                  .instance
+                                                              AuthService
+                                                                      .firebase()
                                                                   .currentUser;
-                                                          if (user == null)
-                                                            return;
-                                                          if (!user
-                                                              .emailVerified) {
-                                                            if (mounted) {
-                                                              showVerificationDialog(
-                                                                  context);
+                                                          if (user != null) {
+                                                            if (!user
+                                                                .isEmailVerified) {
+                                                              if (mounted) {
+                                                                showVerificationDialog(
+                                                                    context.mounted
+                                                                        ? context
+                                                                        : context);
+                                                              }
+                                                              return;
+                                                            } else {
+                                                              Navigator.of(context
+                                                                          .mounted
+                                                                      ? context
+                                                                      : context)
+                                                                  .pushNamedAndRemoveUntil(
+                                                                      homeRoute,
+                                                                      (route) =>
+                                                                          false);
                                                             }
-                                                            return;
                                                           }
-                                                          if (mounted) {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pushNamedAndRemoveUntil(
-                                                                    homeRoute,
-                                                                    (route) =>
-                                                                        false);
-                                                          }
-                                                        } on FirebaseAuthException catch (e) {
-                                                          devtools.log(
-                                                              'Error occurred: ${e.code}');
-                                                          devtools.log(
-                                                              '${_email.text} ${_password.text}');
-                                                          devtools.log(
-                                                              'e.code: ${e.code}');
-                                                          switch (e.code) {
-                                                            case 'invalid-email':
-                                                              await showErrorDialog(
-                                                                  context,
-                                                                  'The email address is badly formatted');
-                                                              break;
-                                                            case 'invalid-credential':
-                                                              await showErrorDialog(
-                                                                  context,
-                                                                  'User not found');
-                                                              break;
-                                                            case 'wrong-password':
-                                                              await showErrorDialog(
-                                                                  context,
-                                                                  'Wrong password');
-                                                              break;
-                                                            default:
-                                                              await showErrorDialog(
-                                                                  context,
-                                                                  'An error occurred : ${e.code}');
-                                                          }
-                                                        } catch (e) {
-                                                          showErrorDialog(
-                                                              context,
-                                                              e.toString());
+                                                        } on InvalidEmailAuthException {
+                                                          await showErrorDialog(
+                                                              context.mounted
+                                                                  ? context
+                                                                  : context,
+                                                              'The email address is badly formatted');
+                                                        } on InvalidCredentialAuthException {
+                                                          await showErrorDialog(
+                                                              context.mounted
+                                                                  ? context
+                                                                  : context,
+                                                              'User not found');
+                                                        } on GenericAuthException {
+                                                          await showErrorDialog(
+                                                              context.mounted
+                                                                  ? context
+                                                                  : context,
+                                                              'An error occurred');
                                                         }
                                                       },
                                                 style: TextButton.styleFrom(
@@ -594,8 +580,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: TextButton(
                   onPressed: () {
-                    final AuthService _authService = AuthService();
-                    _authService.signInAnonymously();
+                    AuthService.firebase().logInAnonymously();
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(homeRoute, (route) => false);
                   },

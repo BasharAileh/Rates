@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
-
 import 'package:rates/dialogs/error_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
+import 'package:rates/services/auth/auth_exception.dart';
+import 'package:rates/services/auth/auth_service.dart';
 
 Future<void> register(
   BuildContext context,
@@ -13,36 +13,30 @@ Future<void> register(
   final TextEditingController email = gEmail;
   final TextEditingController password = password1;
   try {
-    devtools.log('Creating user with email: $email');
-    devtools.log('Creating user with password: $password');
-    final userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: email.text, password: password.text);
-    await userCredential.user!.sendEmailVerification();
+    await AuthService.firebase()
+        .createUser(email: email.text, password: password.text);
+    await AuthService.firebase().sendEmailVerification();
     {
       if (context.mounted) {
         await showVerificationDialog(context);
       }
     }
-    devtools.log(userCredential.user.toString());
-  } on FirebaseAuthException catch (e) {
-    if (e.code == 'weak-password') {
-      if (context.mounted) {
-        await showErrorDialog(context, 'The password provided is too weak.');
-      }
-    } else if (e.code == 'email-already-in-use') {
-      if (context.mounted) {
-        await showErrorDialog(
-            context, 'The account already exists for that email.');
-      }
-    } else if (e.code == 'invalid-email') {
-      if (context.mounted) {
-        await showErrorDialog(context, 'The email address is badly formatted.');
-      }
-    }
-  } catch (e) {
+  } on WeakPasswordAuthException {
     if (context.mounted) {
-      await showErrorDialog(context, e.toString());
+      await showErrorDialog(context, 'The password provided is too weak.');
+    }
+  } on EmailAlreadyInUseAuthException {
+    if (context.mounted) {
+      await showErrorDialog(
+          context, 'The account already exists for that email.');
+    }
+  } on InvalidEmailAuthException {
+    if (context.mounted) {
+      await showErrorDialog(context, 'The email address is badly formatted.');
+    }
+  } on GenericAuthException {
+    if (context.mounted) {
+      await showErrorDialog(context, 'An error occurred.');
     }
   }
 }
