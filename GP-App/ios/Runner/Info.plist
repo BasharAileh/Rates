@@ -4,6 +4,25 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLName</key>
+    <string>com.googleusercontent.apps.792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>com.googleusercontent.apps.792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7</string>
+    </array>
+  </dict>
+</array>
+
+
+	<key>DEBUG_CONFIGURATION_FILE</key>
+	<string></string>
+	<key>RELEASE_CONFIGURATION_FILE</key>
+	<string></string>
+	<key>PROFILE_CONFIGURATION_FILE</key>
+	<string></string>
 	<key>CFBundleDisplayName</key>
 	<string>Rates</string>
 	<key>CFBundleExecutable</key>
@@ -45,5 +64,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>GIDClientID</key>
+	<string>792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7.apps.googleusercontent.com</string>
+	<key>DEBUG_CONFIGURATION_FILE</key>
+<string>Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
+<key>RELEASE_CONFIGURATION_FILE</key>
+<string>Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
+<key>PROFILE_CONFIGURATION_FILE</key>
+<string>Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig</string>
 </dict>
 </plist>

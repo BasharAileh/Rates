@@ -40,13 +40,13 @@ class FirebaseAuthProvider implements AuthProvider {
 
   @override
   Future<AuthUser> logIn({
-    required String email,
-    required String password,
+    String? email,
+    String? password,
   }) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+        email: email!,
+        password: password!,
       );
       final user = currentUser;
       if (user != null) {

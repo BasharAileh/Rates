@@ -468,7 +468,22 @@ class _LoginPageState extends State<LoginPage> {
                                               child: ElevatedButton(
                                                   style: ElevatedButton
                                                       .styleFrom(),
-                                                  onPressed: () {},
+                                                  onPressed: () async {
+                                                    try {
+                                                      await AuthService.google()
+                                                          .logIn();
+                                                      Navigator.of(
+                                                              context.mounted
+                                                                  ? context
+                                                                  : context)
+                                                          .pushNamedAndRemoveUntil(
+                                                              homeRoute,
+                                                              (route) => false);
+                                                    } catch (e) {
+                                                      devtools
+                                                          .log(e.toString());
+                                                    }
+                                                  },
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
