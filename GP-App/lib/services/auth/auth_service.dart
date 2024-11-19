@@ -27,13 +27,16 @@ class AuthService implements AuthProvider {
     String? email,
     String? password,
   }) {
-    if (provider is FirebaseAuthProvider) {
-      return (provider as FirebaseAuthProvider).logIn(
-        email: email!,
-        password: password!,
-      );
-    } else {
-      return (provider as GoogleAuthProvider).logIn();
+    switch (provider.runtimeType) {
+      case const (FirebaseAuthProvider):
+        return (provider as FirebaseAuthProvider).logIn(
+          email: email!,
+          password: password!,
+        );
+      case const (GoogleAuthProvider):
+        return (provider as GoogleAuthProvider).logIn();
+      default:
+        throw UnimplementedError();
     }
   }
 
