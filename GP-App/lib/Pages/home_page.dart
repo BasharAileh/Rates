@@ -3,8 +3,10 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/dialogs/rating_dialog.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/crud/rates_service.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +23,7 @@ const TextStyle titleStyle = TextStyle(
 );
 
 class HomePageState extends State<HomePage> {
+
   late final RatesService _ratesService;
   String get userEmail => AuthService.firebase().currentUser!.email!;
 
@@ -36,6 +39,7 @@ class HomePageState extends State<HomePage> {
     _ratesService.close();
     super.dispose();
   }
+
 
   int currentIndex = 0; // Track the selected index for bottom navigation bar
 
@@ -122,7 +126,10 @@ class HomePageState extends State<HomePage> {
             ),
             // Button to rating
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showRatingDialog(
+                  context);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     const Color.fromARGB(255, 244, 143, 66), // Orange button
@@ -206,7 +213,7 @@ class TheFinest extends StatelessWidget {
         height: containerHeight,
         decoration: BoxDecoration(
           image: const DecorationImage(
-            image: AssetImage('assets/images/podium.png'),
+            image: AssetImage('assets/images/podium2.png'),
             fit: BoxFit.fill,
           ),
           borderRadius: BorderRadius.circular(20),
