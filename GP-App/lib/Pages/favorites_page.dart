@@ -4,7 +4,6 @@ import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 
-
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -76,28 +75,30 @@ class FavoritesPageState extends State<FavoritesPage> {
           backgroundColor: AppColors.appBarColor,
           height: AspectRatios.height * 0.07,
           selectedIndex: currentIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentIndex = index; // Update the selected index
-          });
-          Navigator.of(context).pushNamed(routes[index]); // Navigate to the respective route
-        }, // Height based on AspectRatios
+          onDestinationSelected: (int index) {
+            setState(() {
+              currentIndex = index; // Update the selected index
+            });
+            Navigator.of(context)
+                .pushNamed(routes[index]); // Navigate to the respective route
+          }, // Height based on AspectRatios
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: "home"),
-            NavigationDestination(icon: Icon(Icons.category), label: "Category"),
+            NavigationDestination(
+                icon: Icon(Icons.category), label: "Category"),
             NavigationDestination(icon: Icon(Icons.person_2), label: "Profile"),
           ],
         ),
         // End drawer for navigation menu
         endDrawer: const NavBar(),
         appBar: AppBar(
-
-        backgroundColor: AppColors.appBarColor,
-        title: Text(
-          titles[currentIndex], // Dynamically change the title
-          style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
+          backgroundColor: AppColors.appBarColor,
+          title: Text(
+            titles[currentIndex], // Dynamically change the title
+            style: const TextStyle(
+                color: AppColors.textColor, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -136,12 +137,10 @@ class FavoritesPageState extends State<FavoritesPage> {
                 // Search TextField
                 TextField(
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search,
-                        color: AppColors.textColor),
+                    prefixIcon:
+                        const Icon(Icons.search, color: AppColors.textColor),
                     hintText: "Search",
-                    hintStyle:
-                        const TextStyle(color: AppColors.textColor),
-
+                    hintStyle: const TextStyle(color: AppColors.textColor),
                     filled: true,
                     fillColor:
                         const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.8),
@@ -297,8 +296,7 @@ class FavoritesPageState extends State<FavoritesPage> {
                     children: [
                       Text(
                         rates,
-                        style: const TextStyle(
-                            color: AppColors.textColor),
+                        style: const TextStyle(color: AppColors.textColor),
                       ),
                       SizedBox(width: AspectRatios.width * 0.01),
                       const Icon(Icons.favorite,

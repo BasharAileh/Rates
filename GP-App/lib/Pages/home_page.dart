@@ -4,6 +4,9 @@ import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/rating_dialog.dart';
+import 'package:rates/services/auth/auth_service.dart';
+import 'package:rates/services/crud/rates_service.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,11 +24,22 @@ const TextStyle titleStyle = TextStyle(
 
 class HomePageState extends State<HomePage> {
 
-// void onSuccess(){
-//                 Navigator.of(context).push(MaterialPageRoute(
-//                   builder: (context) => const RatingPage(), // Navigate to the RatingScreen
-//                  ));
-//               } 
+  late final RatesService _ratesService;
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _ratesService = RatesService();
+    _ratesService.open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _ratesService.close();
+    super.dispose();
+  }
+
 
   int currentIndex = 0; // Track the selected index for bottom navigation bar
 
@@ -66,13 +80,6 @@ class HomePageState extends State<HomePage> {
       body: Container(
         width: double.infinity, // Ensures the image covers the full width
         height: double.infinity, // Ensures the image covers the full height
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                'assets/images/Horizontal_background.png'), // Path to your image
-            fit: BoxFit.cover, // Ensures the image covers the entire area
-          ),
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

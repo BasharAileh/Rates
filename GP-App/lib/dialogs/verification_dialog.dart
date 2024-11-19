@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rates/constants/routes.dart';
+import 'package:rates/services/auth/auth_exception.dart';
+import 'package:rates/services/auth/auth_service.dart';
+import 'dart:developer' as devtools show log;
 
 Future<void> showVerificationDialog(BuildContext context) async {
   await showDialog(
@@ -12,7 +13,7 @@ Future<void> showVerificationDialog(BuildContext context) async {
         actions: [
           TextButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
+                await AuthService.firebase().logOut();
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
@@ -20,16 +21,37 @@ Future<void> showVerificationDialog(BuildContext context) async {
               child: const Text('Log out')),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+              try {
+                await AuthService.firebase().sendEmailVerification();
+              } on TooManyRequestsAuthException {
+                if (context.mounted) {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Too many requests'),
+                        content: const Text(
+                            'Please wait a moment before sending another verification email.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              } catch (e) {
+                devtools.log(e.toString());
+              }
             },
             child: const Text('Send verification email'),
           ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
-              },
-              child: const Text('I have verified my email')),
         ],
       );
     },

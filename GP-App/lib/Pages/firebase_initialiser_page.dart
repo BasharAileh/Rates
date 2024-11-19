@@ -1,19 +1,14 @@
 import 'dart:developer' as devtools show log;
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:rates/Pages/favorites_page.dart';
-import 'package:rates/Pages/shop_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/firebase_options.dart';
 import 'package:rates/pages/home_page.dart';
 import 'package:rates/pages/login_page.dart';
 import 'package:rates/pages/splash_screen.dart';
+import 'package:rates/services/auth/auth_service.dart';
 
 final Future<void> _initializeFirebase =
     Future.delayed(const Duration(seconds: 2), () async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await AuthService.firebase().initialize();
 });
 
 class FirebaseInitPage extends StatelessWidget {
@@ -29,13 +24,13 @@ class FirebaseInitPage extends StatelessWidget {
           case ConnectionState.waiting:
             return const SplashScreen();
           case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
+            final user = AuthService.firebase().currentUser;
             devtools.log('User: $user');
             if (user != null) {
-              if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
+              if (user.isAnonymous) {
                 return const HomePage();
               }
-              if (user.emailVerified) {
+              if (user.isEmailVerified) {
                 return const HomePage();
               } else {
                 return const LoginPage();
