@@ -3,6 +3,7 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/dialogs/rating_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,13 +20,20 @@ const TextStyle titleStyle = TextStyle(
 );
 
 class HomePageState extends State<HomePage> {
+
+// void onSuccess(){
+//                 Navigator.of(context).push(MaterialPageRoute(
+//                   builder: (context) => const RatingPage(), // Navigate to the RatingScreen
+//                  ));
+//               } 
+
   int currentIndex = 0; // Track the selected index for bottom navigation bar
 
   // List of titles for the app bar based on selected tab
   final List<String> titles = ["Food", "Category", "Profile"];
 
   // List of routes for navigation(others routs not ready yet)
-  final List<String> routes = [homeRoute,categoriesRoute];
+  final List<String> routes = [homeRoute, categoriesRoute];
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +119,10 @@ class HomePageState extends State<HomePage> {
             ),
             // Button to rating
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                showRatingDialog(
+                  context);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     const Color.fromARGB(255, 244, 143, 66), // Orange button
@@ -195,7 +206,7 @@ class TheFinest extends StatelessWidget {
         height: containerHeight,
         decoration: BoxDecoration(
           image: const DecorationImage(
-            image: AssetImage('assets/images/podium.png'),
+            image: AssetImage('assets/images/podium2.png'),
             fit: BoxFit.fill,
           ),
           borderRadius: BorderRadius.circular(20),
@@ -213,44 +224,50 @@ class TheFinest extends StatelessWidget {
           children: [
             // Row to display three avatars (second, first, third place) with padding to position them in a podium
             Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  children: [
-    // Second avatar (Silver) - Left podium
-    Expanded(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: containerHeight * 0.15), // Adjusted for left position
-          child: buildAvatarAndName(
-              finestNames[1], finestPics[1], avatarSize, 2),
-        ),
-      ),
-    ),
-    // First avatar (Gold) - Center podium
-    Expanded(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: containerHeight * 0.3), // Higher position for center
-          child: buildAvatarAndName(
-              finestNames[0], finestPics[0], avatarSize, 1, showCrown: true),
-        ),
-      ),
-    ),
-    // Third avatar (Bronze) - Right podium
-    Expanded(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: containerHeight * 0.15), // Adjusted for right position
-          child: buildAvatarAndName(
-              finestNames[2], finestPics[2], avatarSize, 3),
-        ),
-      ),
-    ),
-  ],
-),
-
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Second avatar (Silver) - Left podium
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: containerHeight *
+                              0.15), // Adjusted for left position
+                      child: buildAvatarAndName(
+                          finestNames[1], finestPics[1], avatarSize, 2),
+                    ),
+                  ),
+                ),
+                // First avatar (Gold) - Center podium
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          bottom: containerHeight *
+                              0.3), // Higher position for center
+                      child: buildAvatarAndName(
+                          finestNames[0], finestPics[0], avatarSize, 1,
+                          showCrown: true),
+                    ),
+                  ),
+                ),
+                // Third avatar (Bronze) - Right podium
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: containerHeight *
+                              0.15), // Adjusted for right position
+                      child: buildAvatarAndName(
+                          finestNames[2], finestPics[2], avatarSize, 3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
