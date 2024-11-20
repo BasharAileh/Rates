@@ -59,9 +59,10 @@ class _CategoriesState extends State<Categories> {
           onPressed: () {
             setState(() {
               IsSearch = !IsSearch; // Toggles the search mode.
-              if (!IsSearch)
+              if (!IsSearch) {
                 SearchConroller
                     .clear(); // Clears the search input if exiting search mode.
+              }
             });
           },
         ),

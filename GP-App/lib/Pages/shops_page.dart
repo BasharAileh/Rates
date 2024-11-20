@@ -163,7 +163,7 @@ class _RestaurantsState extends State<ShopsPage> {
         child: Column(
           children: [
             // Slider at the top
-            Container(
+            SizedBox(
               height: totalHeight * 0.25, // Set height for the slider
               child: CarouselSlider(
                 options: CarouselOptions(
@@ -183,7 +183,7 @@ class _RestaurantsState extends State<ShopsPage> {
             // List of restaurants
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 itemCount: restaurants.length, // Number of restaurant cards
                 itemBuilder: (context, index) {
                   return RestaurantCard(

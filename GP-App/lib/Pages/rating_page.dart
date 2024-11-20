@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:rates/constants/app_colors.dart';
-import 'package:rates/constants/aspect_ratio.dart';
 
 class RatingPage extends StatefulWidget {
   final String restaurantName;

@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity, // Ensures the image covers the full width
         height: double.infinity, // Ensures the image covers the full height
         child: Column(

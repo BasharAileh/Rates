@@ -23,7 +23,7 @@ class _FavoritePageState extends State<FavoritePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Remove from Favorites"),
+          title: const Text("Remove from Favorites"),
           content: Text("Are you sure you want to remove $name from your favorites?"),
           actions: [
             TextButton(
@@ -65,7 +65,7 @@ class _FavoritePageState extends State<FavoritePage> {
           fit: BoxFit.cover, // This will cover the entire container
         ),),
         child: widget.favoriteRestaurants.isEmpty
-            ? Center(child: Text("No favorite restaurants added."))
+            ? const Center(child: Text("No favorite restaurants added."))
             : ListView.builder(
                 itemCount: widget.favoriteRestaurants.length,
                 itemBuilder: (context, index) {
