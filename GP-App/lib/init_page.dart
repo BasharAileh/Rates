@@ -1,8 +1,8 @@
 import 'dart:developer' as devtools show log;
+
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/pages/home_page.dart';
-import 'package:rates/pages/login_page.dart';
 import 'package:rates/pages/splash_screen.dart';
 import 'package:rates/services/auth/auth_service.dart';
 
@@ -11,8 +11,8 @@ final Future<void> _initializeFirebase =
   await AuthService.firebase().initialize();
 });
 
-class FirebaseInitPage extends StatelessWidget {
-  const FirebaseInitPage({super.key});
+class InitPage extends StatelessWidget {
+  const InitPage({super.key});
   @override
   Widget build(BuildContext context) {
     AspectRatios.init(
@@ -33,10 +33,11 @@ class FirebaseInitPage extends StatelessWidget {
               if (user.isEmailVerified) {
                 return const HomePage();
               } else {
-                return const LoginPage();
+                return const HomePage(); //this is the one you change whenever you want to run your page
+                //don't text me 'what line to change, so i can run my page please :)'
               }
             } else {
-              return const LoginPage();
+              return const HomePage();
             }
 
           default:
