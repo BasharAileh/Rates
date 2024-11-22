@@ -22,13 +22,13 @@ class InitPage extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return const SplashScreen();
+            return ;
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
             devtools.log('User: $user');
             if (user != null) {
               if (user.isAnonymous) {
-                return const HomePage();
+                return const lo;
               }
               if (user.isEmailVerified) {
                 return const HomePage();

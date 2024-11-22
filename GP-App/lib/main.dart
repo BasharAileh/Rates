@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rates/pages/firebase_initialiser_page.dart';
-
+import 'package:rates/init_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
@@ -9,7 +8,7 @@ void main() {
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       useMaterial3: true,
     ),
-    home: const FirebaseInitPage(),
+    home: const InitPage(),
   ));
 }
 
