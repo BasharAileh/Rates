@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,8 +16,9 @@ class _LoginPageState extends State<LoginPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: AspectRatios.width * 0.07051282051,
-              vertical: AspectRatios.height * 0.2962085308),
+            vertical: AspectRatios.height * 0.20379146919,
+            horizontal: AspectRatios.width * 0.07051282051,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -111,7 +113,13 @@ class _LoginPageState extends State<LoginPage> {
                     /* devtools.log('${constraints.maxWidth}'); */
                   },
                   child: const SizedBox(
-                    child: Text('Login'),
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -132,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                     GestureDetector(
                       onTap: () {},
                       child: const Text(
-                        'Sign Up',
+                        'Login',
                         style: TextStyle(
                           color: Colors.blue,
                         ),
@@ -169,24 +177,53 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    fixedSize: Size(
-                        AspectRatios.width, AspectRatios.height * 0.05450237),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(37.5),
-                    ),
-                  ),
+                      backgroundColor: Colors.white.withOpacity(0),
+                      shadowColor: Colors.white.withOpacity(0),
+                      fixedSize: Size(AspectRatios.width,
+                          AspectRatios.height * 0.05450236966),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(37.5),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      )),
                   onPressed: () {
                     /* devtools.log('${constraints.maxWidth}'); */
                   },
-                  child: const SizedBox(
-                    child: Text('Login with Google'),
+                  child: SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/google.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: AspectRatios.width * 0.02564102564,
+                        ),
+                        const Text(
+                          'Continue with Google',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(
-                  /*   height: constraints.maxHeight * 0.0575, */
-                  ),
+              SizedBox(
+                height: AspectRatios.height * 0.03406398,
+              ),
+              Center(
+                child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Continue as Guest',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 243, 198, 35)),
+                    )),
+              ),
               // SvgPicture.asset(
               //   'lib/rates_logo.svg',
               //   width: 40,
