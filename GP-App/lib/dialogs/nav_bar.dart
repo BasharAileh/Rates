@@ -1,118 +1,46 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/constants/routes.dart';
-import 'package:rates/constants/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:rates/dialogs/nav_contoller.dart';
 
 
-/// Text style for profile details in the Drawer header.
-const TextStyle profileTextStyle = TextStyle(
-  color: AppColors.textColor,
-  fontSize: 15,
-  fontWeight: FontWeight.bold,
-);
+class NavigationBarWidget extends StatelessWidget {
+  NavigationBarWidget({super.key});
 
-/// Navigation Drawer for the application.
-class NavBar extends StatelessWidget {
-  const NavBar({super.key});
+  // Access the BottomNavController
+  final BottomNavController bottomNavController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      // Set drawer width to 60% of the screen width for a responsive layout
-      width: AspectRatios.width * 0.6,
-      child: ListView(
-        children: [
-          // User Account Header with profile information
-          const UserAccountsDrawerHeader(
-            accountName: Text(
-              'mhmd adass',
-              style: profileTextStyle,
+    return Obx(() => BottomNavigationBar(
+          currentIndex: bottomNavController.currentIndex.value, // Reactive index
+          onTap: (index) {
+            bottomNavController.changePage(index); // Call changePage method
+          },
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.black,
+          items: [
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/rate_icon.svg'),
+              label: 'Rate',
             ),
-            accountEmail: Text(
-              'mohammadaladass63@gmail.com',
-              style: profileTextStyle,
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/profile_icon.svg'),
+              label: 'Profile',
             ),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: AssetImage('assets/images/mhmd_adass.png'),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/home_icon.svg'),
+              label: 'Home',
             ),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 33, 150, 243),
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage('assets/images/Vertical_background.png'),
-              ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/favorite_icon.svg'),
+              label: 'Favorites',
             ),
-          ),
-
-          // Drawer Menu Items
-          buildListTile(
-            context: context,
-            icon: Icons.favorite,
-            title: 'Favorites',
-            onTap: () => Navigator.of(context).pushNamed(favoriteRoute),
-          ),
-          buildListTile(
-            context: context,
-            icon: Icons.person,
-            title: 'Profile',
-            onTap: () => showDevelopmentSnackBar(context),
-          ),
-          const Divider(color: Color.fromARGB(255, 0, 0, 0)), 
-
-
-          buildListTile(
-            context: context,
-            icon: Icons.settings,
-            title: 'Settings',
-            onTap: () => showDevelopmentSnackBar(context),
-          ),
-          buildListTile(
-            context: context,
-            icon: Icons.help,
-            title: 'Help',
-            onTap: () => showDevelopmentSnackBar(context),
-          ),
-          buildListTile(
-            context: context,
-            icon: Icons.description,
-            title: 'Policies',
-            onTap: () => showDevelopmentSnackBar(context),
-          ),
-          const Divider(color: Color.fromARGB(255, 0, 0, 0)),
-
-          buildListTile(
-            context: context,
-            icon: Icons.exit_to_app,
-            title: 'Log out',
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushNamed(loginRoute);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Creates a ListTile widget for items in the Drawer.
-  Widget buildListTile({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
-  }
-
-  // Displays a SnackBar indicating the section is under development.
-  void showDevelopmentSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('This section is under development')),
-    );
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/icons/about_icon.svg'),
+              label: 'About',
+            ),
+          ],
+        ));
   }
 }
