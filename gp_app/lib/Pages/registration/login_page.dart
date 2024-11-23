@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/dialogs/nav_bar.dart';
+
+int pageIndex = 2;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -225,20 +228,19 @@ class _LoginPageState extends State<LoginPage> {
                     )),
               ),
               // SvgPicture.asset(
-              //   'lib/rates_logo.svg',
+              //   'assets/logos/yallow_logo.svg',
               //   width: 40,
               //   height: 40,
               // ),
-              // IconButton(
-              //     onPressed: () {
-              //       devtools.log('message');
-              //     },
-              //     // icon: SvgPicture.asset(
-              //   'lib/rates_logo.svg',
-              //   width: 20,
-              //   height: 20,
-              // )
-              //    )
+              IconButton(
+                  onPressed: () {
+                    print('message');
+                  },
+                  icon: SvgPicture.asset(
+                    'assets/icons/food_icon.svg',
+                    width: 40,
+                    height: 40,
+                  )),
             ],
           ),
         ),
