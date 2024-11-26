@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rates/constants/aspect_ratio.dart';
+
+import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
   @override
@@ -7,17 +8,25 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> {
-  List<bool> favoriteList = List.generate(10, (_) => false);
+  List<Map<String, dynamic>> restaurantList = List.generate(
+    10,
+    (index) => {
+      'name': 'Restaurant #$index',
+      'rating': 3.5 + (index % 2) * 0.5,
+      'image': 'https://via.placeholder.com/70', // Replace with actual image URL
+      'isFavorite': false,
+    },
+  );
 
   void toggleFavorite(int index) {
     setState(() {
-      favoriteList[index] = !favoriteList[index];
+      restaurantList[index]['isFavorite'] = !restaurantList[index]['isFavorite'];
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          favoriteList[index]
+          restaurantList[index]['isFavorite']
               ? 'Added to favorite list'
               : 'Removed from favorite list',
         ),
@@ -43,6 +52,24 @@ class _FoodPageState extends State<FoodPage> {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite, color: Colors.red),
+            onPressed: () {
+              // Navigate to FavoritesPage with the favorite restaurants
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FavoritesPage(
+                    favorites: restaurantList
+                        .where((restaurant) => restaurant['isFavorite'])
+                        .toList(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.only(left: 10.0),
@@ -69,12 +96,12 @@ class _FoodPageState extends State<FoodPage> {
                       border: OutlineInputBorder(
                         borderRadius:
                             BorderRadius.circular(20), // Circular border
-                        borderSide: const BorderSide(color: Colors.black), // Remove border outline
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search, color: Colors.black),
                         onPressed: () {},
-                      ), // Search icon inside the box
+                      ),
                     ),
                   ),
                 ),
@@ -88,8 +115,9 @@ class _FoodPageState extends State<FoodPage> {
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                itemCount: 10,
+                itemCount: restaurantList.length,
                 itemBuilder: (context, index) {
+                  final restaurant = restaurantList[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
                     child: Container(
@@ -113,28 +141,28 @@ class _FoodPageState extends State<FoodPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Row(
+                                Row(
                                   children: [
                                     Text(
-                                      "Restaurant Name",
-                                      style: TextStyle(
+                                      restaurant['name'],
+                                      style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    SizedBox(width: 10),
-                                    Text(
+                                    const SizedBox(width: 10),
+                                    const Text(
                                       "#1st Place",
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
-                                const Text(
-                                  "Rating of 3.5 stars",
-                                  style: TextStyle(
-                                      color: Colors.orange,
-                                      fontSize: 12 // Change dynamically
-                                      ),
+                                Text(
+                                  "Rating of ${restaurant['rating']} stars",
+                                  style: const TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                  ),
                                 ),
                                 const SizedBox(height: 7),
                                 InkWell(
@@ -159,10 +187,10 @@ class _FoodPageState extends State<FoodPage> {
                           ),
                           IconButton(
                             icon: Icon(
-                              favoriteList[index]
+                              restaurant['isFavorite']
                                   ? Icons.favorite
                                   : Icons.favorite_border,
-                              color: favoriteList[index]
+                              color: restaurant['isFavorite']
                                   ? Colors.red
                                   : Colors.grey,
                             ),
@@ -171,7 +199,6 @@ class _FoodPageState extends State<FoodPage> {
                         ],
                       ),
                     ),
-                    
                   );
                 },
               ),
