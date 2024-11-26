@@ -5,6 +5,9 @@ import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/services/auth/auth_service.dart';
 
+import 'Pages/other/profile_page.dart';
+import 'Pages/shops/shops_page.dart';
+
 final Future<void> _initializeFirebase =
     Future.delayed(const Duration(seconds: 2), () async {
   await AuthService.firebase().initialize();
@@ -27,16 +30,16 @@ class InitPage extends StatelessWidget {
             devtools.log('User: $user');
             if (user != null) {
               if (user.isAnonymous) {
-                return const LoginPage();
+                return  FoodPage();
               }
               if (user.isEmailVerified) {
-                return const LoginPage();
+                return  FoodPage();
               } else {
-                return const LoginPage(); //this is the one you change whenever you want to run your page
+                return  FoodPage(); //this is the one you change whenever you want to run your page
                 //don't text me 'what line to change, so i can run my page please :)'
               }
             } else {
-              return const LoginPage();
+              return  FoodPage();
             }
 
           default:
