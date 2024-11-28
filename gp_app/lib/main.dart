@@ -5,6 +5,7 @@ import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_contoller.dart';
+import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/init_page.dart';
 
 void main() {
@@ -28,22 +29,12 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/init',
       getPages: [
-        GetPage(
-          name: homeRoute,
-          page: () => const HomePage(),
-        ),
-        GetPage(
-          name: loginRoute,
-          page: () => const LoginPage(),
-        ),
-        GetPage(
-          name: '/init',
-          page: () => const InitPage(),
-        ),
-        GetPage(
-          name: signupRoute,
-          page: () => const SignupPage(),
-        ),
+
+        GetPage(name: homeRoute, page: () => const HomePage()),
+        GetPage(name: loginRoute, page: () => const LoginPage()),
+        GetPage(name: '/init', page: () => const InitPage()),
+        GetPage(name: verCodeDialogRoute, page: () => const VerificationDialogPage()),
+
         // Add other pages with their respective routes
       ],
     );
