@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/dialogs/nav_contoller.dart';
-
-
+import 'package:rates/dialogs/redeem_dialog.dart';
 class NavigationBarWidget extends StatelessWidget {
   NavigationBarWidget({super.key});
 
@@ -16,6 +15,14 @@ class NavigationBarWidget extends StatelessWidget {
           currentIndex: bottomNavController.currentIndex.value, // Reactive index
           onTap: (index) {
             bottomNavController.changePage(index); // Call changePage method
+            if (index == 0) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const VerificationDialogPage(); // Show the verification dialog
+                },
+              );
+            } 
           },
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black,
