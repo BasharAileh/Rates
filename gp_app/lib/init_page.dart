@@ -32,16 +32,16 @@ class InitPage extends StatelessWidget {
             devtools.log('User: $user');
             if (user != null) {
               if (user.isAnonymous) {
-                return  FoodPage();
+                return  ProfilePage();
               }
               if (user.isEmailVerified) {
-                return  FoodPage();
+                return  ProfilePage();
               } else {
-                return  FoodPage(); //this is the one you change whenever you want to run your page
+                return  ProfilePage(); //this is the one you change whenever you want to run your page
                 //don't text me 'what line to change, so i can run my page please :)'
               }
             } else {
-              return  FoodPage();
+              return  ProfilePage();
             }
 
           default:

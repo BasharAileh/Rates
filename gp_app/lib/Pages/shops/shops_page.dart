@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:rates/constants/aspect_ratio.dart';
+import '../../dialogs/nav_bar.dart';
 import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
@@ -12,15 +13,18 @@ class _FoodPageState extends State<FoodPage> {
     10,
     (index) => {
       'name': 'Restaurant #$index',
-      'rating': 3.5 + (index % 2) * 0.5,
-      'image': 'https://via.placeholder.com/70', // Replace with actual image URL
+      'rating': 1.5 + (index + 1 % 2) * 0.5,
+      'image':
+          'https://via.placeholder.com/70', // Replace with actual image URL
       'isFavorite': false,
+      'index': index, // Add an index to help identify the restaurant
     },
   );
 
   void toggleFavorite(int index) {
     setState(() {
-      restaurantList[index]['isFavorite'] = !restaurantList[index]['isFavorite'];
+      restaurantList[index]['isFavorite'] =
+          !restaurantList[index]['isFavorite'];
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -31,6 +35,145 @@ class _FoodPageState extends State<FoodPage> {
               : 'Removed from favorite list',
         ),
         duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  // Method to handle BottomNavigationBar item selection
+  void _onItemTapped(int index) {
+    setState(() {});
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FavoritesPage(
+            favorites: restaurantList
+                .where((restaurant) => restaurant['isFavorite'])
+                .toList(),
+            onRemoveFavorite: (index) {
+              setState(() {
+                restaurantList[index]['isFavorite'] =
+                    false; // Set the isFavorite flag back to false
+              });
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  // RestaurantCard widget
+  Widget restaurantCard({
+    required String name,
+    required String logo,
+    required double rating,
+    required bool isFavorite,
+    required VoidCallback onFavoriteToggle,
+    required VoidCallback onDetailsPressed,
+  }) {
+    Color ratingColor;
+    String ratingText = "Rating of ";
+
+    // Determine rating color
+    if (rating >= 4) {
+      ratingColor = Colors.green;
+    } else if (rating >= 3) {
+      ratingColor = Colors.orange;
+    } else {
+      ratingColor = Colors.red;
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: AspectRatios.height * 0.015),
+      child: Container(
+        padding: EdgeInsets.all(AspectRatios.width * 0.025),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Logo container
+            Container(
+              height: AspectRatios.height * 0.1,
+              width: AspectRatios.width * 0.15,
+              color: Colors.black,
+              child: Center(
+                child: Text(
+                  logo,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            SizedBox(
+                width:
+                    AspectRatios.width * 0.05), // Space between logo and text
+
+            // Restaurant information
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: AspectRatios.width * 0.01),
+                      const Text(
+                        "#1st Place",
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AspectRatios.height * 0.005),
+                  Row(
+                    children: [
+                      Text(
+                        ratingText,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      Text(
+                        "$rating stars", // The rating value itself
+                        style: TextStyle(color: ratingColor, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: AspectRatios.height * 0.01),
+                  InkWell(
+                    onTap: onDetailsPressed,
+                    child: const Text(
+                      "View Details",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Favorite Icon button
+            IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : Colors.grey,
+              ),
+              onPressed: onFavoriteToggle,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -56,7 +199,6 @@ class _FoodPageState extends State<FoodPage> {
           IconButton(
             icon: const Icon(Icons.favorite, color: Colors.red),
             onPressed: () {
-              // Navigate to FavoritesPage with the favorite restaurants
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -64,6 +206,12 @@ class _FoodPageState extends State<FoodPage> {
                     favorites: restaurantList
                         .where((restaurant) => restaurant['isFavorite'])
                         .toList(),
+                    onRemoveFavorite: (index) {
+                      setState(() {
+                        restaurantList[index]['isFavorite'] =
+                            false; // Set the isFavorite flag back to false
+                      });
+                    },
                   ),
                 ),
               );
@@ -72,39 +220,54 @@ class _FoodPageState extends State<FoodPage> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Text(
-                  "Discover and rate",
-                  style: TextStyle(fontSize: 11),
-                ),
-                const SizedBox(width: 10),
                 Container(
-                  height: 30, // Adjusted height for better alignment
-                  width: 230, // Adjusted width for the search box
+                  height: AspectRatios.height * 0.02158203125,
+                  width: AspectRatios.width * 0.2538461538461538,
+                  child: const Text(
+                    "Discover and rate",
+                    style: TextStyle(fontSize: 11),
+                  ),
+                ),
+                SizedBox(width: AspectRatios.width * 0.01),
+                Container(
+                  height: AspectRatios.height *
+                      0.035, // Adjusted height to make it more consistent
+                  width: AspectRatios.width *
+                      0.5807692307692308, // Adjusted width to make the search bar wider
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: "Search for restaurants",
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 15),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: AspectRatios.width *
+                            0.05, // Horizontal padding for text
+                        vertical: AspectRatios.height *
+                            0.01, // Vertical padding for better alignment
+                      ),
                       filled: true,
-                      fillColor: Colors.white, // Light background color
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Circular border
+                        borderRadius: BorderRadius.circular(20),
                         borderSide: const BorderSide(color: Colors.black),
                       ),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.search, color: Colors.black),
-                        onPressed: () {},
+                      suffixIcon:  
+                         IconButton(
+                          icon: const Icon(
+                            Icons.search,
+                            color: Colors.black,
+                            size: 20, // Smaller icon size
+                          ),
+                          onPressed: () {
+                            // Handle search action here
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
+                
                 IconButton(
                   icon: const Icon(Icons.filter_alt_outlined),
                   onPressed: () {},
@@ -118,87 +281,20 @@ class _FoodPageState extends State<FoodPage> {
                 itemCount: restaurantList.length,
                 itemBuilder: (context, index) {
                   final restaurant = restaurantList[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Container(
-                      height: 70,
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 76,
-                            width: 76,
-                            color: Colors.black,
-                            child: const Center(
-                              child: Text(
-                                "Logo",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      restaurant['name'],
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const Text(
-                                      "#1st Place",
-                                      style: TextStyle(color: Colors.blue),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Rating of ${restaurant['rating']} stars",
-                                  style: const TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 7),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            RestaurantDetailsPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "View Details",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              restaurant['isFavorite']
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: restaurant['isFavorite']
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () => toggleFavorite(index),
-                          ),
-                        ],
-                      ),
-                    ),
+                  return restaurantCard(
+                    name: restaurant['name'],
+                    logo: "Logo", // You can replace this with actual image
+                    rating: restaurant['rating'],
+                    isFavorite: restaurant['isFavorite'],
+                    onFavoriteToggle: () => toggleFavorite(index),
+                    onDetailsPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RestaurantDetailsPage(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -206,32 +302,7 @@ class _FoodPageState extends State<FoodPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class RestaurantDetailsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Restaurant Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text("Details of the restaurant will go here."),
-      ),
+      bottomNavigationBar: NavigationBarWidget(),
     );
   }
 }

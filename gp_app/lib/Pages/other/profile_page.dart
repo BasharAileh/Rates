@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rates/constants/aspect_ratio.dart';
+
+import '../../dialogs/nav_bar.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,16 +18,23 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: content,
+          title: Text(
+            title,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.black),
+            selectionColor: Colors.black,
           ),
+          content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: content),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Close"),
+              child: const Text(
+                "Close",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );
@@ -54,16 +64,17 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         centerTitle: true,
-        
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          
           children: [
-            Container(height: 15,),
-            Container(margin: const EdgeInsets.only(left: 15),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 15),
               child: const Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -105,9 +116,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 8),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/profile.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/profile.svg',
+                  height: 20, width: 20),
               title: "Personal Information",
               subtitle: "hamzashakhatreh@gmail.com",
               onTap: () {
@@ -118,19 +129,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]);
               },
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/rewards.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/rewards.svg',
+                  height: 20, width: 20),
               title: "Rewards and Vouchers",
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/rating.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/rating.svg',
+                  height: 20, width: 20),
               title: "Rating",
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/language.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/language.svg',
+                  height: 20, width: 20),
               title: "Language",
               subtitle: selectedLanguage,
               onTap: () {
@@ -138,6 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   RadioListTile<String>(
                     title: const Text("Arabic"),
                     value: "Arabic",
+                    activeColor: Colors.black,
                     groupValue: selectedLanguage,
                     onChanged: (value) {
                       setState(() => selectedLanguage = value!);
@@ -147,6 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   RadioListTile<String>(
                     title: const Text("English"),
                     value: "English",
+                    activeColor: Colors.black,
                     groupValue: selectedLanguage,
                     onChanged: (value) {
                       setState(() => selectedLanguage = value!);
@@ -156,9 +169,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]);
               },
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/theme.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/theme.svg',
+                  height: 20, width: 20),
               title: "Theme",
               subtitle: selectedTheme,
               onTap: () {
@@ -166,6 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   RadioListTile<String>(
                     title: const Text("Light"),
                     value: "Light",
+                    activeColor: Colors.black,
                     groupValue: selectedTheme,
                     onChanged: (value) {
                       setState(() => selectedTheme = value!);
@@ -175,6 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   RadioListTile<String>(
                     title: const Text("Dark"),
                     value: "Dark",
+                    activeColor: Colors.black,
                     groupValue: selectedTheme,
                     onChanged: (value) {
                       setState(() => selectedTheme = value!);
@@ -184,17 +199,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]);
               },
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/help.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/help.svg',
+                  height: 20, width: 20),
               title: "Help",
             ),
-            _buildListTile(
-              context,
-              icon: SvgPicture.asset('assets/icons/reset_password.svg', height: 40, width: 40),
+            _buildCustomTile(
+              icon: SvgPicture.asset('assets/icons/reset_password.svg',
+                  height: 20, width: 20),
               title: "Reset Password",
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+            
+            ),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -202,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  minimumSize: const Size(120, 40),
+                  minimumSize: const Size(130, 35),
                 ),
                 onPressed: () {
                   // Logout logic here
@@ -213,38 +230,58 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            
           ],
         ),
       ),
+      bottomNavigationBar: NavigationBarWidget(),
     );
   }
 
-  Widget _buildListTile(
-    BuildContext context, {
-    required Widget icon,
-    required String title,
-    String? subtitle,
-    VoidCallback? onTap,
-  }) {
-    return ListTile(
-      leading: icon,
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+ Widget _buildCustomTile({
+  required Widget icon,
+  required String title,
+  String? subtitle,
+  VoidCallback? onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    child: Container(
+      margin: EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+              ],
+            ),
+          ),
+          SvgPicture.asset(
+            'assets/icons/arrow.svg',
+            height: 24,
+            width: 24,
+          ),
+        ],
       ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: const TextStyle(fontSize: 12),
-            )
-          : null,
-      trailing: SvgPicture.asset(
-        'assets/icons/arrow.svg',
-        height: 30,
-        width: 30,
-      ),
-      onTap: onTap,
-    );
-  }
+    ),
+  );
 }
+
+}
+
+    
+  
+
