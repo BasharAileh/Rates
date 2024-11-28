@@ -18,27 +18,46 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: AspectRatios.height * 0.20379146919,
-            horizontal: AspectRatios.width * 0.07051282051,
-          ),
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: AspectRatios.height * 0.150379146919,
+          left: AspectRatios.width * 0.07051282051,
+          right: AspectRatios.width * 0.07051282051,
+        ),
+
+        /* symmetric(
+          vertical: AspectRatios.height * 0.19379146919,
+          horizontal: AspectRatios.width * 0.07051282051,
+        ), */
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: SvgPicture.asset(
+                    width: 80,
+                    '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/black_logo.svg'),
+              ),
               SizedBox(
-                height: AspectRatios.height * 0.03909953,
-                child: SizedBox(
-                  height: AspectRatios.width * 0.42307692,
-                  child: const Text(
+                height: AspectRatios.height * 0.04909953,
+              ),
+              Row(
+                children: [
+                  Text(
                     'Login to Rates',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
-                ),
+                  ), /* 
+                  Transform.translate(
+                    offset: Offset(0, -10),
+                    child: SvgPicture.asset(
+                      height: AspectRatios.height * 0.04909953,
+                      'assets/logos/black_logo.svg',
+                    ),
+                  ), */
+                ],
               ),
               SizedBox(height: AspectRatios.height * 0.03554502369),
               Row(

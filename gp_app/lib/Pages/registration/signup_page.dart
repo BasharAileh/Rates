@@ -4,6 +4,7 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
+import 'dart:developer' as devtools show log;
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -21,11 +22,30 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   late Animation<Offset> _phoneSlideAnimation;
   late Animation<Offset> _startPostion;
   bool _justOpend = true;
+  late int _selectedCountry;
+
+  List<DropdownMenuItem<String>> countryItems = [
+    const DropdownMenuItem(
+      value: '00962',
+      child: Text('Jordan'),
+    ),
+    const DropdownMenuItem(
+      value: '01',
+      child: Text('United States'),
+    ),
+    const DropdownMenuItem(
+      value: '02',
+      child: Text('India'),
+    ),
+    const DropdownMenuItem(
+      value: '03',
+      child: Text('United Kingdom'),
+    ),
+  ];
 
   @override
   void initState() {
     _controllers = List.generate(4, (_) => TextEditingController());
-
     // Animation controllers for email and phone fields
     _animationController = AnimationController(
       vsync: this,
@@ -162,8 +182,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                       onTap: () {
                         setState(() {
                           _isEmailSelected = false;
-                          _animationController.forward(
-                              from: 0); // Trigger animation
+                          _animationController.forward(from: 0);
                         });
                       },
                       child: Container(
@@ -206,10 +225,25 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                       children: [
                         SlideTransition(
                           position: _startPostion,
-                          child: customTextField(
-                            controller: _controllers[index],
-                            height: AspectRatios.height * 0.05450236966,
-                          ),
+                          child: _isEmailSelected
+                              ? customTextField(
+                                  controller: _controllers[index],
+                                  height: AspectRatios.height * 0.05450236966,
+                                )
+                              : phoneNumberTextField(
+                                  phoneController: _controllers[index],
+                                  initialCountryCode: '01',
+                                  countryItems: countryItems,
+                                  onCountryChanged: (item) {},
+                                  dropdownWidth:
+                                      AspectRatios.width * 0.20256410256,
+                                  borderRadius: 37.5,
+                                  height: AspectRatios.height * 0.05450236966,
+                                  spaceWidth:
+                                      AspectRatios.width * 0.01538461538,
+                                  textFieldWidth:
+                                      AspectRatios.width * 0.64102564102,
+                                ),
                         ),
                         SizedBox(
                           height: AspectRatios.height * 0.02665876777,
@@ -233,8 +267,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           position: _phoneSlideAnimation,
                           child: phoneNumberTextField(
                             phoneController: _controllers[index],
-                            countryItems: [],
-                            onCountryChanged: (_) {},
+                            initialCountryCode: '01',
+                            countryItems: countryItems,
+                            onCountryChanged: (item) {},
                             dropdownWidth: AspectRatios.width * 0.20256410256,
                             borderRadius: 37.5,
                             height: AspectRatios.height * 0.05450236966,
@@ -310,7 +345,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      /*  for (var controller in _controllers) {
+                        devtools.log(controller.text);
+                      } */
+                      Get.toNamed(otpVerifyRoute);
+                    },
                     child: const Text('Sign Up'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
@@ -350,7 +390,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account?'),
+                  const Text('Already have an account? '),
                   GestureDetector(
                     onTap: () {
                       Get.offNamed(loginRoute);
@@ -371,8 +411,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     );
   }
 }
-
-
 
 /* 
 import 'package:flutter/material.dart';

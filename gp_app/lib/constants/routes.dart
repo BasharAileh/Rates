@@ -8,3 +8,5 @@ const String shopRoute = '/shop/';
 const String favoritesRoute = '/favorites/';
 const String favoriteRoute = '/favorite/';
 const String categoriesRoute = '/categories/';
+const String otpVerifyRoute = '/otpVerfiy/';
+const String verifySuccessRoute = '/verifySuccess/';

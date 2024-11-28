@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/home/home_page.dart';
 import 'package:rates/Pages/registration/login_page.dart';
+import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
+import 'package:rates/Pages/registration/verify_success_page.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_contoller.dart';
 import 'package:rates/init_page.dart';
@@ -44,7 +46,14 @@ class MyApp extends StatelessWidget {
           name: signupRoute,
           page: () => const SignupPage(),
         ),
-        // Add other pages with their respective routes
+        GetPage(
+          name: otpVerifyRoute,
+          page: () => const OtpVerifyPage(),
+        ),
+        GetPage(
+          name: verifySuccessRoute,
+          page: () => SvgTopToBottomFade(),
+        ),
       ],
     );
   }

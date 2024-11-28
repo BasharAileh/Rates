@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:rates/constants/aspect_ratio.dart';
 
 Widget phoneNumberTextField({
   required TextEditingController
