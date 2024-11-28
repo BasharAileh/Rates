@@ -21,7 +21,7 @@ class _SvgTopToBottomFadeState extends State<SvgTopToBottomFade>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     );
 
     _fadeAnimation = CurvedAnimation(
@@ -36,7 +36,7 @@ class _SvgTopToBottomFadeState extends State<SvgTopToBottomFade>
 
     _controller.forward();
 
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Get.back();
     });
   }
