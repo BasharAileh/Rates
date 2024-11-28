@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/constants/routes.dart';
 
 int pageIndex = 2;
 
@@ -105,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 243, 198, 35),
+                    backgroundColor: AppColors.primaryColor,
                     fixedSize: Size(AspectRatios.width * 0.58717948717,
                         AspectRatios.height * 0.05450236966),
                     shape: RoundedRectangleBorder(
@@ -141,9 +143,11 @@ class _LoginPageState extends State<LoginPage> {
                       'Don\'t have an account?',
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Get.offNamed(signupRoute);
+                      },
                       child: const Text(
-                        'Login',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.blue,
                         ),
@@ -221,10 +225,11 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       'Continue as Guest',
-                      style:
-                          TextStyle(color: Color.fromARGB(255, 243, 198, 35)),
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                      ),
                     )),
               ),
               // SvgPicture.asset(
@@ -232,15 +237,13 @@ class _LoginPageState extends State<LoginPage> {
               //   width: 40,
               //   height: 40,
               // ),
-              IconButton(
-                  onPressed: () {
-                    print('message');
-                  },
+              /*  IconButton(
+                  onPressed: () {},
                   icon: SvgPicture.asset(
                     'assets/icons/food_icon.svg',
                     width: 40,
                     height: 40,
-                  )),
+                  )), */
             ],
           ),
         ),
