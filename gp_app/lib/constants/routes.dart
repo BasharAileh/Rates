@@ -9,3 +9,4 @@ const String shopRoute = '/shop/';
 const String favoritesRoute='/favorites/';
 const String favoriteRoute='/favorite/';
 const String categoriesRoute='/categories/';
+const String verCodeDialogRoute = '/verCode/';
