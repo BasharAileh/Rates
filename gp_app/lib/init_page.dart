@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/services/auth/auth_service.dart';
+<<<<<<< HEAD
+=======
+import 'package:rates/Pages/home/home_page.dart';
+
+import 'Pages/other/favorites_page.dart';
+>>>>>>> 9d7a5c7b844d2a040f923d289f1ac90361fb8ac2
 import 'Pages/other/profile_page.dart';
 
 final Future<void> _initializeFirebase =
