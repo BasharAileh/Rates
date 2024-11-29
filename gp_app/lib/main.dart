@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/home/home_page.dart';
 import 'package:rates/Pages/registration/login_page.dart';
+import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
+import 'package:rates/Pages/registration/verify_success_page.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_contoller.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
@@ -29,11 +31,42 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/init',
       getPages: [
-
-        GetPage(name: homeRoute, page: () => const HomePage()),
-        GetPage(name: loginRoute, page: () => const LoginPage()),
-        GetPage(name: '/init', page: () => const InitPage()),
-        GetPage(name: verCodeDialogRoute, page: () => const VerificationDialogPage()),
+        GetPage(
+          name: homeRoute,
+          page: () => const HomePage(),
+        ),
+        GetPage(
+          name: loginRoute,
+          page: () => const LoginPage(),
+        ),
+        GetPage(
+          name: '/init',
+          page: () => const InitPage(),
+        ),
+        GetPage(
+          name: signupRoute,
+          page: () => const SignupPage(),
+        ),
+        GetPage(
+          name: otpVerifyRoute,
+          page: () => const OtpVerifyPage(),
+        ),
+        GetPage(
+          name: verifySuccessRoute,
+          page: () => SvgTopToBottomFade(),
+        ),
+        GetPage(
+          name: homeRoute,
+          page: () => const HomePage(),
+        ),
+        GetPage(
+          name: loginRoute,
+          page: () => const LoginPage(),
+        ),
+        GetPage(
+          name: verCodeDialogRoute,
+          page: () => const VerificationDialogPage(),
+        ),
 
         // Add other pages with their respective routes
       ],

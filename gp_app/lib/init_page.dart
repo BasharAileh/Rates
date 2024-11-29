@@ -32,16 +32,16 @@ class InitPage extends StatelessWidget {
             devtools.log('User: $user');
             if (user != null) {
               if (user.isAnonymous) {
-                return  ProfilePage();
+                return ProfilePage();
               }
               if (user.isEmailVerified) {
-                return  ProfilePage();
+                return ProfilePage();
               } else {
-                return  ProfilePage(); //this is the one you change whenever you want to run your page
-                //don't text me 'what line to change, so i can run my page please :)'
+                return ProfilePage();
               }
             } else {
-              return  ProfilePage();
+              return const LoginPage(); //this is the one you change whenever you want to run your page
+              //don't text me 'what line to change, so i can run my page please :)'
             }
 
           default:
