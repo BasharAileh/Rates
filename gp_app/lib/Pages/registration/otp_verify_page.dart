@@ -16,9 +16,10 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(
-            vertical: AspectRatios.height * 0.31990521327,
+            vertical: AspectRatios.heightWithoutAppBar * 0.31990521327,
             horizontal: AspectRatios.width * 0.07051282051),
         child: Center(
           child: Column(
@@ -33,7 +34,7 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
               ),
               Flexible(
                 child: Text(
-                  'Please enter the OTP consisting of 4-digits that has been sent to your mobile number',
+                  'Please enter the OTP consisting of 6-digits that has been sent to your mobile number',
                   textAlign: TextAlign.center,
                 ),
               ),

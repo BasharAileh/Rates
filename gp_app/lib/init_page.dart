@@ -1,14 +1,9 @@
 import 'dart:developer' as devtools show log;
-
 import 'package:flutter/material.dart';
-import 'package:rates/Pages/home/home_page.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/services/auth/auth_service.dart';
-
-import 'Pages/other/favorites_page.dart';
 import 'Pages/other/profile_page.dart';
-import 'Pages/shops/shops_page.dart';
 
 final Future<void> _initializeFirebase =
     Future.delayed(const Duration(seconds: 2), () async {

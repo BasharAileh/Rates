@@ -8,6 +8,7 @@ project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
   'Release' => :release,
+  
 }
 
 def flutter_root
@@ -37,7 +38,6 @@ target 'Runner' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
   
-
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

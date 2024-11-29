@@ -35,8 +35,9 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Center(
                 child: SvgPicture.asset(
-                    width: 80,
-                    '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/black_logo.svg'),
+                  width: 80,
+                  'assets/logos/black_logo.svg',
+                ),
               ),
               SizedBox(
                 height: AspectRatios.height * 0.04909953,
@@ -46,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     'Login to Rates',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: AspectRatios.width * 0.05641025641,
                       fontWeight: FontWeight.bold,
                     ),
                   ), /* 
@@ -107,15 +108,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const Row(
+              Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                       /*   width: constraints.maxWidth * 0.02, */
                       ),
-                  Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Colors.blue,
+                  InkWell(
+                    onTap: () {
+                      Get.toNamed(resetPassMethodRoute);
+                    },
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                 ],

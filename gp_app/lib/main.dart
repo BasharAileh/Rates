@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:rates/Pages/home/home_page.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/otp_verify_page.dart';
+import 'package:rates/Pages/registration/reset_pass_method_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
 import 'package:rates/Pages/registration/verify_success_page.dart';
 import 'package:rates/constants/routes.dart';
@@ -26,6 +27,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: MediaQuery.of(context).size.height * 0.0663507109,
+        ),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -66,6 +72,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: verCodeDialogRoute,
           page: () => const VerificationDialogPage(),
+        ),
+        GetPage(
+          name: resetPassMethodRoute,
+          page: () => const ResetPassMethodPage(),
         ),
 
         // Add other pages with their respective routes
