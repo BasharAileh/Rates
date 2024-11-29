@@ -13,8 +13,53 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   String currentCategory = "Food";
-  PageController pageController = PageController(); // Page controller for the swiping
+  PageController pageController =
+  PageController(); // Page controller for the swiping
   int currentPage = 0; // Current page for the indicator
+  bool showVerificationMessage = true; // Controls the verification message
+  bool emailVerified = false; // Controls the success message
+
+  void showSuccessMessage() {
+    setState(() {
+      emailVerified = true; // Show the success message
+    });
+
+    // Automatically hide success message after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        emailVerified = false; // Hide the success message
+      });
+    });
+  }
+
+  void showVerificationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Verify Email"),
+        content: const Text("Are you sure you want to verify your email?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              setState(() {
+                showVerificationMessage =
+                    false; // Hide the verification message
+              });
+              showSuccessMessage(); // Trigger the success message
+            },
+            child: const Text("Verify"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +79,56 @@ class HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Conditional Messages
+              if (showVerificationMessage)
+                Container(
+                  padding: const EdgeInsets.all(4.0),
+                  margin: const EdgeInsets.only(bottom: 4.0),
+                  decoration: BoxDecoration(
+                    color:
+                        const Color.fromARGB(255, 158, 158, 158).withOpacity(0.2), // Light background color
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon:
+                            const Icon(Icons.info_outline, color: Color.fromARGB(255, 0, 0, 0)),
+                        onPressed: showVerificationDialog, // Show the dialog
+                      ),
+                      const Text(
+                        "Please verify your email.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else if (emailVerified)
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(4.0),
+                    margin: const EdgeInsets.only(bottom: 4.0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 76, 175, 80)
+                          .withOpacity(0.2), // Light green background
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: const Text(
+                      "Email is verified successfully.",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
               // Categories Section
               buildCategoriesSection(AspectRatios.width, AspectRatios.height),
               // Top Rated Title
@@ -54,7 +149,7 @@ class HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: const Color.fromARGB(255, 238, 238, 238),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -70,9 +165,9 @@ class HomePageState extends State<HomePage> {
                               () {}, // Keep it empty since PopupMenuButton handles the tap
                           icon: PopupMenuButton<String>(
                             icon: const Icon(Icons.filter_list,
-                                color: Colors.black87),
-                            color: Colors
-                                .white, // Background color of the popup menu
+                                color: Color.fromARGB(221, 0, 0, 0)),
+                            color: const Color.fromARGB(255, 255, 255,
+                                255), // Background color of the popup menu
                             onSelected: (String value) {
                               setState(() {
                                 currentCategory = value;
@@ -87,7 +182,8 @@ class HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87, // Text color
+                                    color: Color.fromARGB(
+                                        221, 0, 0, 0), // Text color
                                   ),
                                 ),
                               ),
@@ -99,7 +195,7 @@ class HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                    color: Color.fromARGB(221, 0, 0, 0),
                                   ),
                                 ),
                               ),
@@ -111,7 +207,7 @@ class HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                    color: Color.fromARGB(221, 0, 0, 0),
                                   ),
                                 ),
                               ),
@@ -123,7 +219,7 @@ class HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                    color: Color.fromARGB(221, 0, 0, 0),
                                   ),
                                 ),
                               ),
@@ -135,7 +231,7 @@ class HomePageState extends State<HomePage> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                    color: Color.fromARGB(221, 0, 0, 0),
                                   ),
                                 ),
                               ),
@@ -143,8 +239,9 @@ class HomePageState extends State<HomePage> {
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(10), // Rounded corners
-                              side: BorderSide(
-                                color: Colors.grey[300]!, // Light grey border
+                              side: const BorderSide(
+                                color: Color.fromARGB(
+                                    255, 224, 224, 224), // Light grey border
                                 width: 1,
                               ),
                             ),
@@ -169,7 +266,8 @@ class HomePageState extends State<HomePage> {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey, // Optional: add color for distinction
+                      color: Color.fromARGB(255, 158, 158,
+                          158), // Optional: add color for distinction
                     ),
                   ),
                 ],
@@ -185,12 +283,12 @@ class HomePageState extends State<HomePage> {
               SizedBox(height: AspectRatios.height * 0.01),
               Center(
                 child: SmoothPageIndicator(
-                  controller: pageController, 
+                  controller: pageController,
                   count: 5, // Number of items in the PageView
-                  effect: const ExpandingDotsEffect(
-                    activeDotColor: Color.fromARGB(255, 255, 196, 45),
-                    dotHeight: 4,
-                    dotWidth: 8,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: const Color.fromARGB(255, 255, 196, 45),
+                    dotHeight: AspectRatios.height * 0.005,
+                    dotWidth: AspectRatios.height * 0.01,
                   ), // Dots style
                 ),
               ),
@@ -210,7 +308,8 @@ class HomePageState extends State<HomePage> {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey, // Optional: add color for distinction
+                      color: Color.fromARGB(255, 158, 158,
+                          158), // Optional: add color for distinction
                     ),
                   ),
                 ],
@@ -226,12 +325,12 @@ class HomePageState extends State<HomePage> {
               SizedBox(height: AspectRatios.height * 0.01),
               Center(
                 child: SmoothPageIndicator(
-                  controller: pageController, 
+                  controller: pageController,
                   count: 5, // Number of items in the PageView
-                  effect: const ExpandingDotsEffect(
-                    activeDotColor: Color.fromARGB(255, 255, 196, 45),
-                    dotHeight: 4,
-                    dotWidth: 8,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: const Color.fromARGB(255, 255, 196, 45),
+                    dotHeight: AspectRatios.height * 0.005,
+                    dotWidth: AspectRatios.height * 0.01,
                   ), // Dots style
                 ),
               ),
@@ -251,7 +350,8 @@ class HomePageState extends State<HomePage> {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey, // Optional: add color for distinction
+                      color: Color.fromARGB(255, 158, 158,
+                          158), // Optional: add color for distinction
                     ),
                   ),
                 ],
@@ -268,12 +368,12 @@ class HomePageState extends State<HomePage> {
               // Dots for section change
               Center(
                 child: SmoothPageIndicator(
-                  controller: pageController, 
+                  controller: pageController,
                   count: 5, // Number of items in the PageView
-                  effect: const ExpandingDotsEffect(
-                    activeDotColor: Color.fromARGB(255, 255, 196, 45),
-                    dotHeight: 4,
-                    dotWidth: 8,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: const Color.fromARGB(255, 255, 196, 45),
+                    dotHeight: AspectRatios.height * 0.005,
+                    dotWidth: AspectRatios.height * 0.01,
                   ), // Dots style
                 ),
               ),
@@ -281,7 +381,8 @@ class HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBarWidget(), // Use NavigationBarWidget here
+      bottomNavigationBar:
+          NavigationBarWidget(), // Use NavigationBarWidget here
     );
   }
 
@@ -307,10 +408,14 @@ class HomePageState extends State<HomePage> {
               width: screenWidth * 0.18,
               child: Column(
                 children: [
-                  SvgPicture.asset(
-                    category['icon'] as String,
-                    height: screenHeight * 0.067,
-                    width: screenWidth * 0.05,
+                  IconButton(
+                    padding: const EdgeInsets.all(0),
+                    icon: SvgPicture.asset(
+                      category['icon'] as String,
+                      height: screenHeight * 0.067,
+                      width: screenWidth * 0.05,
+                    ),
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -387,7 +492,6 @@ class HomePageState extends State<HomePage> {
       children: [
         contentWidget,
         Container(
-          padding: const EdgeInsets.all(0),
           height: height, // Dynamic height for each container
           width: AspectRatios.width * 0.17,
           decoration: BoxDecoration(
@@ -403,9 +507,19 @@ class HomePageState extends State<HomePage> {
             ],
           ),
           child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (text == "1st")
+                  SvgPicture.asset(
+                    'assets/icons/Crown.svg',
+                    height: AspectRatios.height * 0.04,
+                  ),
+                Text(
+                  text,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
         ),
