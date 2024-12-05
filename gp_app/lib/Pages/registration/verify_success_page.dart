@@ -3,9 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/constants/widgets.dart';
 
 class SvgTopToBottomFade extends StatefulWidget {
+  const SvgTopToBottomFade({super.key});
+
   @override
   _SvgTopToBottomFadeState createState() => _SvgTopToBottomFadeState();
 }

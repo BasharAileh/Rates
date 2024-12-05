@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: verifySuccessRoute,
-          page: () => SvgTopToBottomFade(),
+          page: () => const SvgTopToBottomFade(),
         ),
         GetPage(
           name: homeRoute,

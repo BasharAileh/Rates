@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: AspectRatios.height * 0.04909953,
               ),
-              Row(
+              const Row(
                 children: [
                   Text(
                     'Login to Rates',

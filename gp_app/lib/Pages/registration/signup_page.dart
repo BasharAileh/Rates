@@ -4,7 +4,6 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
-import 'dart:developer' as devtools show log;
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -351,7 +350,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                       } */
                       Get.toNamed(otpVerifyRoute);
                     },
-                    child: const Text('Sign Up'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
@@ -362,13 +360,13 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         double.infinity,
                       ),
                     ),
+                    child: const Text('Sign Up'),
                   ),
                   SizedBox(
                     width: AspectRatios.width * 0.03,
                   ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: const Text('Cancel'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white.withOpacity(0),
                       shadowColor: Colors.white.withOpacity(0),
@@ -380,6 +378,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         double.infinity,
                       ),
                     ),
+                    child: const Text('Cancel'),
                   ),
                 ],
               ),

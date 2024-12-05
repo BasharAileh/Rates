@@ -4,6 +4,8 @@ import '../../dialogs/nav_bar.dart'; // Imports a custom navigation bar widget.
 import '../other/favorites_page.dart'; // Imports the FavoritesPage widget for navigation.
 
 class FoodPage extends StatefulWidget {
+  const FoodPage({super.key});
+
   @override
   _FoodPageState createState() => _FoodPageState(); // Creates the state for FoodPage.
 }
@@ -219,15 +221,15 @@ class _FoodPageState extends State<FoodPage> {
                   "Discover and Rate",
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold,color: Colors.grey),
                 ),
-                SizedBox(width: 5,),
+                const SizedBox(width: 5,),
                 Center(
               child: SizedBox(
                 height: AspectRatios.height * 0.031591796875,
                 width: screenWidth * 0.5807692307692308, // Adjust width dynamically.
                 child: SearchBar(
                   hintText: "Search for restaurants",
-                  backgroundColor: MaterialStateProperty.all(Colors.white),
-                  shape: MaterialStateProperty.all(
+                  backgroundColor: WidgetStateProperty.all(Colors.white),
+                  shape: WidgetStateProperty.all(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: const BorderSide(color: Colors.black),
@@ -266,7 +268,7 @@ class _FoodPageState extends State<FoodPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RestaurantDetailsPage(),
+                            builder: (context) => const RestaurantDetailsPage(),
                           ),
                         );
                       },

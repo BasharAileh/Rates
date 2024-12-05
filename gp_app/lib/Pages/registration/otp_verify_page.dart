@@ -24,14 +24,14 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Verify your mobile number',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               ),
               SizedBox(
                 height: AspectRatios.height * 0.03791469194,
               ),
-              Flexible(
+              const Flexible(
                 child: Text(
                   'Please enter the OTP consisting of 4-digits that has been sent to your mobile number',
                   textAlign: TextAlign.center,

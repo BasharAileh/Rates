@@ -104,7 +104,6 @@ class _rest_info_pageState extends State<rest_info_page> {
                         ),
                       ),
                       const SizedBox(height: 16),
-
                       // Information Section
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0),
