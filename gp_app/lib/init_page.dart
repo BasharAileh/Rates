@@ -1,18 +1,14 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
-import 'package:rates/Pages/registration/login_page.dart';
+import 'package:rates/Pages/other/splash_screen.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/services/auth/auth_service.dart';
-<<<<<<< HEAD
-=======
-import 'package:rates/Pages/home/home_page.dart';
-
-import 'Pages/other/favorites_page.dart';
->>>>>>> 9d7a5c7b844d2a040f923d289f1ac90361fb8ac2
 import 'Pages/other/profile_page.dart';
 
-final Future<void> _initializeFirebase =
-    Future.delayed(const Duration(seconds: 2), () async {
+final Future<void> _initializeFirebase = Future.delayed(
+    const Duration(
+        /* seconds: 4, */
+        ), () async {
   await AuthService.firebase().initialize();
 });
 
@@ -27,7 +23,7 @@ class InitPage extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return const CircularProgressIndicator();
+            return SplashScreen();
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
             devtools.log('User: $user');
@@ -41,7 +37,7 @@ class InitPage extends StatelessWidget {
                 return ProfilePage();
               }
             } else {
-              return const LoginPage(); //this is the one you change whenever you want to run your page
+              return SplashScreen(); //this is the one you change whenever you want to run your page
               //don't text me 'what line to change, so i can run my page please :)'
             }
 

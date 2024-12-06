@@ -23,9 +23,7 @@ class _ResetPassMethodPageState extends State<ResetPassMethodPage> {
             left: AspectRatios.width * 0.12179487179,
             right: AspectRatios.width * 0.12179487179,
           ),
-          child: Center(
-            child: Text('aaaaaaaaaaaaaaaaaaaaaaaa'),
-          ),
+          child: Center(),
         ),
       ),
     );
