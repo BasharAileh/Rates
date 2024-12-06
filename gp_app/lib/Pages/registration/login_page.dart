@@ -5,7 +5,6 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 
-int pageIndex = 2;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,18 +34,19 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Center(
                 child: SvgPicture.asset(
-                    width: 80,
-                    '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/black_logo.svg'),
+                  width: 80,
+                  'assets/logos/black_logo.svg',
+                ),
               ),
               SizedBox(
                 height: AspectRatios.height * 0.04909953,
               ),
-              const Row(
+              Row(
                 children: [
                   Text(
                     'Login to Rates',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: AspectRatios.width * 0.05641025641,
                       fontWeight: FontWeight.bold,
                     ),
                   ), /* 
@@ -107,15 +107,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const Row(
+              Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                       /*   width: constraints.maxWidth * 0.02, */
                       ),
-                  Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Colors.blue,
+                  InkWell(
+                    onTap: () {
+                      Get.toNamed(resetPassMethodRoute);
+                    },
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                 ],

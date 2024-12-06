@@ -19,8 +19,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _emailSlideAnimation;
   late Animation<Offset> _phoneSlideAnimation;
-  late Animation<Offset> _startPostion;
-  bool _justOpend = true;
   late int _selectedCountry;
 
   List<DropdownMenuItem<String>> countryItems = [
@@ -48,20 +46,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     // Animation controllers for email and phone fields
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 400),
     );
 
     // Animation for Email Slide (From right to left)
     _emailSlideAnimation = Tween<Offset>(
-      begin: const Offset(1, 0), // Slide from right
-      end: Offset.zero, // End at the normal position
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _startPostion = Tween<Offset>(
-      begin: Offset.zero, // Slide from right
+      begin: const Offset(0, -1), // Slide from right
       end: Offset.zero, // End at the normal position
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -70,13 +60,17 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
 
     // Animation for Phone Slide (From left to right)
     _phoneSlideAnimation = Tween<Offset>(
-      begin: const Offset(-1, 0), // Slide from left
+      begin: const Offset(0, 1), // Slide from left
       end: Offset.zero, // End at the normal position
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
 
+    setState(() {
+      _animationController.forward(from: 250);
+    });
+    _isEmailSelected = true;
     super.initState();
   }
 
@@ -94,21 +88,21 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(
-          vertical: AspectRatios.height * 0.13210900473,
+          vertical: AspectRatios.heightWithoutAppBar * 0.13210900473,
           horizontal: AspectRatios.width * 0.07051282051,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: AspectRatios.height * 0.03672985781,
+              height: AspectRatios.heightWithoutAppBar * 0.03672985781,
               width: AspectRatios.width * 0.85897435897,
               child: const Text(
                 'Sign Up to Rates',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: AspectRatios.height * 0.03554502369),
+            SizedBox(height: AspectRatios.heightWithoutAppBar * 0.03554502369),
             GestureDetector(
               onTap: () {
                 Get.offNamed(loginRoute);
@@ -122,7 +116,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(
-              height: AspectRatios.height * 0.01777251184,
+              height: AspectRatios.heightWithoutAppBar * 0.01777251184,
             ),
             Stack(
               alignment: Alignment.center,
@@ -136,7 +130,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                       : Alignment.centerRight,
                   child: Container(
                     width: AspectRatios.width * 0.42948717948,
-                    height: AspectRatios.height * 0.02606635071,
+                    height: AspectRatios.heightWithoutAppBar * 0.02606635071,
                     decoration: BoxDecoration(
                       color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(5),
@@ -149,15 +143,18 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          _isEmailSelected = true;
-                          _animationController.forward(
-                              from: 0); // Trigger animation
-                        });
+                        if (_isEmailSelected != true) {
+                          setState(() {
+                            _isEmailSelected = true;
+                            _animationController.forward(
+                                from: 0); // Trigger animation
+                          });
+                        }
                       },
                       child: Container(
                         width: AspectRatios.width * 0.42948717948,
-                        height: AspectRatios.height * 0.02606635071,
+                        height:
+                            AspectRatios.heightWithoutAppBar * 0.02606635071,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.transparent,
@@ -179,14 +176,17 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                     ),
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          _isEmailSelected = false;
-                          _animationController.forward(from: 0);
-                        });
+                        if (_isEmailSelected) {
+                          setState(() {
+                            _isEmailSelected = false;
+                            _animationController.forward(from: 0);
+                          });
+                        }
                       },
                       child: Container(
                         width: AspectRatios.width * 0.42948717948,
-                        height: AspectRatios.height * 0.02606635071,
+                        height:
+                            AspectRatios.heightWithoutAppBar * 0.02606635071,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.transparent,
@@ -211,45 +211,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               ],
             ),
             SizedBox(
-              height: AspectRatios.height * 0.02,
+              height: AspectRatios.heightWithoutAppBar * 0.02,
             ),
             ...List.generate(
               4,
               (index) {
                 if (index == 1) {
-                  // Do not animate on initial load, trigger animation on tap
-                  if (_justOpend) {
-                    _justOpend = false;
-                    return Column(
-                      children: [
-                        SlideTransition(
-                          position: _startPostion,
-                          child: _isEmailSelected
-                              ? customTextField(
-                                  controller: _controllers[index],
-                                  height: AspectRatios.height * 0.05450236966,
-                                )
-                              : phoneNumberTextField(
-                                  phoneController: _controllers[index],
-                                  initialCountryCode: '01',
-                                  countryItems: countryItems,
-                                  onCountryChanged: (item) {},
-                                  dropdownWidth:
-                                      AspectRatios.width * 0.20256410256,
-                                  borderRadius: 37.5,
-                                  height: AspectRatios.height * 0.05450236966,
-                                  spaceWidth:
-                                      AspectRatios.width * 0.01538461538,
-                                  textFieldWidth:
-                                      AspectRatios.width * 0.64102564102,
-                                ),
-                        ),
-                        SizedBox(
-                          height: AspectRatios.height * 0.02665876777,
-                        )
-                      ],
-                    );
-                  }
                   return Column(
                     children: [
                       // Apply slide animation only if the field is selected
@@ -258,7 +225,8 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           position: _emailSlideAnimation,
                           child: customTextField(
                             controller: _controllers[index],
-                            height: AspectRatios.height * 0.05450236966,
+                            height: AspectRatios.heightWithoutAppBar *
+                                0.05450236966,
                           ),
                         ),
                       if (!_isEmailSelected)
@@ -271,13 +239,15 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             onCountryChanged: (item) {},
                             dropdownWidth: AspectRatios.width * 0.20256410256,
                             borderRadius: 37.5,
-                            height: AspectRatios.height * 0.05450236966,
+                            height: AspectRatios.heightWithoutAppBar *
+                                0.05450236966,
                             spaceWidth: AspectRatios.width * 0.01538461538,
                             textFieldWidth: AspectRatios.width * 0.64102564102,
                           ),
                         ),
                       SizedBox(
-                        height: AspectRatios.height * 0.02665876777,
+                        height:
+                            AspectRatios.heightWithoutAppBar * 0.02665876777,
                       ),
                     ],
                   );
@@ -287,19 +257,20 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   children: [
                     customTextField(
                         controller: _controllers[index],
-                        height: AspectRatios.height * 0.05450236966),
+                        height:
+                            AspectRatios.heightWithoutAppBar * 0.05450236966),
                     SizedBox(
-                      height: AspectRatios.height * 0.02665876777,
+                      height: AspectRatios.heightWithoutAppBar * 0.02665876777,
                     ),
                   ],
                 );
               },
             ),
             SizedBox(
-              height: AspectRatios.height * 0.00888625592,
+              height: AspectRatios.heightWithoutAppBar * 0.00888625592,
             ),
             SizedBox(
-              height: AspectRatios.height * 0.03554502369,
+              height: AspectRatios.heightWithoutAppBar * 0.03554502369,
               child: Row(
                 children: [
                   Checkbox(
@@ -318,10 +289,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(
-              height: AspectRatios.height * 0.00829383886,
+              height: AspectRatios.heightWithoutAppBar * 0.00829383886,
             ),
             SizedBox(
-              height: AspectRatios.height * 0.02843601895,
+              height: AspectRatios.heightWithoutAppBar * 0.02843601895,
               child: Row(
                 children: [
                   Checkbox(
@@ -336,10 +307,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(
-              height: AspectRatios.height * 0.02665876777,
+              height: AspectRatios.heightWithoutAppBar * 0.02665876777,
             ),
             SizedBox(
-              height: AspectRatios.height * 0.05450236966,
+              height: AspectRatios.heightWithoutAppBar * 0.05450236966,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -383,9 +354,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            SizedBox(height: AspectRatios.height * 0.02665876777),
+            SizedBox(height: AspectRatios.heightWithoutAppBar * 0.02665876777),
             SizedBox(
-              height: AspectRatios.height * 0.02251184834,
+              height: AspectRatios.heightWithoutAppBar * 0.02251184834,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

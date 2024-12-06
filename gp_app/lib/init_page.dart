@@ -7,6 +7,8 @@ import 'package:rates/services/auth/auth_service.dart';
 
 
 
+
+
 final Future<void> _initializeFirebase =
     Future.delayed(const Duration(seconds: 2), () async {
   await AuthService.firebase().initialize();
