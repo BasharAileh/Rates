@@ -67,7 +67,7 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: SvgPicture.asset(
           'assets/logos/black_logo.svg',
-          height: AspectRatios.height * 0.06,
+          height: AspectRatios.height * 0.03865213082259663032705649157582,
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -82,6 +82,7 @@ class HomePageState extends State<HomePage> {
               // Conditional Messages
               if (showVerificationMessage)
                 Container(
+                  height: AspectRatios.height*0.03030303030303030303030303030303,
                   padding: const EdgeInsets.all(4.0),
                   margin: const EdgeInsets.only(bottom: 4.0),
                   decoration: BoxDecoration(
@@ -91,11 +92,13 @@ class HomePageState extends State<HomePage> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       IconButton(
                         icon:
                             const Icon(Icons.info_outline, color: Color.fromARGB(255, 0, 0, 0)),
                         onPressed: showVerificationDialog, // Show the dialog
+                        iconSize: AspectRatios.height*0.01955034213098729227761485826002,
                       ),
                       const Text(
                         "Please verify your email.",
@@ -406,18 +409,14 @@ class HomePageState extends State<HomePage> {
           children: categories.map((category) {
             return SizedBox(
               width: screenWidth * 0.18,
-              child: Column(
-                children: [
-                  IconButton(
-                    padding: const EdgeInsets.all(0),
-                    icon: SvgPicture.asset(
-                      category['icon'] as String,
-                      height: screenHeight * 0.067,
-                      width: screenWidth * 0.05,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
+              child: IconButton(
+                padding: const EdgeInsets.all(0),
+                icon: SvgPicture.asset(
+                  category['icon'] as String,
+                  height: screenHeight * 0.0594648166501486620416253716551,
+                  width: screenWidth * 0.04360753221010901883052527254708,
+                ),
+                onPressed: () {},
               ),
             );
           }).toList(),
@@ -513,7 +512,7 @@ class HomePageState extends State<HomePage> {
                 if (text == "1st")
                   SvgPicture.asset(
                     'assets/icons/Crown.svg',
-                    height: AspectRatios.height * 0.04,
+                    height: AspectRatios.height * 0.033,
                   ),
                 Text(
                   text,
