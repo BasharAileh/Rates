@@ -23,7 +23,7 @@ class HomePageState extends State<HomePage> {
   String mfCurrentCategoryTitle = "Food";
   String yfCurrentCategoryTitle = "Food";
   String reCurrentCategoryTitle = "Food";
-PageController pageController =
+  PageController pageController =
       PageController(); // Page controller for the swiping
   int currentPage = 0; // Current page for the indicator
   bool showVerificationMessage = true; // Controls the verification message
@@ -179,10 +179,7 @@ PageController pageController =
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: AspectRatios.height *
-                          0.02666666666666666666666666666667,
-                      width: AspectRatios.width *
-                          0.16410256410256410256410256410256,
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
@@ -190,13 +187,11 @@ PageController pageController =
                             width: 1.0,
                             strokeAlign: BorderSide.strokeAlignCenter,
                           )),
-                      child: Center(
-                        child: Text(
-                          mainCurrentCategoryTitle,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      child: Text(
+                        mainCurrentCategoryTitle,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -217,18 +212,14 @@ PageController pageController =
                             setState(() {
                               mainCurrentCategoryTitle = value;
                               mfCurrentCategoryTitle = value;
-                              yfCurrentCategoryTitle = value; 
-                              reCurrentCategoryTitle =value;
+                              yfCurrentCategoryTitle = value;
+                              reCurrentCategoryTitle = value;
                             });
                           },
                           itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                            PopupMenuItemBuilder.build(value: 'Food'),
-                            PopupMenuItemBuilder.build(value: 'Services'),
-                            PopupMenuItemBuilder.build(value: 'Cloths'),
-                            PopupMenuItemBuilder.build(value: 'Education'),
-                            PopupMenuItemBuilder.build(value: 'Cars'),
-                          ],
+                              categoriess.map((String category) {
+                            return PopupMenuItemBuilder.build(value: category);
+                          }).toList(),
                         )),
                   ],
                 ),
@@ -264,7 +255,7 @@ PageController pageController =
                     {'content': "assets/images/mhmd_adass.png"},
                     {'content': "assets/images/mhmd_adass.png"},
                   ],
-                      categoriess: categoriess,
+                  categoriess: categoriess,
                 ),
               ],
             ),
@@ -300,8 +291,10 @@ PageController pageController =
                 padding: const EdgeInsets.all(0),
                 icon: SvgPicture.asset(
                   category['icon'] as String,
-                  height: AspectRatios.height * 0.0594648166501486620416253716551,
-                  width: AspectRatios.width * 0.04360753221010901883052527254708,
+                  height:
+                      AspectRatios.height * 0.0594648166501486620416253716551,
+                  width:
+                      AspectRatios.width * 0.04360753221010901883052527254708,
                 ),
                 onPressed: () {},
               ),
@@ -414,7 +407,7 @@ class _FinestSectionState extends State<FinestSection> {
         itemCount: widget.categoriess.length,
         onPageChanged: (int page) {
           setState(() {
-            currentPage = page;
+             currentPage = page;
             widget.currentCategory = widget.categoriess[page];
           });
         },
@@ -476,12 +469,21 @@ class _FinestSectionState extends State<FinestSection> {
             ),
           ),
           child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (text == "1st")
+                  SvgPicture.asset(
+                    'assets/icons/Crown.svg',
+                    height: AspectRatios.height * 0.033,
+                  ),
+                Text(
+                  text,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ]
           ),
-        ),
+        ),)
       ],
     );
   }
