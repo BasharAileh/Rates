@@ -7,6 +7,7 @@ Widget phoneNumberTextField({
   required Function(String?)
       onCountryChanged, // Callback for dropdown value change
   String? initialCountryCode = 'jo', // Initial value for the dropdown
+  String? hintText, // Placeholder text for the TextField
   double dropdownFlex = 7, // Flex for the dropdown
   double textFieldFlex = 19, // Flex for the text field
   double spaceFlex = 1, // Flex for the space between the components
@@ -48,9 +49,11 @@ Widget phoneNumberTextField({
         child: SizedBox(
           height: height,
           child: TextField(
+            keyboardType: TextInputType.phone,
             controller: phoneController,
             style: textFieldStyle,
             decoration: InputDecoration(
+              hintText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
               ),

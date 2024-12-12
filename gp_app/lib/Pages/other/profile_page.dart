@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rates/constants/aspect_ratio.dart';
-
-import '../../dialogs/nav_bar.dart';
+import 'package:get/get.dart';
+import 'package:rates/constants/routes.dart';
+import 'package:rates/services/auth/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -49,12 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: const Text(
           'Profile',
           style: TextStyle(
@@ -65,7 +61,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView( // Added SingleChildScrollView here
+      body: SingleChildScrollView(
+        // Added SingleChildScrollView here
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Column(
@@ -147,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 subtitle: selectedLanguage,
                 onTap: () {
                   _showPopup(context, "Language", [
-                    RadioListTile<String>( 
+                    RadioListTile<String>(
                       title: const Text("Arabic"),
                       value: "Arabic",
                       activeColor: Colors.black,
@@ -177,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 subtitle: selectedTheme,
                 onTap: () {
                   _showPopup(context, "Theme", [
-                    RadioListTile<String>( 
+                    RadioListTile<String>(
                       title: const Text("Light"),
                       value: "Light",
                       activeColor: Colors.black,
@@ -187,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.of(context).pop();
                       },
                     ),
-                    RadioListTile<String>( 
+                    RadioListTile<String>(
                       title: const Text("Dark"),
                       value: "Dark",
                       activeColor: Colors.black,
@@ -220,8 +217,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     minimumSize: const Size(130, 35),
                   ),
-                  onPressed: () {
-                    // Logout logic here
+                  onPressed: () async {
+                    await AuthService.firebase().logOut();
+                    Get.offAllNamed(loginRoute);
                   },
                   child: const Text(
                     "Logout",
@@ -233,7 +231,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBarWidget(),
     );
   }
 
@@ -258,7 +255,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   if (subtitle != null)
                     Text(

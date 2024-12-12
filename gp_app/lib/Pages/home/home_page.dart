@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/dialogs/nav_bar.dart'; // Import the navigation controller
+import 'package:rates/constants/routes.dart';
+import 'dart:developer' as devtools show log;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'; // Import smooth page indicator
 
 class HomePage extends StatefulWidget {
@@ -14,7 +16,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   String currentCategory = "Food";
   PageController pageController =
-  PageController(); // Page controller for the swiping
+      PageController(); // Page controller for the swiping
   int currentPage = 0; // Current page for the indicator
   bool showVerificationMessage = true; // Controls the verification message
   bool emailVerified = false; // Controls the success message
@@ -85,16 +87,16 @@ class HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(4.0),
                   margin: const EdgeInsets.only(bottom: 4.0),
                   decoration: BoxDecoration(
-                    color:
-                        const Color.fromARGB(255, 158, 158, 158).withOpacity(0.2), // Light background color
+                    color: const Color.fromARGB(255, 158, 158, 158)
+                        .withOpacity(0.2), // Light background color
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon:
-                            const Icon(Icons.info_outline, color: Color.fromARGB(255, 0, 0, 0)),
+                        icon: const Icon(Icons.info_outline,
+                            color: Color.fromARGB(255, 0, 0, 0)),
                         onPressed: showVerificationDialog, // Show the dialog
                       ),
                       const Text(
@@ -381,8 +383,6 @@ class HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar:
-          NavigationBarWidget(), // Use NavigationBarWidget here
     );
   }
 
@@ -415,7 +415,12 @@ class HomePageState extends State<HomePage> {
                       height: screenHeight * 0.067,
                       width: screenWidth * 0.05,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      devtools.log(
+                        'Category: ${category['icon']}',
+                      );
+                      Get.toNamed(homeRoute);
+                    },
                   ),
                 ],
               ),

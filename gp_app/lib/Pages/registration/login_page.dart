@@ -8,6 +8,8 @@ import 'package:rates/constants/widgets.dart';
 // ignore: unused_import
 import 'dart:developer' as devtools show log;
 
+import 'package:rates/services/auth/auth_service.dart';
+
 int pageIndex = 2;
 
 class LoginPage extends StatefulWidget {
@@ -149,7 +151,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.offNamed(signupRoute);
+                            Get.offNamed(
+                              signupRoute,
+                            );
                           },
                           child: const Text(
                             'Sign Up',
@@ -229,7 +233,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Center(
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await AuthService.firebase().logInAnonymously();
+                          devtools.log(
+                              'User: ${AuthService.firebase().currentUser}');
+                          Get.offNamed(homeRoute);
+                        },
                         child: const Text(
                           'Continue as Guest',
                           style: TextStyle(
