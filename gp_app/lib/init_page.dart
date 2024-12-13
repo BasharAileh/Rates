@@ -7,6 +7,7 @@ import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'Pages/other/profile_page.dart';
+import 'Pages/home/home_page.dart';
 
 final Future<void> _initializeFirebase = Future.delayed(
     const Duration(
