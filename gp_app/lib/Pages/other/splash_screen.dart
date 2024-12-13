@@ -15,6 +15,10 @@ class _SplashScreenState extends State<SplashScreen>
   late List<Animation<double>> _fadeAnimations;
   late List<Animation<Offset>> _positionAnimations;
 
+  late AnimationController _sentenceController;
+  late Animation<double> _sentenceFadeAnimations;
+  late Animation<Offset> _sentencePositionAnimations;
+
   late AnimationController _lowerStarController;
   late Animation<double> _lowerStarFadeAnimation;
   late Animation<Offset> _lowerStarSlideAnimation;
@@ -70,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Letters Animation
     _lettersController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 750),
     );
 
     _fadeAnimations = [];
@@ -99,11 +103,34 @@ class _SplashScreenState extends State<SplashScreen>
       );
     }
 
+    /// Sentence Animation
+    _sentenceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 750),
+    );
+
+    _sentenceFadeAnimations = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _sentenceController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+    _sentencePositionAnimations = Tween<Offset>(
+      begin: const Offset(0.0, 0.0),
+      end: const Offset(0.0, -1.0),
+    ).animate(
+      CurvedAnimation(
+        parent: _sentenceController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     // Lower Star Animation
     _lowerStarController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
     );
+
     _lowerStarFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _lowerStarController,
@@ -123,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Upper Star Animation
     _upperStarController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
     );
     _upperStarFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
@@ -174,14 +201,18 @@ class _SplashScreenState extends State<SplashScreen>
     _lettersController.forward().then(
       (_) {
         Future.delayed(
-          const Duration(milliseconds: 500),
+          const Duration(milliseconds: 200),
           () {
             _lowerStarController.forward();
             for (int i = 0; i < _popupControllers.length; i++) {
               Future.delayed(
-                Duration(milliseconds: i * 125),
+                Duration(milliseconds: i * 50),
                 () {
-                  _popupControllers[i].forward();
+                  _popupControllers[i].forward().then(
+                    (_) {
+                      _sentenceController.forward();
+                    },
+                  );
                 },
               );
             }
@@ -202,6 +233,10 @@ class _SplashScreenState extends State<SplashScreen>
     _lettersController.dispose();
     _lowerStarController.dispose();
     _upperStarController.dispose();
+    _sentenceController.dispose();
+    for (var controller in _popupControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -209,115 +244,133 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
-      body: Padding(
-        padding: const EdgeInsets.only(top: 100),
-        child: Stack(
-          children: [
-            // Upper Star
-            Align(
-              alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
-              child: SvgPicture.asset(
-                width: 120,
-                '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/upper_star.svg',
-              ),
+      body: Stack(
+        children: [
+          // Upper Star
+          Align(
+            alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
+            child: SvgPicture.asset(
+              width: 120,
+              '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/upper_star.svg',
             ),
-            Align(
-              alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
+          ),
+          Align(
+            alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
+            child: AnimatedBuilder(
+              animation: _upperStarController,
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _upperStarFadeAnimation,
+                  child: SlideTransition(
+                    position: _upperStarSlideAnimation,
+                    child: Container(
+                      width: 120,
+                      height: 50,
+                      decoration:
+                          const BoxDecoration(color: AppColors.primaryColor),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Lower Star
+          Align(
+            alignment: Alignment.centerLeft + const Alignment(0.9, -0.09),
+            child: SvgPicture.asset(
+              width: 100,
+              '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/lower_star.svg',
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft + const Alignment(0.9, -0.09),
+            child: AnimatedBuilder(
+              animation: _lowerStarController,
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: _lowerStarFadeAnimation,
+                  child: SlideTransition(
+                    position: _lowerStarSlideAnimation,
+                    child: Container(
+                      width: 100,
+                      height: 20,
+                      decoration:
+                          const BoxDecoration(color: AppColors.primaryColor),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          ...List.generate(7, (index) {
+            return Align(
+              alignment: starAlignments[index],
               child: AnimatedBuilder(
-                animation: _upperStarController,
+                animation: _popupControllers[index],
                 builder: (context, child) {
                   return FadeTransition(
-                    opacity: _upperStarFadeAnimation,
-                    child: SlideTransition(
-                      position: _upperStarSlideAnimation,
-                      child: Container(
-                        width: 120,
-                        height: 50,
-                        decoration:
-                            const BoxDecoration(color: AppColors.primaryColor),
+                    opacity: _popupFadeAnimations[index],
+                    child: ScaleTransition(
+                      scale: _popupScaleAnimations[index],
+                      child: SvgPicture.asset(
+                        width: starSzie[index],
+                        starPaths[index],
                       ),
                     ),
                   );
                 },
               ),
-            ),
-
-            // Lower Star
-            Align(
-              alignment: Alignment.centerLeft + const Alignment(0.9, -0.09),
-              child: SvgPicture.asset(
-                width: 100,
-                '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/lower_star.svg',
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft + const Alignment(0.9, -0.09),
-              child: AnimatedBuilder(
-                animation: _lowerStarController,
-                builder: (context, child) {
-                  return FadeTransition(
-                    opacity: _lowerStarFadeAnimation,
-                    child: SlideTransition(
-                      position: _lowerStarSlideAnimation,
-                      child: Container(
-                        width: 100,
-                        height: 20,
-                        decoration:
-                            const BoxDecoration(color: AppColors.primaryColor),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            ...List.generate(7, (index) {
-              return Align(
-                alignment: starAlignments[index],
-                child: AnimatedBuilder(
-                  animation: _popupControllers[index],
+            );
+          }),
+          // Letters
+          Align(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_lettersPath.length, (index) {
+                return AnimatedBuilder(
+                  animation: _lettersController,
                   builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _popupFadeAnimations[index],
-                      child: ScaleTransition(
-                        scale: _popupScaleAnimations[index],
+                    return Opacity(
+                      opacity: _fadeAnimations[index].value,
+                      child: SlideTransition(
+                        position: _positionAnimations[index],
                         child: SvgPicture.asset(
-                          width: starSzie[index],
-                          starPaths[index],
+                          _lettersPath[index],
+                          width: 50,
+                          height: 50,
                         ),
                       ),
                     );
                   },
+                );
+              }),
+            ),
+          ),
+          AnimatedBuilder(
+            animation: _sentencePositionAnimations,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _sentenceFadeAnimations,
+                child: Align(
+                  alignment:
+                      Alignment.bottomCenter + const Alignment(0.0, -0.83),
+                  child: Text(
+                    'Your Guide to the Best of \nEverything',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               );
-            }),
-            // Letters
-            Align(
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_lettersPath.length, (index) {
-                  return AnimatedBuilder(
-                    animation: _lettersController,
-                    builder: (context, child) {
-                      return Opacity(
-                        opacity: _fadeAnimations[index].value,
-                        child: SlideTransition(
-                          position: _positionAnimations[index],
-                          child: SvgPicture.asset(
-                            _lettersPath[index],
-                            width: 50,
-                            height: 50,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }),
-              ),
-            ),
-          ],
-        ),
+            },
+          )
+        ],
       ),
     );
   }

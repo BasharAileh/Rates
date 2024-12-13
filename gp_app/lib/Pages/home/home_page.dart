@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/dialogs/nav_bar.dart'; // Import the navigation controller
+import 'package:rates/constants/routes.dart';
+import 'dart:developer' as devtools show log;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'; // Import smooth page indicator
 
 class HomePage extends StatefulWidget {
@@ -262,8 +264,6 @@ class HomePageState extends State<HomePage> {
           ]),
         ),
       ),
-      bottomNavigationBar:
-          NavigationBarWidget(), // Use NavigationBarWidget here
     );
   }
 

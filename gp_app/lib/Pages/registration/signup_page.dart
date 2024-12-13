@@ -14,12 +14,19 @@ class SignupPage extends StatefulWidget {
 }
 
 bool _isEmailSelected = true;
+List<String> _textFields = [
+  'Username',
+  'Email',
+  'Password',
+  'Confirm Password',
+];
 
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   late final List<TextEditingController> _controllers;
   late AnimationController _animationController;
   late Animation<Offset> _emailSlideAnimation;
   late Animation<Offset> _phoneSlideAnimation;
+  bool _justInit = true;
 
   List<DropdownMenuItem<String>> countryItems = [
     const DropdownMenuItem(
@@ -51,18 +58,22 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     _emailSlideAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _phoneSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _animationController.forward();
     super.initState();
@@ -198,21 +209,35 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   4,
                   (index) {
                     if (index == 1) {
-                      return Column(
-                        children: [
-                          if (_isEmailSelected)
-                            SlideTransition(
-                              position: _emailSlideAnimation,
-                              child: customTextField(
-                                controller: _controllers[index],
-                                height: height * 0.06,
-                              ),
+                      if (_justInit) {
+                        _justInit = false;
+                        return Column(
+                          children: [
+                            customTextField(
+                              controller: _controllers[index],
+                              hintText: _textFields[index],
+                              height: height * 0.06,
                             ),
-                          if (!_isEmailSelected)
-                            SlideTransition(
-                              position: _phoneSlideAnimation,
-                              child: Flexible(
+                            SizedBox(height: height * 0.03),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            if (_isEmailSelected)
+                              SlideTransition(
+                                position: _emailSlideAnimation,
+                                child: customTextField(
+                                  hintText: _textFields[index],
+                                  controller: _controllers[index],
+                                  height: height * 0.06,
+                                ),
+                              ),
+                            if (!_isEmailSelected)
+                              SlideTransition(
+                                position: _phoneSlideAnimation,
                                 child: phoneNumberTextField(
+                                  hintText: 'Phone Number',
                                   phoneController: _controllers[index],
                                   initialCountryCode: '01',
                                   countryItems: countryItems,
@@ -221,16 +246,17 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                   height: height * 0.06,
                                 ),
                               ),
-                            ),
-                          SizedBox(height: height * 0.03),
-                        ],
-                      );
+                            SizedBox(height: height * 0.03),
+                          ],
+                        );
+                      }
                     }
                     return Column(
                       children: [
                         customTextField(
                           controller: _controllers[index],
                           height: height * 0.06,
+                          hintText: _textFields[index],
                         ),
                         SizedBox(height: height * 0.03),
                       ],

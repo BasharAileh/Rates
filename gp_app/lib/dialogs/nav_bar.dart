@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:rates/dialogs/nav_contoller.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
+
+class BottomNavController extends GetxController {
+  var currentIndex = 2.obs; // Reactive variable for the selected index
+
+  void changePage(int index) {
+    currentIndex.value = index;
+  }
+}
+
 class NavigationBarWidget extends StatelessWidget {
   NavigationBarWidget({super.key});
 
@@ -12,17 +20,19 @@ class NavigationBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => BottomNavigationBar(
-          currentIndex: bottomNavController.currentIndex.value, // Reactive index
+          currentIndex:
+              bottomNavController.currentIndex.value, // Reactive index
           onTap: (index) {
-            bottomNavController.changePage(index); // Call changePage method
-            if (index == 0) {
+            if (index != 0) {
+              bottomNavController.changePage(index); // Call changePage method
+            } else {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return const VerificationDialogPage(); // Show the verification dialog
                 },
               );
-            } 
+            }
           },
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black,
