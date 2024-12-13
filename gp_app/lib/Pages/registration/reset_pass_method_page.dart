@@ -26,6 +26,7 @@ class _ResetPassMethodPageState extends State<ResetPassMethodPage> {
           child: const Center(
             child: Text('aaaaaaaaaaaaaaaaaaaaaaaa'),
           ),
+
         ),
       ),
     );

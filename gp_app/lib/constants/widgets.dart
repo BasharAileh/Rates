@@ -7,9 +7,9 @@ Widget phoneNumberTextField({
   required Function(String?)
       onCountryChanged, // Callback for dropdown value change
   String? initialCountryCode = 'jo', // Initial value for the dropdown
-  double dropdownWidth = 80, // Width of the dropdown
-  double spaceWidth = 10, // Width of the space between dropdown and text field
-  double textFieldWidth = 210, // Width of the text field
+  double dropdownFlex = 7, // Flex for the dropdown
+  double textFieldFlex = 19, // Flex for the text field
+  double spaceFlex = 1, // Flex for the space between the components
   double height = 50, // Common height for all components
   double borderRadius = 12, // Border radius for dropdown and text field
   EdgeInsetsGeometry dropdownPadding =
@@ -20,38 +20,42 @@ Widget phoneNumberTextField({
 }) {
   return Row(
     children: [
-      // DropdownButtonFormField for country selection
-      SizedBox(
-        width: dropdownWidth,
-        height: height,
-        child: DropdownButtonFormField(
-          isExpanded: true,
-          value: initialCountryCode,
-          items: countryItems,
-          onChanged: onCountryChanged,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+      // Expanded for the DropdownButtonFormField
+      Expanded(
+        flex: dropdownFlex.toInt(),
+        child: SizedBox(
+          height: height,
+          child: DropdownButtonFormField(
+            isExpanded: true,
+            value: initialCountryCode,
+            items: countryItems,
+            onChanged: onCountryChanged,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+              contentPadding: dropdownPadding,
             ),
-            contentPadding: dropdownPadding,
           ),
         ),
       ),
-      SizedBox(
-        width: spaceWidth, // Space between the dropdown and text field
+      Expanded(
+        flex: spaceFlex.toInt(),
+        child: const SizedBox(),
       ),
-      // TextField for phone number input
-      SizedBox(
-        width: textFieldWidth,
-        height: height,
-        child: TextField(
-          controller: phoneController,
-          style: textFieldStyle,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+      Expanded(
+        flex: textFieldFlex.toInt(),
+        child: SizedBox(
+          height: height,
+          child: TextField(
+            controller: phoneController,
+            style: textFieldStyle,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
+              contentPadding: textFieldPadding,
             ),
-            contentPadding: textFieldPadding,
           ),
         ),
       ),

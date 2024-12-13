@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize BottomNavController globally
     Get.put(BottomNavController());
-
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

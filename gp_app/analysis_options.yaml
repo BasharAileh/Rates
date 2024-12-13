@@ -10,6 +10,7 @@
 analyzer:
   errors:
     unnecessary_string_escapes: ignore
+    prefer_const_constructors: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:
