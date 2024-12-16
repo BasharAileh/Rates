@@ -25,7 +25,8 @@ class VerificationDialogPage extends StatelessWidget {
       "CODE456": {
         "restaurant": "Another Restaurant",
         "meals": ["Meal A", "Meal B", "Meal C"],
-        "rating": "3.5"
+        "rating": "3.5",
+        "logo": "assets/images/BurgarMaker_Logo.jpeg"
       },
     };
 
@@ -42,7 +43,7 @@ class VerificationDialogPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.all(20),
-          height: AspectRatios.height * 0.43, // Adjusted height
+          height: AspectRatios.height * 0.395,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -54,30 +55,40 @@ class VerificationDialogPage extends StatelessWidget {
               const Text(
                 "Redeem Your Meal Code",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: AspectRatios.height * 0.02),
-              TextField(
-                cursorColor: const Color.fromARGB(255, 255, 196, 45),
-                controller: codeController,
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(17),
-                    borderSide: BorderSide(
-                      color:  const Color.fromARGB(255, 255, 196, 45),
-                    )
-                  ),
-                  labelText: "Enter Code",
-                  labelStyle:TextStyle(
-                     color: const Color.fromARGB(255, 255, 196, 45),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(17),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 255, 196, 45),
-                    )
+              SizedBox(
+                height: AspectRatios.height * 0.055,
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                      textSelectionTheme: TextSelectionThemeData(
+                    cursorColor:
+                        Color.fromARGB(255, 255, 196, 45),
+                    selectionHandleColor:
+                        Color.fromARGB(255, 255, 196, 45),
+                  )),
+                  child: TextField(
+                    cursorColor: const Color.fromARGB(255, 255, 196, 45),
+                    controller: codeController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(17),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 255, 196, 45),
+                          )),
+                      labelText: "Enter Code",
+                      labelStyle: TextStyle(
+                        color: const Color.fromARGB(255, 255, 196, 45),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(17),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 255, 196, 45),
+                          )),
+                    ),
                   ),
                 ),
               ),
@@ -92,12 +103,12 @@ class VerificationDialogPage extends StatelessWidget {
               ),
               SizedBox(height: AspectRatios.height * 0.02),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   // Cancel Button
                   ElevatedButton(
                     onPressed: () {
-                      Get.back(); // Close the dialog
+                      Get.back();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 191, 191, 191),
@@ -108,7 +119,7 @@ class VerificationDialogPage extends StatelessWidget {
                     child: const Text(
                       "Cancel",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Color.fromARGB(255, 0, 0, 0),
                       ),
                     ),
@@ -129,17 +140,41 @@ class VerificationDialogPage extends StatelessWidget {
                             ));
                       } else {
                         Get.snackbar(
-                          "Invalid Code",
-                          "The code you entered is not valid.",
-                          backgroundColor:
-                              const Color.fromARGB(255, 244, 67, 54),
-                          colorText: const Color.fromARGB(255, 255, 255, 255),
-                        );
+                            "Invalid Code",
+                            "The code you entered is not valid.",
+                            titleText: Text(
+                              "Invalid Code",
+                              style: TextStyle(
+                                fontSize:
+                                    16, 
+                                fontWeight: FontWeight
+                                    .bold,
+                              ),
+                            ),
+                            messageText: Text(
+                              "The code you entered is not valid.",
+                              style: TextStyle(
+                                fontSize:
+                                    12,
+                              ),
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 191, 191, 191),
+                            colorText: const Color.fromARGB(255, 255, 255, 255),
+                            margin: EdgeInsets.only(top: 10, left: 7, right: 7),
+                            padding: EdgeInsets.all(5),
+                            boxShadows: [
+                              BoxShadow(
+                                  color: Color.fromARGB(255, 56, 56, 56),
+                                  offset: Offset(0, 2),
+                                  blurRadius: 5,
+                                  spreadRadius: 0.5)
+                            ]);
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          const Color.fromARGB(255, 255, 196, 45), // Yellow
+                          const Color.fromARGB(255, 255, 196, 45),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
@@ -147,7 +182,7 @@ class VerificationDialogPage extends StatelessWidget {
                     child: const Text(
                       "Redeem",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Color.fromARGB(255, 0, 0, 0),
                       ),
                     ),
