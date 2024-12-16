@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
 import 'package:rates/Pages/other/splash_screen.dart';
 import 'package:rates/Pages/registration/login_page.dart';
+import 'package:rates/Pages/shops/shops_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_service.dart';
@@ -33,15 +34,15 @@ class InitPage extends StatelessWidget {
             devtools.log('User: $user');
             if (user != null) {
               if (user.isAnonymous) {
-                return PagesWithNavBar();
+                return FoodPage();
               }
               if (user.isEmailVerified) {
-                return ProfilePage();
+                return FoodPage();
               } else {
-                return ProfilePage();
+                return FoodPage();
               }
             } else {
-              return LoginPage();
+              return FoodPage();
               //this is the one you change whenever you want to run your page
               //don't text me 'what line to change, so i can run my page please :)'
             }
