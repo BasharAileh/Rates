@@ -7,17 +7,28 @@ import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 
-class PagesWithNavBar extends StatelessWidget {
-  late final int page;
+int? page;
 
-  PagesWithNavBar({super.key, this.page = 5});
+class PagesWithNavBar extends StatefulWidget {
+  const PagesWithNavBar({super.key, int? page});
+
+  @override
+  State<PagesWithNavBar> createState() => _PagesWithNavBarState();
+}
+
+class _PagesWithNavBarState extends State<PagesWithNavBar> {
+  @override
+  void dispose() {
+    super.dispose();
+    bottomNavController.changePage(2);
+  }
 
   final BottomNavController bottomNavController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: page == 5
+      body: page == null
           ? Obx(() {
               // Dynamically load the page based on the selected index
               switch (bottomNavController.currentIndex.value) {
@@ -30,7 +41,7 @@ class PagesWithNavBar extends StatelessWidget {
                 case 3:
                   return FavoritesPage(
                     favorites: const [],
-                    onRemoveFavorite: (p0) {},
+                    onRemoveFavorite: (_) {},
                   ); // Or any other page
                 case 4:
                   return SignupPage(); // Or another page
@@ -41,16 +52,22 @@ class PagesWithNavBar extends StatelessWidget {
           : (() {
               switch (page) {
                 case 0:
+                  page = null;
                   return HomePage();
                 case 1:
+                  page = null;
                   return ProfilePage();
                 case 2:
+                  page = null;
                   return HomePage(); // You can use a different page for this if needed
                 case 3:
+                  page = null;
                   return LoginPage(); // Or any other page
                 case 4:
+                  page = null;
                   return SignupPage(); // Or another page
                 default:
+                  page = null;
                   return HomePage(); // Default page
               }
             })(),

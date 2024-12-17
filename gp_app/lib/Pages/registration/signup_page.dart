@@ -6,6 +6,7 @@ import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:rates/services/auth/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -14,7 +15,6 @@ class SignupPage extends StatefulWidget {
   State<SignupPage> createState() => _SignupPageState();
 }
 
-bool _isEmailSelected = true;
 List<String> _textFields = [
   'Username',
   'Email',
@@ -27,7 +27,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _emailSlideAnimation;
   late Animation<Offset> _phoneSlideAnimation;
+  late List<bool> _isSelected;
+  bool _isEmailSelected = true;
+  bool _bottomEnabled = false;
   bool _justInit = true;
+  String? _passwordsMatch;
+  bool _isPasswordVisible = false;
 
   List<DropdownMenuItem<String>> countryItems = [
     const DropdownMenuItem(
@@ -50,6 +55,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    _isSelected = [false, true];
     _controllers = List.generate(4, (_) => TextEditingController());
     _animationController = AnimationController(
       vsync: this,
@@ -86,6 +92,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
       controller.dispose();
     }
     _animationController.dispose();
+    _isSelected.clear();
     super.dispose();
   }
 
@@ -121,6 +128,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   ),
                 ),
                 SizedBox(height: height * 0.02),
+
+                // Sign-up method selection
+
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -205,6 +215,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                     ),
                   ],
                 ),
+
+                //text fields
+
                 SizedBox(height: height * 0.02),
                 ...List.generate(
                   4,
@@ -215,6 +228,21 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         return Column(
                           children: [
                             customTextField(
+                              onChanged: (value) {
+                                if (_controllers.every((controller) =>
+                                        controller.text.isNotEmpty) &&
+                                    _controllers[2].text ==
+                                        _controllers[3].text &&
+                                    _isSelected[0]) {
+                                  setState(() {
+                                    _bottomEnabled = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    _bottomEnabled = false;
+                                  });
+                                }
+                              },
                               controller: _controllers[index],
                               hintText: _textFields[index],
                               height: height * 0.06,
@@ -229,6 +257,21 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                               SlideTransition(
                                 position: _emailSlideAnimation,
                                 child: customTextField(
+                                  onChanged: (value) {
+                                    if (_controllers.every((controller) =>
+                                            controller.text.isNotEmpty) &&
+                                        _controllers[2].text ==
+                                            _controllers[3].text &&
+                                        _isSelected[0]) {
+                                      setState(() {
+                                        _bottomEnabled = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _bottomEnabled = false;
+                                      });
+                                    }
+                                  },
                                   hintText: _textFields[index],
                                   controller: _controllers[index],
                                   height: height * 0.06,
@@ -238,6 +281,21 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                               SlideTransition(
                                 position: _phoneSlideAnimation,
                                 child: phoneNumberTextField(
+                                  onTextfieldChanged: (value) {
+                                    if (_controllers.every((controller) =>
+                                            controller.text.isNotEmpty) &&
+                                        _controllers[2].text ==
+                                            _controllers[3].text &&
+                                        _isSelected[0]) {
+                                      setState(() {
+                                        _bottomEnabled = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _bottomEnabled = false;
+                                      });
+                                    }
+                                  },
                                   hintText: 'Phone Number',
                                   phoneController: _controllers[index],
                                   initialCountryCode: '01',
@@ -252,24 +310,166 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         );
                       }
                     }
+                    if (index == 2 || index == 3) {
+                      _isPasswordVisible = true;
+                    } else {
+                      _isPasswordVisible = false;
+                    }
                     return Column(
                       children: [
                         customTextField(
+                          onChanged: (value) {
+                            if (_controllers.every((controller) =>
+                                    controller.text.isNotEmpty) &&
+                                _controllers[2].text == _controllers[3].text &&
+                                _isSelected[0]) {
+                              setState(() {
+                                _bottomEnabled = true;
+                              });
+                            } else {
+                              setState(() {
+                                _bottomEnabled = false;
+                              });
+                            }
+                            if (_controllers[2].text != _controllers[3].text) {
+                              setState(() {
+                                _passwordsMatch = 'Passwords do not match';
+                              });
+                            } else {
+                              setState(() {
+                                _passwordsMatch = null;
+                              });
+                            }
+                          },
+                          obscureText: _isPasswordVisible,
                           controller: _controllers[index],
                           height: height * 0.06,
                           hintText: _textFields[index],
                         ),
-                        SizedBox(height: height * 0.03),
+                        index == 3 && _passwordsMatch != null
+                            ? Column(
+                                children: [
+                                  SizedBox(height: height * 0.005),
+                                  SizedBox(
+                                    height: height * 0.025,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(width: width * 0.03),
+                                        Text(
+                                          _passwordsMatch!,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(height: height * 0.03),
                       ],
                     );
                   },
                 ),
+                SizedBox(
+                  height: AspectRatios.height * 0.00888625592,
+                ),
+                SizedBox(
+                  height: AspectRatios.height * 0.03554502369,
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: _isSelected[0],
+                        onChanged: (_) {
+                          setState(() {
+                            _isSelected[0] = !_isSelected[0];
+                          });
+                          if (_controllers.every(
+                                  (controller) => controller.text.isNotEmpty) &&
+                              _controllers[2].text == _controllers[3].text &&
+                              _isSelected[0]) {
+                            setState(() {
+                              _bottomEnabled = true;
+                            });
+                          } else {
+                            setState(() {
+                              _bottomEnabled = false;
+                            });
+                          }
+                        },
+                      ),
+                      const Flexible(
+                        child: Text(
+                          'By creating an account, you are agreeing with Rates terms and conditions',
+                          style: TextStyle(
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: AspectRatios.height * 0.00829383886,
+                ),
+                SizedBox(
+                  height: AspectRatios.height * 0.02843601895,
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: _isSelected[1],
+                        onChanged: (_) {
+                          setState(() {
+                            _isSelected[1] = !_isSelected[1];
+                          });
+                        },
+                      ),
+                      const Text(
+                        'Email me new updates',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: height * 0.02),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      devtools.log('Sign Up button pressed');
-                    },
+                    onPressed: _bottomEnabled == true
+                        ? () async {
+                            final username = _controllers[0].text;
+                            final phoneOrEmail = _controllers[1].text;
+                            final password = _controllers[2].text;
+
+                            try {
+                              if (_isEmailSelected) {
+                                await AuthService.firebase().createUser(
+                                    email: phoneOrEmail, password: password);
+                                await AuthService.firebase()
+                                    .sendEmailVerification();
+                                Get.snackbar(
+                                  'Check you\'re email',
+                                  'Verification email sent',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  colorText: Colors.green[900],
+                                  backgroundColor: Colors.white,
+                                  barBlur: 0.5,
+                                  duration: 5000.milliseconds,
+                                  icon: Icon(Icons.check,
+                                      color: Colors.green[900]),
+                                );
+                                Get.offNamed(homeRoute);
+                              }
+                            } on Exception catch (e) {
+                              Get.snackbar(
+                                'Error',
+                                e.toString(),
+                                snackPosition: SnackPosition.BOTTOM,
+                                colorText: Colors.red,
+                              );
+                            }
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       fixedSize: Size(AspectRatios.width * 0.58717948717,
@@ -291,7 +491,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                     ),
                     TextButton(
                       onPressed: () {
-                        Get.toNamed(loginRoute);
+                        Get.offNamed(loginRoute);
                       },
                       child: const Text(
                         "Log In",
