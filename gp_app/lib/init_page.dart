@@ -33,14 +33,7 @@ class InitPage extends StatelessWidget {
             final user = AuthService.firebase().currentUser;
             devtools.log('User: $user');
             if (user != null) {
-              if (user.isAnonymous) {
-                return FoodPage();
-              }
-              if (user.isEmailVerified) {
-                return FoodPage();
-              } else {
-                return FoodPage();
-              }
+              return FoodPage();
             } else {
               return FoodPage();
               //this is the one you change whenever you want to run your page

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rates/Pages/shop/rest_info_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   final List<Map<String, dynamic>> favorites;
@@ -29,17 +31,51 @@ class _FavoritesPageState extends State<FavoritesPage> {
       favorites.removeAt(index);
     });
 
-    widget.onRemoveFavorite(removedRestaurant['index']); // تحديث صفحة FoodPage
+    widget.onRemoveFavorite(removedRestaurant['index']);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('You removed the item from the favorite list'),
-        duration: Duration(seconds: 1),
+    // Replace the snackbar with Get.snackbar
+    showSnackBar(false, removedRestaurant['name']);
+  }
+
+  void showSnackBar(bool isFavorite, String name) {
+    String snackBarTitle = isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
+    String snackBarMessage = isFavorite
+        ? "The item has been successfully added to your favorite list."
+        : "The item has been removed from your favorite list.";
+
+    Get.snackbar(
+      snackBarTitle, // Title
+      snackBarMessage, // Message
+      titleText: Text(
+        snackBarTitle,
+        style: const TextStyle(
+          fontSize: 16, // Title font size
+          fontWeight: FontWeight.bold, // Bold title
+        ),
       ),
+      messageText: Text(
+        snackBarMessage,
+        style: const TextStyle(
+          fontSize: 12, // Message font size
+          fontWeight: FontWeight.normal, // Regular weight for message
+        ),
+      ),
+      backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+      colorText: const Color.fromARGB(255, 255, 255, 255),
+      margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+      padding: const EdgeInsets.all(5),
+      boxShadows: [
+        const BoxShadow(
+          color: Color.fromARGB(255, 56, 56, 56),
+          offset: Offset(0, 2),
+          blurRadius: 5,
+          spreadRadius: 0.5,
+        ),
+      ],
+     
     );
   }
 
-  // نفس الدالة الموجودة في FoodPage
   Widget restaurantCard({
     required String name,
     required String logo,
@@ -51,7 +87,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
     Color ratingColor;
     String ratingText = "Rating of ";
 
-    // تحديد لون التصنيف
     if (rating >= 4) {
       ratingColor = Colors.green;
     } else if (rating >= 3) {
@@ -183,39 +218,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantDetailsPage(),
+                    builder: (context) => rest_info_page(),
                   ),
                 );
               },
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class RestaurantDetailsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Restaurant Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text("Details of the restaurant will go here."),
       ),
     );
   }

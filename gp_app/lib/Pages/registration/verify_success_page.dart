@@ -89,7 +89,7 @@ class _SvgTopToBottomFadeState extends State<SvgTopToBottomFade>
             const Text(
               'Successfully verified',
               style: TextStyle(
-                color: AppColors.greenColor,
+                color: AppColors.textGreenColor,
                 fontSize: 22,
               ),
             ),

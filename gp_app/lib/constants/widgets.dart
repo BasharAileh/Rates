@@ -6,6 +6,7 @@ Widget phoneNumberTextField({
   required List<DropdownMenuItem<String>> countryItems, // Dropdown items
   required Function(String?)
       onCountryChanged, // Callback for dropdown value change
+  void Function(String)? onTextfieldChanged, // Callback for text change
   String? initialCountryCode = 'jo', // Initial value for the dropdown
   String? hintText, // Placeholder text for the TextField
   double dropdownFlex = 7, // Flex for the dropdown
@@ -49,6 +50,7 @@ Widget phoneNumberTextField({
         child: SizedBox(
           height: height,
           child: TextField(
+            onChanged: onTextfieldChanged,
             keyboardType: TextInputType.phone,
             controller: phoneController,
             style: textFieldStyle,
@@ -97,11 +99,15 @@ Widget customTextField({
   TextInputAction? textInputAction, // Action for the keyboard button
   FocusNode? focusNode, // Focus node for the field
   double? height, // Height of the field
+  bool enableSuggestions = false, // Whether to enable suggestions
+  bool autocorrect = false, // Whether to enable autocorrect
 }) {
   return height != null
       ? SizedBox(
           height: height,
           child: TextField(
+            enableSuggestions: enableSuggestions,
+            autocorrect: autocorrect,
             controller: controller,
             keyboardType: keyboardType,
             obscureText: obscureText,
@@ -144,6 +150,8 @@ Widget customTextField({
         )
       : TextField(
           controller: controller,
+          enableSuggestions: enableSuggestions,
+          autocorrect: autocorrect,
           keyboardType: keyboardType,
           obscureText: obscureText,
           maxLines: maxLines,
