@@ -1,3 +1,5 @@
+import 'dart:developer' as devtools show log;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -14,7 +16,6 @@ import 'package:rates/services/auth/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -46,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
           left: AspectRatios.width * 0.07051282051,
           right: AspectRatios.width * 0.07051282051,
         ),
-
         /* symmetric(
           vertical: AspectRatios.height * 0.19379146919,
           horizontal: AspectRatios.width * 0.07051282051,
@@ -77,7 +77,8 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: AspectRatios.width * 0.05641025641,
                           fontWeight: FontWeight.bold,
                         ),
-                      ), /* 
+                      ),
+                      /*
                     Transform.translate(
                       offset: Offset(0, -10),
                       child: SvgPicture.asset(

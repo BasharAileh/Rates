@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 late bool _showEmailVerificationMessage;
 late bool _isEmailVerified;
-late final PageController _pageController;
+
 List<String> categories = ["Serviceis", "Food", "Clothes", "Education", "Cars"];
 
 class HomePage extends StatefulWidget {
@@ -17,16 +19,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final List<PageController> _pageController;
   @override
   void initState() {
     super.initState();
-    _showEmailVerificationMessage = true;
+    _showEmailVerificationMessage = false;
     _isEmailVerified = false;
-    _pageController = PageController();
+    _pageController = List.generate(3, (index) => PageController());
+
+    //TODO open DateBase and check if the user is verified
+    //unless we used the ensureDbIsOpen() function in all the functions
+    //then we don't need to open the database here
+    /* 
+    you'll be able to open, close and do every other functions using the rates seraice class
+    */
   }
 
   @override
   void dispose() {
+    for (var controller in _pageController) {
+      controller.dispose();
+    }
+
+    //TODO close the DataBase
+    /* 
+    make sure this page never gets closed when the user is still using the app
+    that means never use get.off() to navigate to another page
+     */
     super.dispose();
   }
 
@@ -34,153 +53,376 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: AspectRatios.width * 0.07307692307,
-        ),
-        child: Column(
-          children: [
-            Center(
-              child: SvgPicture.asset(
-                'assets/logos/black_logo.svg',
-                height: AspectRatios.height * 0.04333333333,
-                width: AspectRatios.width * 0.14871794871,
+          child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AspectRatios.width * 0.07307692307,
+          ),
+          child: Column(
+            children: [
+              Center(
+                child: SvgPicture.asset(
+                  'assets/logos/black_logo.svg',
+                  height: AspectRatios.height * 0.04333333333,
+                  width: AspectRatios.width * 0.14871794871,
+                ),
               ),
-            ),
-            _showEmailVerificationMessage
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: AspectRatios.height * 0.03444444444,
-                          child: Center(
-                            child: Container(
-                              height: AspectRatios.height * 0.03444444444,
-                              decoration: BoxDecoration(
-                                color: AppColors.verificationSuccessColor
-                                    .withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(50.0),
+              _showEmailVerificationMessage
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: AspectRatios.height * 0.03444444444,
+                            child: Center(
+                              child: Container(
+                                height: AspectRatios.height * 0.03444444444,
+                                decoration: BoxDecoration(
+                                  color: AppColors.verificationSuccessColor
+                                      .withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Colors.black,
+                                      size: AspectRatios.height * 0.02444444444,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      'Please verify your email.',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: AspectRatios.height * 0.01,
-                        ),
-                      ],
-                    ),
-                  )
-                : SizedBox(
-                    height: AspectRatios.height * 0.03444444444,
-                  ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: categories.map(
-                  (category) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        right: AspectRatios.width * 0.03607692307,
+                          SizedBox(
+                            height: AspectRatios.height * 0.01,
+                          ),
+                        ],
                       ),
-                      child: SizedBox(
-                        width: AspectRatios.width * 0.14256410256,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: AspectRatios.width * 0.10256410256,
-                              height: AspectRatios.heightWithoutAppBar * 0.044,
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    color: AppColors.iconBackground
-                                        .withOpacity(0.15),
-                                    height: AspectRatios.height * 0.044,
-                                    width: AspectRatios.width * 0.10256410256,
-                                  ),
-                                  Center(
-                                    child: SvgPicture.asset(
-                                      'assets/icons/${category.toLowerCase()}_icon.svg',
-                                      width: AspectRatios.width * 0.08974358974,
+                    )
+                  : SizedBox(
+                      height: AspectRatios.height * 0.03444444444,
+                    ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: categories.map(
+                    (category) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          right: AspectRatios.width * 0.03607692307,
+                        ),
+                        child: SizedBox(
+                          width: AspectRatios.width * 0.14256410256,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: AspectRatios.width * 0.10256410256,
+                                height:
+                                    AspectRatios.heightWithoutAppBar * 0.044,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      color: AppColors.iconBackground
+                                          .withOpacity(0.15),
                                       height: AspectRatios.height * 0.044,
+                                      width: AspectRatios.width * 0.10256410256,
                                     ),
-                                  ),
-                                ],
+                                    Center(
+                                      child: SvgPicture.asset(
+                                        'assets/icons/${category.toLowerCase()}_icon.svg',
+                                        width:
+                                            AspectRatios.width * 0.08974358974,
+                                        height: AspectRatios.height * 0.044,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: AspectRatios.height * 0.01,
-                            ),
-                            Text(
-                              category,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                              SizedBox(
+                                height: AspectRatios.height * 0.01,
                               ),
-                            ),
-                          ],
+                              Text(
+                                category,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ).toList(),
+                      );
+                    },
+                  ).toList(),
+                ),
               ),
-            ),
-            SizedBox(
-              height: AspectRatios.height * 0.02,
-            ),
-            SizedBox(
-              height: AspectRatios.height * 0.02,
-            ),
-            ...List.generate(
-              3,
-              (index) {
-                List<Map<String, String>> info = [
-                  {
-                    'title': 'Monthly Finest',
-                    'content': "assets/images/FireFly_Logo.png",
-                  },
-                  {
-                    'title': 'Yearly Finest',
-                    'content': "assets/images/_4chicks_logo.png",
-                  },
-                  {
-                    'title': 'Rating Experts',
-                    'content': "assets/images/CloudShot_logo.png",
-                  },
-                ];
-                return Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: SizedBox(
-                        width: AspectRatios.width * 0.8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              info[index]['title']!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+              SizedBox(
+                height: AspectRatios.height * 0.02,
+              ),
+              SizedBox(
+                height: AspectRatios.height * 0.02,
+              ),
+              ...List.generate(
+                3,
+                (index) {
+                  List<Map<String, String>> info = [
+                    {
+                      'title': 'Monthly Finest',
+                      'content': "assets/images/FireFly_Logo.png",
+                    },
+                    {
+                      'title': 'Yearly Finest',
+                      'content': "assets/images/_4chicks_logo.png",
+                    },
+                    {
+                      'title': 'Rating Experts',
+                      'content': "assets/images/CloudShot_logo.png",
+                    },
+                  ];
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          width: AspectRatios.width * 0.8,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                info[index]['title']!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Food',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 158, 158, 158),
+                              Text(
+                                'Food',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 158, 158, 158),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: AspectRatios.height * 0.01,
-                    ),
-                    Container(
+                      SizedBox(
+                        height: AspectRatios.height * 0.01,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(topRatedRoute);
+                        },
+                        child: Container(
+                          height: AspectRatios.height * 0.153,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: const [
+                                Color.fromARGB(255, 243, 198, 35),
+                                Color.fromARGB(255, 255, 166, 0),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              stops: const [0.1, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: PageView.builder(
+                              controller: _pageController[index],
+                              onPageChanged: (value) {},
+                              itemCount: 5,
+                              itemBuilder: (context, index) {
+                                return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        ...List.generate(
+                                          3,
+                                          (index) {
+                                            double imageSize =
+                                                AspectRatios.height * 0.027;
+                                            double imageSizeWithPadding =
+                                                AspectRatios.height * 0.027 +
+                                                    AspectRatios.height * 0.01;
+                                            return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        constraints.maxHeight *
+                                                            0.05,
+                                                  ),
+                                                  child: CircleAvatar(
+                                                    radius: imageSize,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/_4chicks_logo.png'),
+                                                  ),
+                                                ),
+                                                Flexible(
+                                                  child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  10),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  10),
+                                                        ),
+                                                      ),
+                                                      height: index == 1
+                                                          ? constraints
+                                                                  .maxHeight -
+                                                              imageSizeWithPadding
+                                                          : index == 0
+                                                              ? constraints
+                                                                      .maxHeight *
+                                                                  0.35
+                                                              : constraints
+                                                                      .maxHeight *
+                                                                  0.23,
+                                                      width:
+                                                          constraints.maxWidth *
+                                                              0.12,
+                                                      child: index == 1
+                                                          ? Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topCenter,
+                                                              child: Column(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            4.0),
+                                                                    child: Transform
+                                                                        .translate(
+                                                                      offset:
+                                                                          Offset(
+                                                                              2,
+                                                                              0),
+                                                                      child: SvgPicture
+                                                                          .asset(
+                                                                        'assets/icons/Crown.svg',
+                                                                        width: constraints.maxWidth *
+                                                                            0.06923076923,
+                                                                        height: constraints.maxHeight *
+                                                                            0.12605042016,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    '1',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          17,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              255,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          : Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Text(
+                                                                index == 0
+                                                                    ? '2'
+                                                                    : '3',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 17,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                            )),
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }),
+                        ),
+                      ),
+                      SizedBox(
+                        height: AspectRatios.height * 0.01,
+                      ),
+                      Center(
+                        child: SmoothPageIndicator(
+                          controller: _pageController[index],
+                          count: 5,
+                          effect: WormEffect(
+                            activeDotColor:
+                                const Color.fromARGB(255, 255, 196, 45),
+                            dotHeight: AspectRatios.height * 0.007,
+                            dotWidth: AspectRatios.width * 0.015,
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              )
+            ],
+          ),
+        ),
+      )),
+    );
+  }
+}
+
+class CurrentCategoryController extends GetxController {
+  var currentIndex = 0.obs; // Reactive variable for the selected index
+
+  void changePage(int index) {
+    currentIndex.value = index;
+  }
+}
+
+/*  Container(
                       height: AspectRatios.height * 0.153,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -307,33 +549,7 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-                    ),
-                    SizedBox(
-                      height: AspectRatios.height * 0.01,
-                    ),
-                    Center(
-                      child: SmoothPageIndicator(
-                        controller: _pageController,
-                        count: 5,
-                        effect: WormEffect(
-                          activeDotColor:
-                              const Color.fromARGB(255, 255, 196, 45),
-                          dotHeight: AspectRatios.height * 0.007,
-                          dotWidth: AspectRatios.width * 0.015,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            )
-          ],
-        ),
-      )),
-    );
-  }
-}
-
+                    ), */
 
 //adas code with bara's changes
 
@@ -907,15 +1123,10 @@ class PopupMenuItemBuilder {
 }
  */
 
-
-
-//adas code 
+//adas code
 /* import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/constants/routes.dart';
-import 'dart:developer' as devtools show log;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'; // Import smooth page indicator
 
 class HomePage extends StatefulWidget {

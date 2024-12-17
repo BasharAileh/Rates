@@ -7,8 +7,8 @@ class FavoritesPage extends StatefulWidget {
   const FavoritesPage({
     required this.favorites,
     required this.onRemoveFavorite,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
@@ -71,7 +71,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
               blurRadius: 4,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -183,7 +183,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantDetailsPage(),
+                    builder: (context) => const RestaurantDetailsPage(),
                   ),
                 );
               },
@@ -196,6 +196,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
 }
 
 class RestaurantDetailsPage extends StatelessWidget {
+  const RestaurantDetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
