@@ -14,3 +14,5 @@ const String verifySuccessRoute = '/verifySuccess/';
 const String verCodeDialogRoute = '/verCode/';
 const String resetPassMethodRoute = '/resetPassMethod/';
 const String profileRoute = '/profileRoute/';
+const String topRatedRoute = '/topRatedRoute/';
+const String restInfoRoute = '/restInfoRoute/';

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 late bool _showEmailVerificationMessage;
@@ -25,6 +26,13 @@ class _HomePageState extends State<HomePage> {
     _showEmailVerificationMessage = false;
     _isEmailVerified = false;
     _pageController = List.generate(3, (index) => PageController());
+
+    //TODO open DateBase and check if the user is verified
+    //unless we used the ensureDbIsOpen() function in all the functions
+    //then we don't need to open the database here
+    /* 
+    you'll be able to open, close and do every other functions using the rates seraice class
+    */
   }
 
   @override
@@ -32,6 +40,12 @@ class _HomePageState extends State<HomePage> {
     for (var controller in _pageController) {
       controller.dispose();
     }
+
+    //TODO close the DataBase
+    /* 
+    make sure this page never gets closed when the user is still using the app
+    that means never use get.off() to navigate to another page
+     */
     super.dispose();
   }
 
@@ -207,164 +221,171 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: AspectRatios.height * 0.01,
                       ),
-                      Container(
-                        height: AspectRatios.height * 0.153,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: const [
-                              Color.fromARGB(255, 243, 198, 35),
-                              Color.fromARGB(255, 255, 166, 0),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: const [0.1, 1.0],
+                      InkWell(
+                        onTap: () {
+                          Get.toNamed(topRatedRoute);
+                        },
+                        child: Container(
+                          height: AspectRatios.height * 0.153,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: const [
+                                Color.fromARGB(255, 243, 198, 35),
+                                Color.fromARGB(255, 255, 166, 0),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              stops: const [0.1, 1.0],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: PageView.builder(
-                            controller: _pageController[index],
-                            onPageChanged: (value) {},
-                            itemCount: 5,
-                            itemBuilder: (context, index) {
-                              return LayoutBuilder(
-                                builder: (context, constraints) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      ...List.generate(
-                                        3,
-                                        (index) {
-                                          double imageSize =
-                                              AspectRatios.height * 0.027;
-                                          double imageSizeWithPadding =
-                                              AspectRatios.height * 0.027 +
-                                                  AspectRatios.height * 0.01;
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical:
-                                                      constraints.maxHeight *
-                                                          0.05,
+                          child: PageView.builder(
+                              controller: _pageController[index],
+                              onPageChanged: (value) {},
+                              itemCount: 5,
+                              itemBuilder: (context, index) {
+                                return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        ...List.generate(
+                                          3,
+                                          (index) {
+                                            double imageSize =
+                                                AspectRatios.height * 0.027;
+                                            double imageSizeWithPadding =
+                                                AspectRatios.height * 0.027 +
+                                                    AspectRatios.height * 0.01;
+                                            return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        constraints.maxHeight *
+                                                            0.05,
+                                                  ),
+                                                  child: CircleAvatar(
+                                                    radius: imageSize,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/_4chicks_logo.png'),
+                                                  ),
                                                 ),
-                                                child: CircleAvatar(
-                                                  radius: imageSize,
-                                                  backgroundImage: AssetImage(
-                                                      'assets/images/_4chicks_logo.png'),
-                                                ),
-                                              ),
-                                              Flexible(
-                                                child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(10),
-                                                        topRight:
-                                                            Radius.circular(10),
+                                                Flexible(
+                                                  child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  10),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  10),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    height: index == 1
-                                                        ? constraints
-                                                                .maxHeight -
-                                                            imageSizeWithPadding
-                                                        : index == 0
-                                                            ? constraints
-                                                                    .maxHeight *
-                                                                0.35
-                                                            : constraints
-                                                                    .maxHeight *
-                                                                0.23,
-                                                    width:
-                                                        constraints.maxWidth *
-                                                            0.12,
-                                                    child: index == 1
-                                                        ? Align(
-                                                            alignment: Alignment
-                                                                .topCenter,
-                                                            child: Column(
-                                                              children: [
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          top:
-                                                                              4.0),
-                                                                  child: Transform
-                                                                      .translate(
-                                                                    offset:
-                                                                        Offset(
-                                                                            2,
-                                                                            0),
-                                                                    child: SvgPicture
-                                                                        .asset(
-                                                                      'assets/icons/Crown.svg',
-                                                                      width: constraints
-                                                                              .maxWidth *
-                                                                          0.06923076923,
-                                                                      height: constraints
-                                                                              .maxHeight *
-                                                                          0.12605042016,
+                                                      height: index == 1
+                                                          ? constraints
+                                                                  .maxHeight -
+                                                              imageSizeWithPadding
+                                                          : index == 0
+                                                              ? constraints
+                                                                      .maxHeight *
+                                                                  0.35
+                                                              : constraints
+                                                                      .maxHeight *
+                                                                  0.23,
+                                                      width:
+                                                          constraints.maxWidth *
+                                                              0.12,
+                                                      child: index == 1
+                                                          ? Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topCenter,
+                                                              child: Column(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            4.0),
+                                                                    child: Transform
+                                                                        .translate(
+                                                                      offset:
+                                                                          Offset(
+                                                                              2,
+                                                                              0),
+                                                                      child: SvgPicture
+                                                                          .asset(
+                                                                        'assets/icons/Crown.svg',
+                                                                        width: constraints.maxWidth *
+                                                                            0.06923076923,
+                                                                        height: constraints.maxHeight *
+                                                                            0.12605042016,
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Text(
-                                                                  '1',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            0,
-                                                                            0,
-                                                                            0),
+                                                                  Text(
+                                                                    '1',
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          17,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Color
+                                                                          .fromARGB(
+                                                                              255,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : Align(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              index == 0
-                                                                  ? '2'
-                                                                  : '3',
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 17,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        0,
-                                                                        0,
-                                                                        0),
+                                                                ],
                                                               ),
-                                                            ),
-                                                          )),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }),
+                                                            )
+                                                          : Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Text(
+                                                                index == 0
+                                                                    ? '2'
+                                                                    : '3',
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 17,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                            )),
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }),
+                        ),
                       ),
                       SizedBox(
                         height: AspectRatios.height * 0.01,
@@ -400,9 +421,6 @@ class CurrentCategoryController extends GetxController {
     currentIndex.value = index;
   }
 }
-
-
-
 
 /*  Container(
                       height: AspectRatios.height * 0.153,
@@ -1105,9 +1123,7 @@ class PopupMenuItemBuilder {
 }
  */
 
-
-
-//adas code 
+//adas code
 /* import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

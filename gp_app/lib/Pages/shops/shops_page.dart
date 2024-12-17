@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart'; // Imports the Flutter material design package.
+import 'package:get/get.dart';
 import 'package:rates/constants/aspect_ratio.dart'; // Imports aspect ratio constants for responsive UI.
+import 'package:rates/constants/routes.dart';
 import '../../dialogs/nav_bar.dart'; // Imports a custom navigation bar widget.
 import '../other/favorites_page.dart'; // Imports the FavoritesPage widget for navigation.
 
@@ -101,77 +103,85 @@ class _FoodPageState extends State<FoodPage> {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Image.asset(
-            image, // Displays the restaurant image.
-            height: 69, // Fixed height for the image.
-            width: 67, // Fixed width for the image.
-          ),
-          const SizedBox(width: 10), // Space between image and text.
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(restInfoRoute);
+        },
+        child: Row(
+          children: [
+            Image.asset(
+              image, // Displays the restaurant image.
+              height: 69, // Fixed height for the image.
+              width: 67, // Fixed width for the image.
+            ),
+            const SizedBox(width: 10), // Space between image and text.
 
-          // Restaurant information section.
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Aligns text to the left.
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Centers text vertically.
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      name, // Displays the restaurant name.
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 5), // Space between text elements.
-                    const Text(
-                      "#1st Place", // Example ranking text.
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2), // Space below the name.
-                Row(
-                  children: [
-                    Text(
-                      ratingText, // Rating label text.
-                      style: const TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                    Text(
-                      "$rating stars", // Displays the rating value.
-                      style: TextStyle(color: ratingColor, fontSize: 12),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 3), // Space below the rating.
-                InkWell(
-                  onTap: onDetailsPressed, // Trigger details view callback.
-                  child: const Text(
-                    "View Details", // Details button text.
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.grey),
+            // Restaurant information section.
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Aligns text to the left.
+                mainAxisAlignment:
+                    MainAxisAlignment.center, // Centers text vertically.
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        name, // Displays the restaurant name.
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 5), // Space between text elements.
+                      const Text(
+                        "#1st Place", // Example ranking text.
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 2), // Space below the name.
+                  Row(
+                    children: [
+                      Text(
+                        ratingText, // Rating label text.
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      Text(
+                        "$rating stars", // Displays the rating value.
+                        style: TextStyle(color: ratingColor, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 3), // Space below the rating.
+                  InkWell(
+                    onTap: onDetailsPressed, // Trigger details view callback.
+                    child: const Text(
+                      "View Details", // Details button text.
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // Favorite icon button for toggling favorite status.
-          IconButton(
-            icon: Icon(
-              isFavorite
-                  ? Icons.favorite
-                  : Icons
-                      .favorite_border, // Icon changes based on favorite status.
-              color: isFavorite
-                  ? Colors.red
-                  : Colors.grey, // Icon color changes based on favorite status.
+            // Favorite icon button for toggling favorite status.
+            IconButton(
+              icon: Icon(
+                isFavorite
+                    ? Icons.favorite
+                    : Icons
+                        .favorite_border, // Icon changes based on favorite status.
+                color: isFavorite
+                    ? Colors.red
+                    : Colors
+                        .grey, // Icon color changes based on favorite status.
+              ),
+              onPressed:
+                  onFavoriteToggle, // Calls the favorite toggle callback.
             ),
-            onPressed: onFavoriteToggle, // Calls the favorite toggle callback.
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
