@@ -1,3 +1,5 @@
+import 'dart:developer' as devtools show log;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -5,13 +7,12 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
-// ignore: unused_import
-import 'dart:developer' as devtools show log;
+import 'package:rates/services/auth/auth_service.dart';
 
+int pageIndex = 2;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -26,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
           left: AspectRatios.width * 0.07051282051,
           right: AspectRatios.width * 0.07051282051,
         ),
-
         /* symmetric(
           vertical: AspectRatios.height * 0.19379146919,
           horizontal: AspectRatios.width * 0.07051282051,
@@ -64,7 +64,8 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: AspectRatios.width * 0.05641025641,
                           fontWeight: FontWeight.bold,
                         ),
-                      ), /* 
+                      ),
+                      /*
                     Transform.translate(
                       offset: Offset(0, -10),
                       child: SvgPicture.asset(
@@ -104,7 +105,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     );
                   }),
-
                   SizedBox(
                     height: AspectRatios.height * 0.01777251,
                   ),
@@ -148,7 +148,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.offNamed(signupRoute);
+                            Get.offNamed(
+                              signupRoute,
+                            );
                           },
                           child: const Text(
                             'Sign Up',
@@ -228,7 +230,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Center(
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await AuthService.firebase().logInAnonymously();
+                          devtools.log(
+                              'User: ${AuthService.firebase().currentUser}');
+                          Get.offNamed(homeRoute);
+                        },
                         child: const Text(
                           'Continue as Guest',
                           style: TextStyle(

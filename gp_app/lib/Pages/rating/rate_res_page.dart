@@ -32,29 +32,62 @@ class RateMealPageState extends State<RateMealPage> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0)),
+          icon:
+              const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0)),
           onPressed: () => Navigator.pop(context), // Navigate back
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(15, 30, 15, 100),
+      body: Column(
         children: [
-          // Restaurant Header
-          buildRestaurantHeader(),
-          RestaurantRatingCard(restaurantName: widget.restaurant),
-          // Meals List
-          const Text(
-            "Rate the meals you enjoyed:",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.meals.length,
-            itemBuilder: (context, index) => MealRatingCard(mealName: widget.meals[index]),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: Column(
+                children: [
+                  // Restaurant Header
+                  buildRestaurantHeader(),
+                  RestaurantRatingCard(restaurantName: widget.restaurant),
+                  // Meals List
+                  Row(
+                    children: const [
+                      Text(
+                        "Rate the meals you enjoyed:",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  for (String meal in widget.meals)
+                    MealRatingCard(mealName: meal),
+                  SizedBox(height: 20), // Spacing before opinion box
+                  buildOpinionTextBox(),
+                ],
+              ),
+            ),
           ),
           buildFooterButtons(context),
         ],
+      )
+    );
+  }
+ Widget buildOpinionTextBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      margin: EdgeInsets.only(left: 13, right:13),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 255, 255, 255),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey, width: 1),
+      ),
+      child: TextField(
+        cursorColor:const Color.fromARGB(255, 255, 196, 45),
+        maxLines: 4,  // Allow multi-line input
+        decoration: const InputDecoration(
+          hintText: "Write your general opinion here...",
+          border: InputBorder.none,
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+        ),
+        style: const TextStyle(fontSize: 14, color: Colors.black),
       ),
     );
   }
@@ -68,18 +101,21 @@ class RateMealPageState extends State<RateMealPage> {
           "Welcome to ${widget.restaurant}!",
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-         SizedBox(height: AspectRatios.height*0.025),
+        SizedBox(height: AspectRatios.height * 0.025),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(widget.logo, height: AspectRatios.height*0.08, width: AspectRatios.width*0.2),
-             SizedBox(width: AspectRatios.width*0.02),
+            Image.asset(widget.logo,
+                height: AspectRatios.height * 0.08,
+                width: AspectRatios.width * 0.2),
+            SizedBox(width: AspectRatios.width * 0.02),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.restaurant,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   "Rating of ${widget.rating} stars!",
@@ -89,6 +125,10 @@ class RateMealPageState extends State<RateMealPage> {
             ),
           ],
         ),
+            const Text(
+              "Rate the restuarant services:",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
       ],
     );
   }
@@ -117,7 +157,8 @@ class RateMealPageState extends State<RateMealPage> {
             ),
             child: const Text(
               "Submit Ratings",
-              style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
+              style:
+                  TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
             ),
           ),
           TextButton(
@@ -131,7 +172,8 @@ class RateMealPageState extends State<RateMealPage> {
                 ),
               );
             },
-            style: TextButton.styleFrom(foregroundColor: const Color.fromARGB(255, 33, 150, 243)),
+            style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 33, 150, 243)),
             child: const Text(
               "This wasn’t what I ordered",
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -151,7 +193,7 @@ class RatingSlider extends StatelessWidget {
 
   const RatingSlider({
     super.key,
-     this.label,
+    this.label,
     required this.currentRating,
     required this.onChanged,
   });
@@ -162,7 +204,7 @@ class RatingSlider extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label??"",
+          label ?? "",
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Row(
@@ -218,7 +260,7 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
             children: [
               const Text(
                 "Restaurant Services",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               isRatingVisible
                   ? IconButton(
@@ -227,9 +269,9 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
                           isRatingVisible = false; // Collapse the slider
                         });
                       },
-                      icon:  Icon(
+                      icon: Icon(
                         Icons.keyboard_arrow_up,
-                        size: AspectRatios.height*0.055,
+                        size: AspectRatios.height * 0.055,
                         color: const Color.fromARGB(255, 255, 196, 45),
                       ),
                     )
@@ -302,7 +344,7 @@ class MealRatingCardState extends State<MealRatingCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(6.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -312,7 +354,8 @@ class MealRatingCardState extends State<MealRatingCard> {
               Expanded(
                 child: Text(
                   widget.mealName,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ),
               isRatingVisible
@@ -322,9 +365,9 @@ class MealRatingCardState extends State<MealRatingCard> {
                           isRatingVisible = false; // Collapse the slider
                         });
                       },
-                      icon:  Icon(
+                      icon: Icon(
                         Icons.keyboard_arrow_up,
-                        size: AspectRatios.height*0.055,
+                        size: AspectRatios.height * 0.055,
                         color: const Color.fromARGB(255, 255, 196, 45),
                       ),
                     )

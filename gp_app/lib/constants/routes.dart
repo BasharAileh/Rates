@@ -1,3 +1,4 @@
+const String initRoute = '/init/';
 const String loginRoute = '/login/';
 const String signupRoute = '/signup/';
 const String splashScreenRoute = '/splashscreen/';
@@ -12,3 +13,4 @@ const String otpVerifyRoute = '/otpVerfiy/';
 const String verifySuccessRoute = '/verifySuccess/';
 const String verCodeDialogRoute = '/verCode/';
 const String resetPassMethodRoute = '/resetPassMethod/';
+const String profileRoute = '/profileRoute/';

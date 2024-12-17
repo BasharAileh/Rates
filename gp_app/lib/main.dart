@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rates/Pages/home/home_page.dart';
+import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/reset_pass_method_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
-import 'package:rates/Pages/registration/verify_success_page.dart';
 import 'package:rates/constants/routes.dart';
-import 'package:rates/dialogs/nav_contoller.dart';
+import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/init_page.dart';
 
@@ -34,18 +33,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/init',
+      initialRoute: initRoute,
       getPages: [
         GetPage(
           name: homeRoute,
-          page: () => const HomePage(),
+          page: () => PagesWithNavBar(page: 2),
         ),
         GetPage(
           name: loginRoute,
           page: () => const LoginPage(),
         ),
         GetPage(
-          name: '/init',
+          name: initRoute,
           page: () => const InitPage(),
         ),
         GetPage(
@@ -58,15 +57,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: verifySuccessRoute,
-          page: () => const SvgTopToBottomFade(),
-        ),
-        GetPage(
-          name: homeRoute,
-          page: () => const HomePage(),
-        ),
-        GetPage(
-          name: loginRoute,
-          page: () => const LoginPage(),
+          page: () => const Placeholder(), // Replace with SvgTopToBottomFade if defined
         ),
         GetPage(
           name: verCodeDialogRoute,
@@ -76,8 +67,10 @@ class MyApp extends StatelessWidget {
           name: resetPassMethodRoute,
           page: () => const ResetPassMethodPage(),
         ),
-
-        // Add other pages with their respective routes
+        GetPage(
+          name: profileRoute,
+          page: () => PagesWithNavBar(page: 1),
+        ),
       ],
     );
   }

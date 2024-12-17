@@ -1,30 +1,3 @@
-import 'package:get/get.dart';
-import 'package:rates/constants/routes.dart';
-
-class BottomNavController extends GetxController {
-  var currentIndex = 0.obs; // Reactive variable for the selected index
-
-  void changePage(int index) {
-    currentIndex.value = index;
-    switch (index) {
-      case 0:
-        Get.offAllNamed(homeRoute); // Navigate to Home
-        break;
-      case 1:
-        Get.offAllNamed('/profile'); // Navigate to Profile (define this route)
-        break;
-      case 2:
-        Get.offAllNamed(loginRoute); // Navigate to Login
-        break;
-      case 3:
-        Get.offAllNamed('/favorites'); // Navigate to Favorites (define this route)
-        break;
-      case 4:
-        Get.offAllNamed('/about'); // Navigate to About (define this route)
-        break;
-    }
-  }
-}
 
 
 

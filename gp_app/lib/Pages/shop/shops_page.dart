@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart'; // Imports the Flutter material design package.
 import 'package:rates/constants/aspect_ratio.dart'; // Imports aspect ratio constants for responsive UI.
-import '../../dialogs/nav_bar.dart'; // Imports a custom navigation bar widget.
+// Imports a custom navigation bar widget.
 import '../other/favorites_page.dart'; // Imports the FavoritesPage widget for navigation.
 
 class FoodPage extends StatefulWidget {
   const FoodPage({super.key});
 
   @override
-  _FoodPageState createState() => _FoodPageState(); // Creates the state for FoodPage.
+  _FoodPageState createState() =>
+      _FoodPageState(); // Creates the state for FoodPage.
 }
 
 class _FoodPageState extends State<FoodPage> {
@@ -18,7 +19,8 @@ class _FoodPageState extends State<FoodPage> {
       'name': 'Restaurant #$index', // Name of the restaurant.
       'rating': 1.5 + (index + 1 % 2) * 0.5, // Generates a sample rating.
       'image': 'assets/images/R.png', // Placeholder for the restaurant image.
-      'isFavorite': false, // Indicates if the restaurant is marked as a favorite.
+      'isFavorite':
+          false, // Indicates if the restaurant is marked as a favorite.
       'index': index, // Tracks the index for identification.
     },
   );
@@ -56,7 +58,8 @@ class _FoodPageState extends State<FoodPage> {
                 .toList(), // Filters the favorite restaurants.
             onRemoveFavorite: (index) {
               setState(() {
-                restaurantList[index]['isFavorite'] = false; // Updates favorite status.
+                restaurantList[index]['isFavorite'] =
+                    false; // Updates favorite status.
               });
             },
           ),
@@ -71,8 +74,10 @@ class _FoodPageState extends State<FoodPage> {
     required String image, // Restaurant image.
     required double rating, // Restaurant rating.
     required bool isFavorite, // Whether the restaurant is a favorite.
-    required VoidCallback onFavoriteToggle, // Callback for toggling favorite status.
-    required VoidCallback onDetailsPressed, // Callback for viewing restaurant details.
+    required VoidCallback
+        onFavoriteToggle, // Callback for toggling favorite status.
+    required VoidCallback
+        onDetailsPressed, // Callback for viewing restaurant details.
   }) {
     Color ratingColor; // Stores the color for rating.
     String ratingText = "Rating of "; // Label for the rating text.
@@ -110,8 +115,10 @@ class _FoodPageState extends State<FoodPage> {
           // Restaurant information section.
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the left.
-              mainAxisAlignment: MainAxisAlignment.center, // Centers text vertically.
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Aligns text to the left.
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Centers text vertically.
               children: [
                 Row(
                   children: [
@@ -158,8 +165,11 @@ class _FoodPageState extends State<FoodPage> {
             icon: Icon(
               isFavorite
                   ? Icons.favorite
-                  : Icons.favorite_border, // Icon changes based on favorite status.
-              color: isFavorite ? Colors.red : Colors.grey, // Icon color changes based on favorite status.
+                  : Icons
+                      .favorite_border, // Icon changes based on favorite status.
+              color: isFavorite
+                  ? Colors.red
+                  : Colors.grey, // Icon color changes based on favorite status.
             ),
             onPressed: onFavoriteToggle, // Calls the favorite toggle callback.
           ),
@@ -211,7 +221,7 @@ class _FoodPageState extends State<FoodPage> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(left: AspectRatios.width*0.045),
+        padding: EdgeInsets.only(left: AspectRatios.width * 0.045),
         child: Column(
           children: [
             const SizedBox(height: 20),
@@ -219,28 +229,35 @@ class _FoodPageState extends State<FoodPage> {
               children: [
                 const Text(
                   "Discover and Rate",
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold,color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
                 ),
-                const SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 Center(
-              child: SizedBox(
-                height: AspectRatios.height * 0.031591796875,
-                width: screenWidth * 0.5807692307692308, // Adjust width dynamically.
-                child: SearchBar(
-                  hintText: "Search for restaurants",
-                  backgroundColor: WidgetStateProperty.all(Colors.white),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: const BorderSide(color: Colors.black),
+                  child: SizedBox(
+                    height: AspectRatios.height * 0.031591796875,
+                    width: screenWidth *
+                        0.5807692307692308, // Adjust width dynamically.
+                    child: SearchBar(
+                      hintText: "Search for restaurants",
+                      backgroundColor: WidgetStateProperty.all(Colors.white),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: const BorderSide(color: Colors.black),
+                        ),
+                      ),
+                      leading: const Icon(Icons.search,
+                          color: Colors.black, size: 20),
+                      onChanged: (query) {},
+                      onSubmitted: (query) {},
                     ),
                   ),
-                  leading: const Icon(Icons.search, color: Colors.black, size: 20),
-                  onChanged: (query) {},
-                  onSubmitted: (query) {},
                 ),
-              ),
-            ),
                 IconButton(
                   icon: const Icon(Icons.filter_list, color: Colors.black),
                   onPressed: () {
@@ -248,7 +265,7 @@ class _FoodPageState extends State<FoodPage> {
                   },
                 ),
               ],
-            ),        
+            ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
@@ -280,7 +297,6 @@ class _FoodPageState extends State<FoodPage> {
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBarWidget(),
     );
   }
 }
