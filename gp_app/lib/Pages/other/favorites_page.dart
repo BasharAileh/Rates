@@ -218,11 +218,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-<<<<<<< HEAD
-                    builder: (context) => rest_info_page(),
-=======
-                    builder: (context) => const RestaurantDetailsPage(),
->>>>>>> Rates
+                    builder: (context) => const rest_info_page(),
                   ),
                 );
               },
@@ -233,34 +229,3 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 }
-<<<<<<< HEAD
-=======
-
-class RestaurantDetailsPage extends StatelessWidget {
-  const RestaurantDetailsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Restaurant Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text("Details of the restaurant will go here."),
-      ),
-    );
-  }
-}
->>>>>>> Rates
