@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/dialogs/nav_bar.dart';
 
 class RateMealPage extends StatefulWidget {
   final String restaurant;
@@ -21,6 +24,7 @@ class RateMealPage extends StatefulWidget {
 }
 
 class RateMealPageState extends State<RateMealPage> {
+  double mealRating = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +38,7 @@ class RateMealPageState extends State<RateMealPage> {
         leading: IconButton(
           icon:
               const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0)),
-          onPressed: () => Navigator.pop(context), // Navigate back
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -47,93 +51,74 @@ class RateMealPageState extends State<RateMealPage> {
                 children: [
                   // Restaurant Header
                   buildRestaurantHeader(),
-                  RestaurantRatingCard(restaurantName: widget.restaurant),
+                  SizedBox(height: AspectRatios.height * 0.035),
                   // Meals List
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Text(
                         "Rate the meals you enjoyed:",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   for (String meal in widget.meals)
-                    MealRatingCard(mealName: meal),
-                  SizedBox(height: 20), // Spacing before opinion box
-                  buildOpinionTextBox(),
+                    MealRatingCard(
+                      mealName: meal,
+                      currentRating: mealRating,
+                      onChanged: (value) {
+                        setState(() {
+                          mealRating = value;
+                        });
+                      },
+                    ),
+                  SizedBox(height: AspectRatios.height * 0.01),
+                  const Row(
+                    children: [
+                      Text(
+                        "Rate the restuarant services:",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  RestaurantRatingCard(restaurantName: widget.restaurant),
+                   SizedBox(height: AspectRatios.height*0.178),
+                  buildFooterButtons(context),
                 ],
               ),
             ),
           ),
-          buildFooterButtons(context),
         ],
-      )
-    );
-  }
- Widget buildOpinionTextBox() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      margin: EdgeInsets.only(left: 13, right:13),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey, width: 1),
       ),
-      child: TextField(
-        cursorColor:const Color.fromARGB(255, 255, 196, 45),
-        maxLines: 4,  // Allow multi-line input
-        decoration: const InputDecoration(
-          hintText: "Write your general opinion here...",
-          border: InputBorder.none,
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-        ),
-        style: const TextStyle(fontSize: 14, color: Colors.black),
-      ),
+      bottomNavigationBar: NavigationBarWidget(),
     );
   }
 
   // Reusable widget to build the restaurant header
   Widget buildRestaurantHeader() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        GestureDetector(
+          onTap: () {
+            Get.to(() => rest_info_page());
+          },
+          child: Image.asset(widget.logo,
+              height: AspectRatios.height * 0.08,
+              width: AspectRatios.width * 0.2),
+        ),
+        SizedBox(width: AspectRatios.width * 0.02),
         Text(
-          "Welcome to ${widget.restaurant}!",
+          widget.restaurant,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: AspectRatios.height * 0.025),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(widget.logo,
-                height: AspectRatios.height * 0.08,
-                width: AspectRatios.width * 0.2),
-            SizedBox(width: AspectRatios.width * 0.02),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.restaurant,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Rating of ${widget.rating} stars!",
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-          ],
-        ),
-            const Text(
-              "Rate the restuarant services:",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
       ],
     );
   }
 
-  // Reusable footer buttons for submission and feedback
+  // Reusable footer buttons for submission and problem
   Widget buildFooterButtons(BuildContext context) {
     return Center(
       child: Column(
@@ -142,15 +127,54 @@ class RateMealPageState extends State<RateMealPage> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => const AlertDialog(
-                  title: Text("Thank You!"),
-                  content: Text("Your ratings have been submitted."),
+                builder: (context) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/verfication_success.svg',
+                            width: AspectRatios.width*0.2,
+                            height: AspectRatios.height*0.2,
+                          ),
+                           SizedBox(height: AspectRatios.height*0.01),
+                          const Text(
+                            'Your ratings have been submitted!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 196, 45),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               );
+              Future.delayed(const Duration(seconds: 4), () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 255, 196, 45),
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
@@ -176,7 +200,7 @@ class RateMealPageState extends State<RateMealPage> {
                 foregroundColor: const Color.fromARGB(255, 33, 150, 243)),
             child: const Text(
               "This wasn’t what I ordered",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -208,21 +232,28 @@ class RatingSlider extends StatelessWidget {
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Slider(
-                value: currentRating,
-                onChanged: onChanged,
-                min: 0,
-                max: 5,
-                divisions: 10,
-                label: currentRating.toStringAsFixed(1),
-                activeColor: const Color.fromARGB(255, 255, 196, 45),
+              child: SliderTheme(
+                data: const SliderThemeData(
+                  valueIndicatorTextStyle:
+                      TextStyle(fontSize: 10, color: Colors.black),
+                ),
+                child: Slider(
+                  value: currentRating,
+                  onChanged: onChanged,
+                  min: 0,
+                  max: 5,
+                  divisions: 10,
+                  label: currentRating.toStringAsFixed(1),
+                  activeColor: const Color.fromARGB(255, 255, 196, 45),
+                ),
               ),
             ),
             Text(
               "${currentRating.toStringAsFixed(1)} / 5",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -242,19 +273,21 @@ class RestaurantRatingCard extends StatefulWidget {
 }
 
 class RestaurantRatingCardState extends State<RestaurantRatingCard> {
-  double deliveryRating = 0;
-  double cleanlinessRating = 0;
-  double pricingRating = 0;
-
+  Map<String, double> ratings = {
+    "Delivery": 0,
+    "Cleanliness": 0,
+    "Pricing": 0,
+  };
   bool isRatingVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: const EdgeInsets.only(left: 6, right: 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: AspectRatios.height * 0.01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -271,7 +304,7 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
                       },
                       icon: Icon(
                         Icons.keyboard_arrow_up,
-                        size: AspectRatios.height * 0.055,
+                        size: AspectRatios.height * 0.045,
                         color: const Color.fromARGB(255, 255, 196, 45),
                       ),
                     )
@@ -284,7 +317,7 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
                       child: const Text(
                         "Rate",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           color: Color.fromARGB(255, 255, 196, 45),
                           fontWeight: FontWeight.bold,
                         ),
@@ -295,31 +328,34 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
           if (isRatingVisible) ...[
             RatingSlider(
               label: "Delivery",
-              currentRating: deliveryRating,
+              currentRating: ratings["Delivery"]!,
               onChanged: (value) {
                 setState(() {
-                  deliveryRating = value;
+                  ratings["Delivery"] = value;
                 });
               },
             ),
             RatingSlider(
               label: "Cleanliness",
-              currentRating: cleanlinessRating,
+              currentRating: ratings["Cleanliness"]!,
               onChanged: (value) {
                 setState(() {
-                  cleanlinessRating = value;
+                  ratings["Cleanliness"] = value;
                 });
               },
             ),
             RatingSlider(
               label: "Pricing",
-              currentRating: pricingRating,
+              currentRating: ratings["Pricing"]!,
               onChanged: (value) {
                 setState(() {
-                  pricingRating = value;
+                  ratings["Pricing"] = value;
                 });
               },
             ),
+            OpinionTextBox(
+              hintText: "How was the overall service at the restaurant?",
+            )
           ],
         ],
       ),
@@ -330,24 +366,31 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
 // Meal Rating Card using RatingSlider
 class MealRatingCard extends StatefulWidget {
   final String mealName;
+  final double currentRating;
+  final ValueChanged<double> onChanged;
 
-  const MealRatingCard({super.key, required this.mealName});
+  const MealRatingCard(
+      {super.key,
+      required this.mealName,
+      required this.currentRating,
+      required this.onChanged});
 
   @override
   MealRatingCardState createState() => MealRatingCardState();
 }
 
 class MealRatingCardState extends State<MealRatingCard> {
-  double mealRating = 0;
   bool isRatingVisible = false;
+  double currentRating = 0;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(6.0),
+      padding: const EdgeInsets.only(left: 6, right: 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: AspectRatios.height * 0.01),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -355,7 +398,7 @@ class MealRatingCardState extends State<MealRatingCard> {
                 child: Text(
                   widget.mealName,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                      fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ),
               isRatingVisible
@@ -367,7 +410,7 @@ class MealRatingCardState extends State<MealRatingCard> {
                       },
                       icon: Icon(
                         Icons.keyboard_arrow_up,
-                        size: AspectRatios.height * 0.055,
+                        size: AspectRatios.height * 0.040,
                         color: const Color.fromARGB(255, 255, 196, 45),
                       ),
                     )
@@ -380,7 +423,7 @@ class MealRatingCardState extends State<MealRatingCard> {
                       child: const Text(
                         "Rate",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: Color.fromARGB(255, 255, 196, 45),
                           fontWeight: FontWeight.bold,
                         ),
@@ -389,15 +432,77 @@ class MealRatingCardState extends State<MealRatingCard> {
             ],
           ),
           if (isRatingVisible)
-            RatingSlider(
-              currentRating: mealRating,
-              onChanged: (value) {
-                setState(() {
-                  mealRating = value;
-                });
-              },
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: SliderTheme(
+                        data: const SliderThemeData(
+                          valueIndicatorTextStyle:
+                              TextStyle(fontSize: 10, color: Colors.black),
+                        ),
+                        child: Slider(
+                          value: currentRating,
+                          onChanged: (value) {
+                            setState(() {
+                              currentRating = value; // Update local state
+                            });
+                            widget.onChanged(
+                                value); // Call onChanged from parent to update external state
+                          },
+                          min: 0,
+                          max: 5,
+                          divisions: 10,
+                          label: currentRating.toStringAsFixed(1),
+                          activeColor: const Color.fromARGB(255, 255, 196, 45),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "${currentRating.toStringAsFixed(1)} / 5",
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                OpinionTextBox(
+                  hintText: "Share your thoughts about the meal...",
+                )
+              ],
             ),
         ],
+      ),
+    );
+  }
+}
+
+class OpinionTextBox extends StatelessWidget {
+  final String hintText;
+
+  const OpinionTextBox({super.key, required this.hintText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      margin: const EdgeInsets.only(left: 13, right: 13),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 255, 255, 255),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey, width: 1),
+      ),
+      child: TextField(
+        maxLength: 200,
+        cursorColor: const Color.fromARGB(255, 255, 196, 45),
+        maxLines: 2, // Allow multi-line input
+        decoration: InputDecoration(
+          hintText: hintText,
+          border: InputBorder.none,
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+        ),
+        style: const TextStyle(fontSize: 14, color: Colors.black),
       ),
     );
   }
