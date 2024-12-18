@@ -6,6 +6,8 @@ import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/reset_pass_method_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
 import 'package:rates/Pages/registration/verify_success_page.dart';
+import 'package:rates/Pages/shop/rest_info_page.dart';
+import 'package:rates/Pages/shop/shops_page.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
@@ -37,9 +39,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: homeRoute,
-          page: () => PagesWithNavBar(
-            page: 2,
-          ),
+          page: () => PagesWithNavBar(page: 2),
         ),
         GetPage(
           name: loginRoute,
@@ -59,11 +59,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: verifySuccessRoute,
-          page: () => SvgTopToBottomFade(),
-        ),
-        GetPage(
-          name: loginRoute,
-          page: () => const LoginPage(),
+          page: () => const Placeholder(), // Replace with SvgTopToBottomFade if defined
         ),
         GetPage(
           name: verCodeDialogRoute,
@@ -75,11 +71,16 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: profileRoute,
-          page: () => PagesWithNavBar(
-            page: 1,
-          ),
+          page: () => PagesWithNavBar(page: 1),
         ),
-
+        GetPage(
+          name: topRatedRoute,
+          page: () => FoodPage(),
+        ),
+        GetPage(
+          name: restInfoRoute,
+          page: () => rest_info_page(),
+        ),
         // Add other pages with their respective routes
       ],
     );

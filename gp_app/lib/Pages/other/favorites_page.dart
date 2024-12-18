@@ -9,8 +9,8 @@ class FavoritesPage extends StatefulWidget {
   const FavoritesPage({
     required this.favorites,
     required this.onRemoveFavorite,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
@@ -106,7 +106,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             BoxShadow(
               color: Colors.grey.withOpacity(0.1),
               blurRadius: 4,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -218,7 +218,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+<<<<<<< HEAD
                     builder: (context) => rest_info_page(),
+=======
+                    builder: (context) => const RestaurantDetailsPage(),
+>>>>>>> Rates
                   ),
                 );
               },
@@ -229,3 +233,34 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 }
+<<<<<<< HEAD
+=======
+
+class RestaurantDetailsPage extends StatelessWidget {
+  const RestaurantDetailsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text(
+          'Restaurant Details',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text("Details of the restaurant will go here."),
+      ),
+    );
+  }
+}
+>>>>>>> Rates

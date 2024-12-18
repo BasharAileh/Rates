@@ -512,7 +512,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   }
 }
 
-/* 
+/*
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';

@@ -1,4 +1,4 @@
-import 'dart:async';
+/* import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:rates/services/crud/crud_exception.dart';
@@ -27,6 +27,16 @@ class RatesService {
     return db;
   }
 
+  //this function is used to ensure that the database is open
+  //use it in all the functions at the beginning
+  Future<void> ensureDbIsOpen() async {
+   try {
+      await open();
+    } on DatabaseAlreadyOpenException {
+      // Do nothing
+    }
+  }
+
   /// Open the database and initialize tables
   Future<void> open() async {
     if (_db != null) throw DatabaseAlreadyOpenException();
@@ -36,10 +46,10 @@ class RatesService {
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
-      await db.execute(createUsersTable);
+      await db.execute(createUserTable);
       await db.execute(createShopTable);
       await db.execute(createProductsTable);
-      await db.execute(createRateTable);
+      await db.execute(createRatingsTable);
 
       await _catchRates();
     } on MissingPlatformDirectoryException {
@@ -139,10 +149,10 @@ class RatesService {
     final dbUser = await getUser(email: user.email);
     if (dbUser != user) throw CouldNotFindUser();
 
-    final rateId = await db.insert(rateTable, {
+    final rateId = await db.insert(ratingsTable, {
       userIdColumn: dbUser.id,
       productIdColumn: productId,
-      rateColumn: rate,
+      ratingvalue: rate,
     });
 
     final dbRate = DatabaseRate(
@@ -157,14 +167,14 @@ class RatesService {
   Future<List<DatabaseRate>> getRates() async {
     final db = _getDatabaseOrThrow();
 
-    final results = await db.query(rateTable);
+    final results = await db.query(ratingsTable);
     return results.map((e) => DatabaseRate.fromMap(e)).toList();
   }
 
   /// Delete all rates
   Future<int> deleteAllRates() async {
     final db = _getDatabaseOrThrow();
-    final numberOfDeletions = await db.delete(rateTable);
+    final numberOfDeletions = await db.delete(ratingsTable);
     _rates.clear();
     _ratesStreamController.add(_rates);
     return numberOfDeletions;
@@ -173,7 +183,7 @@ class RatesService {
   Future<void> deleteRate({required int rateId}) async {
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(
-      rateTable,
+      ratingsTable,
       where: 'rate_id = ?',
       whereArgs: [rateId],
     );
@@ -198,7 +208,7 @@ class DatabaseUser {
   });
 
   DatabaseUser.fromMap(Map<String, Object?> map)
-      : id = map[idColumn] as int,
+      : id = map[userIdColumn] as int,
         email = map[emailColumn] as String,
         username = map[usernameColumn] as String;
 }
@@ -221,64 +231,198 @@ class DatabaseRate {
         userId = map[userIdColumn] as int,
         productId = map[productIdColumn] as int,
         rate = map[rateColumn] as int;
-}
+} */
 
 // ===================== CONSTANTS ===================== //
-
 const dbName = 'rates.db';
-const userTable = 'user';
-const rateTable = 'rate';
 
-const idColumn = 'id';
-const emailColumn = 'email';
+// User Table
+const userTable = 'users';
+const userIdColumn = 'id';
 const usernameColumn = 'username';
-const rateIdColumn = 'rate_id';
-const userIdColumn = 'user_id';
-const productIdColumn = 'product_id';
-const rateColumn = 'rate';
+const emailColumn = 'email';
+const firstNameColumn = 'first_name';
+const lastNameColumn = 'last_name';
+const profilePictureColumn = 'profile_picture_path';
+const dateOfBirthColumn = 'date_of_birth';
+const dateJoinedColumn = 'date_joined';
+const isActiveColumn = 'is_active';
+const isAdminColumn = 'is_admin';
+const isVerifiedColumn = 'is_verified';
 
-const createUsersTable = '''
-  CREATE TABLE IF NOT EXISTS "user" (
-    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL UNIQUE,
-    "username" TEXT NOT NULL
+const createUserTable = '''
+  CREATE TABLE IF NOT EXISTS $userTable (
+    $userIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $usernameColumn VARCHAR NOT NULL,
+    $emailColumn VARCHAR NOT NULL UNIQUE,
+    $firstNameColumn VARCHAR,
+    $lastNameColumn VARCHAR,
+    $profilePictureColumn VARCHAR,
+    $dateOfBirthColumn DATE,
+    $dateJoinedColumn TIMESTAMP,
+    $isActiveColumn BOOLEAN DEFAULT 1,
+    $isAdminColumn BOOLEAN DEFAULT 0,
+    $isVerifiedColumn BOOLEAN DEFAULT 0
   )
 ''';
 
-const createRateTable = '''
-  CREATE TABLE IF NOT EXISTS "rate" (
-    "rate_id" INTEGER PRIMARY KEY AUTOINCREMENT,
-    "user_id" INTEGER NOT NULL,
-    "product_id" INTEGER NOT NULL,
-    "rate" INTEGER NOT NULL,
-    FOREIGN KEY("user_id") REFERENCES "user"("id")
-  )
-''';
-
-const createShopsTable = '''
-  CREATE TABLE IF NOT EXISTS "shops" (
-    "shop_id" INTEGER NOT NULL,
-    "category" TEXT NOT NULL,
-    FOREIGN KEY("shop_id") REFERENCES "shop"("id")
-  )
-''';
+// Shops Table
+const shopsTable = 'shops';
+const shopIdColumn = 'id';
+const shopNameColumn = 'name';
+const addressColumn = 'address';
+const phoneNumberColumn = 'phone_number';
+const shopEmailColumn = 'email';
+const categoryIdColumn = 'category_id';
+const ownerUserIdColumn = 'owner_user_id';
+const shopPictureColumn = 'shop_picture_path';
+const shopCreatedAtColumn = 'created_at';
 
 const createShopTable = '''
-  CREATE TABLE IF NOT EXISTS "shop" (
-    "id" INTEGER,
-    "shop_name" TEXT NOT NULL,
-    "products_id" INTEGER NOT NULL,
-    PRIMARY KEY("id")
+  CREATE TABLE IF NOT EXISTS $shopsTable (
+    $shopIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $shopNameColumn VARCHAR NOT NULL,
+    $addressColumn VARCHAR,
+    $phoneNumberColumn VARCHAR,
+    $shopEmailColumn VARCHAR,
+    $categoryIdColumn INTEGER,
+    $ownerUserIdColumn INTEGER,
+    $shopPictureColumn VARCHAR,
+    $shopCreatedAtColumn TIMESTAMP,
+    FOREIGN KEY($ownerUserIdColumn) REFERENCES $userTable($userIdColumn)
   )
 ''';
+
+// Products Table
+const productsTable = 'products';
+const productIdColumn = 'id';
+const productNameColumn = 'name';
+const productDescriptionColumn = 'description';
+const priceColumn = 'price';
+const shopIdForeignColumn = 'shop_id';
+const productPictureColumn = 'product_picture_path';
+const productCreatedAtColumn = 'created_at';
 
 const createProductsTable = '''
-  CREATE TABLE IF NOT EXISTS "product" (
-    "id" INTEGER,
-    PRIMARY KEY("id")
+  CREATE TABLE IF NOT EXISTS $productsTable (
+    $productIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $productNameColumn VARCHAR NOT NULL,
+    $productDescriptionColumn TEXT,
+    $priceColumn DECIMAL,
+    $shopIdForeignColumn INTEGER,
+    $productPictureColumn VARCHAR,
+    $productCreatedAtColumn TIMESTAMP,
+    FOREIGN KEY($shopIdForeignColumn) REFERENCES $shopsTable($shopIdColumn)
   )
 ''';
 
+// Services Table
+const servicesTable = 'services';
+const serviceIdColumn = 'id';
+const serviceNameColumn = 'name';
+const serviceDescriptionColumn = 'description';
+const servicePriceColumn = 'price';
+const durationColumn = 'duration';
+const serviceShopIdColumn = 'shop_id';
+const servicePictureColumn = 'service_picture_path';
+const serviceCreatedAtColumn = 'created_at';
+
+const createServicesTable = '''
+  CREATE TABLE IF NOT EXISTS $servicesTable (
+    $serviceIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $serviceNameColumn VARCHAR NOT NULL,
+    $serviceDescriptionColumn TEXT,
+    $servicePriceColumn DECIMAL,
+    $durationColumn INTEGER,
+    $serviceShopIdColumn INTEGER,
+    $servicePictureColumn VARCHAR,
+    $serviceCreatedAtColumn TIMESTAMP,
+    FOREIGN KEY($serviceShopIdColumn) REFERENCES $shopsTable($shopIdColumn)
+  )
+''';
+
+// Categories Table
+const categoriesTable = 'categories';
+const categoryNameColumn = 'name';
+const categoryDescriptionColumn = 'description';
+const parentIdColumn = 'parent_id';
+const iconPathColumn = 'icon_path';
+const categoryCreatedAtColumn = 'created_at';
+
+const createCategoriesTable = '''
+  CREATE TABLE IF NOT EXISTS $categoriesTable (
+    $categoryIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $categoryNameColumn VARCHAR NOT NULL,
+    $categoryDescriptionColumn TEXT,
+    $parentIdColumn INTEGER,
+    $iconPathColumn VARCHAR,
+    $categoryCreatedAtColumn TIMESTAMP
+  )
+''';
+
+// Ratings Table
+const ratingsTable = 'ratings';
+const ratingIdColumn = 'id';
+const ratingUserIdColumn = 'user_id';
+const ratingShopIdColumn = 'shop_id';
+const ratingProductIdColumn = 'product_id';
+const ratingServiceIdColumn = 'service_id';
+const ratingValueColumn = 'rating_value';
+const reviewTextColumn = 'review_text';
+const ratingCreatedAtColumn = 'created_at';
+const ratingUpdatedAtColumn = 'updated_at';
+
+const createRatingsTable = '''
+  CREATE TABLE IF NOT EXISTS $ratingsTable (
+    $ratingIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $ratingUserIdColumn INTEGER NOT NULL,
+    $ratingShopIdColumn INTEGER,
+    $ratingProductIdColumn INTEGER,
+    $ratingServiceIdColumn INTEGER,
+    $ratingValueColumn INTEGER NOT NULL,
+    $reviewTextColumn TEXT,
+    $ratingCreatedAtColumn TIMESTAMP,
+    $ratingUpdatedAtColumn TIMESTAMP,
+    FOREIGN KEY($ratingUserIdColumn) REFERENCES $userTable($userIdColumn),
+    FOREIGN KEY($ratingShopIdColumn) REFERENCES $shopsTable($shopIdColumn),
+    FOREIGN KEY($ratingProductIdColumn) REFERENCES $productsTable($productIdColumn),
+    FOREIGN KEY($ratingServiceIdColumn) REFERENCES $servicesTable($serviceIdColumn)
+  )
+''';
+
+// Delivery Apps Table
+const deliveryAppsTable = 'delivery_apps';
+const deliveryAppIdColumn = 'id';
+const appNameColumn = 'name';
+const websiteUrlColumn = 'website_url';
+const logoPathColumn = 'logo_path';
+const appCreatedAtColumn = 'created_at';
+
+const createDeliveryAppsTable = '''
+  CREATE TABLE IF NOT EXISTS $deliveryAppsTable (
+    $deliveryAppIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $appNameColumn VARCHAR NOT NULL,
+    $websiteUrlColumn VARCHAR,
+    $logoPathColumn VARCHAR,
+    $appCreatedAtColumn TIMESTAMP
+  )
+''';
+
+// Shop Delivery Table
+const shopDeliveryTable = 'shop_delivery';
+const shopDeliveryIdColumn = 'id';
+const shopDeliveryShopIdColumn = 'shop_id';
+const shopDeliveryAppIdColumn = 'app_id';
+
+const createShopDeliveryTable = '''
+  CREATE TABLE IF NOT EXISTS $shopDeliveryTable (
+    $shopDeliveryIdColumn INTEGER PRIMARY KEY AUTOINCREMENT,
+    $shopDeliveryShopIdColumn INTEGER NOT NULL,
+    $shopDeliveryAppIdColumn INTEGER NOT NULL,
+    FOREIGN KEY($shopDeliveryShopIdColumn) REFERENCES $shopsTable($shopIdColumn),
+    FOREIGN KEY($shopDeliveryAppIdColumn) REFERENCES $deliveryAppsTable($deliveryAppIdColumn)
+  )
+''';
 
 
 

@@ -1,14 +1,11 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
+import 'package:rates/Pages/home/home_page.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
-import 'package:rates/Pages/other/splash_screen.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/shops/shops_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_service.dart';
-import 'Pages/other/profile_page.dart';
-import 'Pages/home/home_page.dart';
 
 final Future<void> _initializeFirebase = Future.delayed(
     const Duration(
@@ -28,7 +25,7 @@ class InitPage extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return SplashScreen();
+            return HomePage();
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
             devtools.log('User: $user');
