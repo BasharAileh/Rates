@@ -1,9 +1,7 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
 import 'package:rates/Pages/home/home_page.dart';
-import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
-import 'package:rates/Pages/registration/login_page.dart';
-import 'package:rates/Pages/shops/shops_page.dart';
+import 'package:rates/Pages/shop/shops_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/services/auth/auth_service.dart';
 

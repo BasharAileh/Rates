@@ -5,7 +5,6 @@ import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/reset_pass_method_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
-import 'package:rates/Pages/registration/verify_success_page.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/Pages/shop/shops_page.dart';
 import 'package:rates/constants/routes.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/routes.dart';
-import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/services/auth/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {

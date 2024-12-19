@@ -218,11 +218,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-<<<<<<< HEAD
-                    builder: (context) => rest_info_page(),
-=======
-                    builder: (context) => const RestaurantDetailsPage(),
->>>>>>> Rates
+                    builder: (context) => RestaurantDetailsPage(),
                   ),
                 );
               },
@@ -233,12 +229,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 }
-<<<<<<< HEAD
-=======
-
 class RestaurantDetailsPage extends StatelessWidget {
-  const RestaurantDetailsPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -263,4 +254,3 @@ class RestaurantDetailsPage extends StatelessWidget {
     );
   }
 }
->>>>>>> Rates
