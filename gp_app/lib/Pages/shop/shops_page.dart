@@ -6,6 +6,8 @@ import '../../dialogs/nav_bar.dart';
 import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
+  const FoodPage({super.key});
+
   @override
   _FoodPageState createState() => _FoodPageState();
 }
@@ -256,7 +258,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       height: AspectRatios.height * 0.03197265625,
                       width: AspectRatios.width * 0.4807692307692308,
                       child: TextField(
-                        onChanged: _filterRestaurants,
+                       //onChanged: ,
                         decoration: InputDecoration(
                           hintText: 'Search for restaurants',
                           prefixIcon: const Icon(Icons.search),
@@ -314,7 +316,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           ),
         ),
       ),
-    
     );
   }
 }

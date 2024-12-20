@@ -38,7 +38,7 @@ class _view_ratingState extends State<view_rating> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Image.asset(
-                    'assets/images/testpic/babalyamen.jpg', 
+                    'assets/images/testpic/babalyamen.jpg',
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -53,12 +53,15 @@ class _view_ratingState extends State<view_rating> {
                         children: [
                           const Text(
                             'Bab el-yamen',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 8),
                           IconButton(
                             icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
                               color: isFavorite ? Colors.red : Colors.grey,
                             ),
                             onPressed: toggleFavorite,
@@ -93,7 +96,7 @@ class _view_ratingState extends State<view_rating> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
                   child: Image.asset(
-                    'assets/images/testpic/raizmalee.jpg', 
+                    'assets/images/testpic/raizmalee.jpg',
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -108,7 +111,8 @@ class _view_ratingState extends State<view_rating> {
                       children: [
                         Text(
                           'Mandi Meal',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Half chicken, rice, 2 spicy sauces',
@@ -178,7 +182,8 @@ class _view_ratingState extends State<view_rating> {
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Rate'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.favorite), label: 'Favorites'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
         selectedItemColor: Colors.yellow,
@@ -193,7 +198,11 @@ class ReviewTile extends StatelessWidget {
   final String review;
   final int rating;
 
-  const ReviewTile({super.key, required this.user, required this.review, required this.rating});
+  const ReviewTile(
+      {super.key,
+      required this.user,
+      required this.review,
+      required this.rating});
 
   @override
   Widget build(BuildContext context) {

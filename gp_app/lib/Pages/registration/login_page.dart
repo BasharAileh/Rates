@@ -7,10 +7,8 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
-import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/services/auth/auth_exception.dart';
 // ignore: unused_import
-import 'dart:developer' as devtools show log;
 
 import 'package:rates/services/auth/auth_service.dart';
 

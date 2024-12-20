@@ -4,7 +4,6 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
-import 'dart:developer' as devtools show log;
 
 import 'package:rates/services/auth/auth_service.dart';
 

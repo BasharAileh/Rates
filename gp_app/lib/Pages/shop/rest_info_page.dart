@@ -51,10 +51,8 @@ class _rest_info_pageState extends State<rest_info_page> {
                   enlargeCenterPage: true,
                   autoPlay: true,
                 ),
-                items: imgList.map((item) => Container(
-                  child: Center(
-                    child: Image.asset(item, fit: BoxFit.cover, width: 1000),
-                  ),
+                items: imgList.map((item) => Center(
+                  child: Image.asset(item, fit: BoxFit.cover, width: 1000),
                 )).toList(),
               ),
               const SizedBox(height: 16), // Add some spacing
