@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
   final List<String> starPaths = List.generate(
     7,
     (index) =>
-        '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/small_star_${index + 1}.svg',
+        'assets/logos/stars/small_star_${index + 1}.svg',
   );
   final List<double> starSzie = List.generate(7, (index) {
     double startSize = 1.85;
@@ -251,7 +251,7 @@ class _SplashScreenState extends State<SplashScreen>
             alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
             child: SvgPicture.asset(
               width: 120,
-              '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/upper_star.svg',
+              'assets/logos/stars/upper_star.svg',
             ),
           ),
           Align(
@@ -280,7 +280,7 @@ class _SplashScreenState extends State<SplashScreen>
             alignment: Alignment.centerLeft + const Alignment(0.9, -0.09),
             child: SvgPicture.asset(
               width: 100,
-              '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/lower_star.svg',
+              'assets/logos/stars/lower_star.svg',
             ),
           ),
           Align(
