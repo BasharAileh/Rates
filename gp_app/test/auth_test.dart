@@ -101,6 +101,7 @@ class MockAuthProvider implements AuthProvider {
       email: '',
       isEmailVerified: false,
       isAnonymous: false,
+      id: '',
     );
     _user = user;
     return Future.value(user);
@@ -126,6 +127,7 @@ class MockAuthProvider implements AuthProvider {
       email: '',
       isEmailVerified: true,
       isAnonymous: false,
+      id: '',
     );
     _user = newuser;
   }

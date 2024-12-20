@@ -233,8 +233,41 @@ class DatabaseRate {
         rate = map[rateColumn] as int;
 } */
 
+
+
+
+/* 
+
+//TODO singleton
+
+Static Tinal Notesservice shared = Notesservice,_ sharedinstance);
+Notesservice, sharedinstance:
+factory NotesService() = _shared;
+ */
+
+
+
+
+
 // ===================== CONSTANTS ===================== //
 const dbName = 'rates.db';
+
+
+/* 
+//TODO user functions
+
+create user
+get user
+delete user
+get user by id
+update user
+getOrCreateUser
+
+get user by email
+
+get all users
+
+*/
 
 // User Table
 const userTable = 'users';
@@ -266,6 +299,24 @@ const createUserTable = '''
   )
 ''';
 
+
+
+/* 
+//TODO shop functions
+
+add shop
+get shop
+delete shop
+update shop
+get shop by id
+get all shops
+get shops by category
+
+*/
+
+
+
+
 // Shops Table
 const shopsTable = 'shops';
 const shopIdColumn = 'id';
@@ -292,6 +343,24 @@ const createShopTable = '''
     FOREIGN KEY($ownerUserIdColumn) REFERENCES $userTable($userIdColumn)
   )
 ''';
+
+
+
+/* 
+//TODO product functions
+
+add product
+get product
+delete product
+update product
+get product by id
+get all products
+get products by shop
+get products by category
+
+
+*/
+
 
 // Products Table
 const productsTable = 'products';
