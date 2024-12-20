@@ -1,196 +1,205 @@
-import 'package:flutter/material.dart'; // Imports the Flutter material design package.
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
-import 'package:rates/constants/aspect_ratio.dart'; // Imports aspect ratio constants for responsive UI.
-import 'package:rates/constants/routes.dart';
-import '../other/favorites_page.dart'; // Imports the FavoritesPage widget for navigation.
+import 'package:rates/constants/aspect_ratio.dart';
+import '../../dialogs/nav_bar.dart';
+import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
   const FoodPage({super.key});
 
   @override
-  _FoodPageState createState() =>
-      _FoodPageState(); // Creates the state for FoodPage.
+  _FoodPageState createState() => _FoodPageState();
 }
 
-class _FoodPageState extends State<FoodPage> {
-  // List of restaurants with initial properties.
+class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   List<Map<String, dynamic>> restaurantList = List.generate(
-    10, // Generate 10 sample restaurants.
+    10,
     (index) => {
-      'name': 'Restaurant #$index', // Name of the restaurant.
-      'rating': 1.5 + (index + 1 % 2) * 0.5, // Generates a sample rating.
-      'image': 'assets/images/R.png', // Placeholder for the restaurant image.
-      'isFavorite':
-          false, // Indicates if the restaurant is marked as a favorite.
-      'index': index, // Tracks the index for identification.
+      'name': 'Restaurant #$index',
+      'rating': 1.5 + (index + 1 % 2) * 0.5,
+      'image': 'assets/images/Bashar_Akileh.jpg',
+      'isFavorite': false,
+      'index': index,
     },
   );
 
-  // Toggles the favorite status of a restaurant.
-  void toggleFavorite(int index) {
+  void _filterRestaurants(String query) {
     setState(() {
-      restaurantList[index]['isFavorite'] =
-          !restaurantList[index]['isFavorite']; // Toggles favorite status.
+      restaurantList = List.generate(
+        10,
+        (index) => {
+          'name': 'Restaurant #$index',
+          'rating': 1.5 + (index + 1 % 2) * 0.5,
+          'image': 'assets/images/Bashar_Akileh.jpg',
+          'isFavorite': false,
+          'index': index,
+        },
+      ).where((restaurant) {
+        final name = restaurant['name'] as String?;
+        return name != null && name.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  void _sortRestaurants(String criteria) {
+    setState(() {
+      if (criteria == 'Rating') {
+        restaurantList.sort((a, b) => b['rating'].compareTo(a['rating']));
+      } else if (criteria == 'Alphabetical') {
+        restaurantList.sort((a, b) => a['name'].compareTo(b['name']));
+      }
+    });
+  }
+
+  void toggleFavorite(int index) {
+    final previousState = restaurantList[index]['isFavorite'];
+
+    setState(() {
+      restaurantList[index]['isFavorite'] = !previousState;
     });
 
-    // Shows a snack bar indicating the action performed.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          restaurantList[index]['isFavorite']
-              ? 'Added to favorite list' // Message for adding to favorites.
-              : 'Removed from favorite list', // Message for removing from favorites.
+    showSnackBar(restaurantList[index]['isFavorite'], index);
+  }
+
+  void showSnackBar(bool isFavorite, int index) {
+    String snackBarTitle = isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
+    String snackBarMessage = isFavorite
+        ? "The item has been successfully added to your favorite list."
+        : "The item has been removed from your favorite list.";
+
+    Get.snackbar(
+      snackBarTitle, // Title
+      snackBarMessage, // Message
+      titleText: Text(
+        snackBarTitle,
+        style: const TextStyle(
+          fontSize: 16, // Title font size
+          fontWeight: FontWeight.bold, // Bold title
         ),
-        duration: const Duration(seconds: 1), // Duration of the snack bar.
       ),
+      messageText: Text(
+        snackBarMessage,
+        style: const TextStyle(
+          fontSize: 12, // Message font size
+          fontWeight: FontWeight.normal, // Regular weight for message
+        ),
+      ),
+      backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+      colorText: const Color.fromARGB(255, 255, 255, 255),
+      margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+      padding: const EdgeInsets.all(5),
+      boxShadows: [
+        const BoxShadow(
+          color: Color.fromARGB(255, 56, 56, 56),
+          offset: Offset(0, 2),
+          blurRadius: 5,
+          spreadRadius: 0.5,
+        ),
+      ],
+     
     );
   }
 
-  // Handles navigation for BottomNavigationBar item selection.
-  void _onItemTapped(int index) {
-    if (index == 1) {
-      // Navigates to FavoritesPage when the second item is tapped.
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FavoritesPage(
-            favorites: restaurantList
-                .where((restaurant) => restaurant['isFavorite'])
-                .toList(), // Filters the favorite restaurants.
-            onRemoveFavorite: (index) {
-              setState(() {
-                restaurantList[index]['isFavorite'] =
-                    false; // Updates favorite status.
-              });
-            },
-          ),
-        ),
-      );
-    }
-  }
-
-  // Widget for displaying a single restaurant card.
   Widget restaurantCard({
-    required String name, // Restaurant name.
-    required String image, // Restaurant image.
-    required double rating, // Restaurant rating.
-    required bool isFavorite, // Whether the restaurant is a favorite.
-    required VoidCallback
-        onFavoriteToggle, // Callback for toggling favorite status.
-    required VoidCallback
-        onDetailsPressed, // Callback for viewing restaurant details.
+    required String name,
+    required String image,
+    required double rating,
+    required bool isFavorite,
+    required VoidCallback onFavoriteToggle,
+    required VoidCallback onDetailsPressed,
   }) {
-    Color ratingColor; // Stores the color for rating.
-    String ratingText = "Rating of "; // Label for the rating text.
+    Color ratingColor;
+    String ratingText = "Rating of ";
 
-    // Determine the color of the rating text based on its value.
     if (rating >= 4) {
-      ratingColor = Colors.green; // Green for high ratings.
+      ratingColor = Colors.green;
     } else if (rating >= 3) {
-      ratingColor = Colors.orange; // Orange for medium ratings.
+      ratingColor = Colors.orange;
     } else {
-      ratingColor = Colors.red; // Red for low ratings.
+      ratingColor = Colors.red;
     }
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Background color of the card.
-        borderRadius: BorderRadius.circular(10), // Rounded corners.
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.1), // Shadow color with opacity.
-            blurRadius: 0, // Blur radius for the shadow.
-            offset: const Offset(0, 2), // Shadow offset.
+            color: Colors.white.withOpacity(0.1),
+            blurRadius: 0,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: InkWell(
-        onTap: () {
-          Get.toNamed(restInfoRoute);
-        },
-        child: Row(
-          children: [
-            Image.asset(
-              image, // Displays the restaurant image.
-              height: 69, // Fixed height for the image.
-              width: 67, // Fixed width for the image.
+      child: Row(
+        children: [
+          ClipOval(
+            child: Image.asset(
+              image,
+              height: 69,
+              width: 67,
+              fit: BoxFit.cover,
             ),
-            const SizedBox(width: 10), // Space between image and text.
-
-            // Restaurant information section.
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Aligns text to the left.
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Centers text vertically.
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        name, // Displays the restaurant name.
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 5), // Space between text elements.
-                      const Text(
-                        "#1st Place", // Example ranking text.
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2), // Space below the name.
-                  Row(
-                    children: [
-                      Text(
-                        ratingText, // Rating label text.
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                      Text(
-                        "$rating stars", // Displays the rating value.
-                        style: TextStyle(color: ratingColor, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 3), // Space below the rating.
-                  InkWell(
-                    onTap: onDetailsPressed, // Trigger details view callback.
-                    child: const Text(
-                      "View Details", // Details button text.
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.grey),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(width: 5),
+                    const Text(
+                      "#1st Place",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(
+                      ratingText,
+                      style: const TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                    Text(
+                      "$rating stars",
+                      style: TextStyle(color: ratingColor, fontSize: 12),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                InkWell(
+                  onTap: onDetailsPressed,
+                  child: const Text(
+                    "View Details",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            // Favorite icon button for toggling favorite status.
-            IconButton(
-              icon: Icon(
-                isFavorite
-                    ? Icons.favorite
-                    : Icons
-                        .favorite_border, // Icon changes based on favorite status.
-                color: isFavorite
-                    ? Colors.red
-                    : Colors
-                        .grey, // Icon color changes based on favorite status.
-              ),
-              onPressed:
-                  onFavoriteToggle, // Calls the favorite toggle callback.
+          ),
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : Colors.grey,
             ),
-          ],
-        ),
+            onPressed: onFavoriteToggle,
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width; // Get screen width.
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
