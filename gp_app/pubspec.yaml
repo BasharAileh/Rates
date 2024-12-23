@@ -87,6 +87,8 @@ flutter:
   - assets/logos/letters/
   - assets/images/
   - assets/icons/
+  - assets/images/testpic/
+  
   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
