@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'menu_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rates/dialogs/nav_bar.dart';
 
 class rest_info_page extends StatefulWidget {
   const rest_info_page({super.key});
@@ -38,7 +37,6 @@ Future<void> _launchUrl(String input) async {
     throw 'Invalid input: $input';
   }
 }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,7 @@ Future<void> _launchUrl(String input) async {
           // Image Slider Section
           CarouselSlider(
             options: CarouselOptions(
-               aspectRatio: 100/40,
+              aspectRatio: 100/40,
               enlargeCenterPage: true,
               autoPlay: true,
             ),

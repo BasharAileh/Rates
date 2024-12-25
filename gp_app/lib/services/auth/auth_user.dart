@@ -11,7 +11,7 @@ class AuthUser {
     required this.email,
     required this.isEmailVerified,
     required this.isAnonymous,
-    required this.id, 
+    required this.id,
   });
 
   factory AuthUser.fromFirebase(User user) => AuthUser(

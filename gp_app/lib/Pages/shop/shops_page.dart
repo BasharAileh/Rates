@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import '../../dialogs/nav_bar.dart';
 import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
@@ -97,7 +96,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           spreadRadius: 0.5,
         ),
       ],
-     
     );
   }
 
