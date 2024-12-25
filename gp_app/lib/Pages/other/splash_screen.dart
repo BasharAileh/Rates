@@ -251,7 +251,7 @@ class _SplashScreenState extends State<SplashScreen>
             alignment: Alignment.topCenter + const Alignment(0.05, 0.88),
             child: SvgPicture.asset(
               width: 120,
-              '/Users/braashaban/offline_programming/Rates/gp_app/assets/logos/stars/upper_star.svg',
+              'assets/logos/stars/upper_star.svg',
             ),
           ),
           Align(

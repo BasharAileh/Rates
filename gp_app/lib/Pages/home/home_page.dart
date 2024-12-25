@@ -1,13 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/services/cloud/cloud_instances.dart';
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 late bool _showEmailVerificationMessage;
 late bool _isEmailVerified;
+FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
+late String path;
 
 List<String> categories = ["Serviceis", "Food", "Clothes", "Education", "Cars"];
 
@@ -51,6 +57,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -126,27 +133,51 @@ class _HomePageState extends State<HomePage> {
                           width: AspectRatios.width * 0.14256410256,
                           child: Column(
                             children: [
-                              SizedBox(
-                                width: AspectRatios.width * 0.10256410256,
-                                height:
-                                    AspectRatios.heightWithoutAppBar * 0.044,
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      color: AppColors.iconBackground
-                                          .withOpacity(0.15),
-                                      height: AspectRatios.height * 0.044,
-                                      width: AspectRatios.width * 0.10256410256,
-                                    ),
-                                    Center(
-                                      child: SvgPicture.asset(
-                                        'assets/icons/${category.toLowerCase()}_icon.svg',
-                                        width:
-                                            AspectRatios.width * 0.08974358974,
+                              InkWell(
+                                onTap: () async {
+                                  /* FirebaseCloudStorage cloudStorage =
+                                      FirebaseCloudStorage();
+                                  final a = await cloudStorage.getHttpLink(
+                                      'shops/Food/Nar_Snack/Shop_Images/Nar_Snack.jpg');
+                                  print(a); */
+                                  Shop shop = Shop(
+                                    shopID: 'nar_snack',
+                                    shopName: 'Nar Snack',
+                                    shopLocation: 'Kumasi',
+                                    phoneNumber: '0241234567',
+                                    shopOwnerEmail: '',
+                                    categoryID: 'test_cat',
+                                    shopOwnerID: '1',
+                                    shopImagePath:
+                                        await cloudStorage.getShopImagePath(
+                                            'test_cat', 'nar_snack'),
+                                    addedAt: '2021-10-10',
+                                  );
+                                  print(shop);
+                                },
+                                child: SizedBox(
+                                  width: AspectRatios.width * 0.10256410256,
+                                  height:
+                                      AspectRatios.heightWithoutAppBar * 0.044,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        color: AppColors.iconBackground
+                                            .withOpacity(0.15),
                                         height: AspectRatios.height * 0.044,
+                                        width:
+                                            AspectRatios.width * 0.10256410256,
                                       ),
-                                    ),
-                                  ],
+                                      Center(
+                                        child: SvgPicture.asset(
+                                          'assets/icons/${category.toLowerCase()}_icon.svg',
+                                          width: AspectRatios.width *
+                                              0.08974358974,
+                                          height: AspectRatios.height * 0.044,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               SizedBox(
@@ -271,10 +302,37 @@ class _HomePageState extends State<HomePage> {
                                                             0.05,
                                                   ),
                                                   child: CircleAvatar(
-                                                    radius: imageSize,
-                                                    backgroundImage: AssetImage(
-                                                        'assets/images/_4chicks_logo.png'),
-                                                  ),
+                                                      radius: imageSize,
+                                                      child: FutureBuilder(
+                                                        future: cloudStorage
+                                                            .getHttpLink(
+                                                                'shops/food/nar_snack/shop_images/Nar_Snack.jpg'
+                                                                    .toLowerCase()),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot.connectionState ==
+                                                                  ConnectionState
+                                                                      .done &&
+                                                              snapshot
+                                                                  .hasData) {
+                                                            return CircleAvatar(
+                                                              radius: imageSize,
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      snapshot
+                                                                          .data
+                                                                          .toString()),
+                                                            );
+                                                          }
+                                                          return CircularProgressIndicator(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            color: Colors.black,
+                                                            strokeWidth: 2,
+                                                          );
+                                                        },
+                                                      )),
                                                 ),
                                                 Flexible(
                                                   child: Container(
