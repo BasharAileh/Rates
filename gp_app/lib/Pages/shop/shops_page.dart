@@ -63,7 +63,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   }
 
   void showSnackBar(bool isFavorite, int index) {
-    String snackBarTitle = isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
+    String snackBarTitle =
+        isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
     String snackBarMessage = isFavorite
         ? "The item has been successfully added to your favorite list."
         : "The item has been removed from your favorite list.";
@@ -97,7 +98,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           spreadRadius: 0.5,
         ),
       ],
-     
     );
   }
 
@@ -152,7 +152,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 5),
                     const Text(
@@ -179,7 +180,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   onTap: onDetailsPressed,
                   child: const Text(
                     "View Details",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
                 ),
               ],
@@ -250,7 +252,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                 children: [
                   const Text(
                     "Discover and Rate",
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
                   ),
                   SizedBox(width: 5),
                   Expanded(
@@ -258,11 +263,12 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       height: AspectRatios.height * 0.03197265625,
                       width: AspectRatios.width * 0.4807692307692308,
                       child: TextField(
-                       //onChanged: ,
+                        //onChanged: ,
                         decoration: InputDecoration(
                           hintText: 'Search for restaurants',
                           prefixIcon: const Icon(Icons.search),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: const BorderSide(color: Colors.grey),
