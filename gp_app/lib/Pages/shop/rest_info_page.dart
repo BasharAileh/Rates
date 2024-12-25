@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:app_links/app_links.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'Menu_Page.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'menu_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rates/dialogs/nav_bar.dart';
 
 class rest_info_page extends StatefulWidget {
   const rest_info_page({super.key});
@@ -12,324 +14,322 @@ class rest_info_page extends StatefulWidget {
 }
 
 class _rest_info_pageState extends State<rest_info_page> {
-  final AppLinks _appLinks = AppLinks();
-
-  void _launchAppLink(String url) async {
-    try {
-      await _appLinks.openAppLink(Uri.parse(url));
-    } catch (e) {
-      print('Could not launch $url: $e');
-    }
-  }
-
   final List<String> imgList = [
     'assets/images/testpic/babalyamen.jpg',
-    'assets/images/testpic/raizmalee.jpg',
+    'assets/images/testpic/babalyamen.jpg',
     'assets/images/testpic/babalyamen.jpg',
   ];
+
+Future<void> _launchUrl(String input) async {
+  final uri = Uri.tryParse(input);
+  if (uri != null) {
+    final canLaunch = await canLaunchUrl(uri);
+    if (canLaunch) {
+      await launchUrl(
+        uri,
+        mode: input.startsWith('tel:') ? LaunchMode.platformDefault : LaunchMode.externalApplication, // Use platform default for phone numbers
+      );
+    } else {
+      print('Cannot launch $input');
+      throw 'Could not launch $input';
+    }
+  } else {
+    print('Invalid input: $input');
+    throw 'Invalid input: $input';
+  }
+}
+ 
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("View Details"),
+        title: const Text("Restaurant information"),
         backgroundColor: Colors.white,
       ),
-      body: Stack(
+      body: Column(
         children: [
-          // Content
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image Slider Section
-              CarouselSlider(
-                options: CarouselOptions(
-                  aspectRatio: 16 / 9,
-                  enlargeCenterPage: true,
-                  autoPlay: true,
-                ),
-                items: imgList.map((item) => Center(
-                  child: Image.asset(item, fit: BoxFit.cover, width: 1000),
-                )).toList(),
+          // Image Slider Section
+          CarouselSlider(
+            options: CarouselOptions(
+               aspectRatio: 100/40,
+              enlargeCenterPage: true,
+              autoPlay: true,
+            ),
+            items: imgList.map((item) => Flexible(
+              flex: 10,
+              child: Center(
+                child: Image.asset(item, fit: BoxFit.cover, width: screenHeight, height: screenHeight*0.40),
               ),
-              const SizedBox(height: 16), // Add some spacing
-
-              // Details Section
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Bab Eleyemen',
-                            style: TextStyle(
-                              fontSize: 28, // Increased font size
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black, // Set text color to black
-                            ),
-                          ),
-                          const SizedBox(width: 2), // Add some spacing
-                          IconButton(
-                            icon: const Icon(FontAwesomeIcons.facebook, color: Colors.black, size: 24),
-                            onPressed: () => _launchAppLink('https://www.facebook.com'),
-                          ),
-                          IconButton(
-                            icon: const Icon(FontAwesomeIcons.whatsapp, color: Colors.black, size: 24),
-                            onPressed: () => _launchAppLink('https://www.whatsapp.com'),
-                          ),
-                          IconButton(
-                            icon: const Icon(FontAwesomeIcons.instagram, color: Colors.black, size: 24),
-                            onPressed: () => _launchAppLink('https://www.instagram.com'),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.favorite, color: Colors.black, size: 24),
-                            onPressed: () => _launchAppLink('https://www.example.com'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8), // Increased spacing
-                      const Text(
-                        'Yemeni food',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black, // Set text color to black
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Information Section
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(FontAwesomeIcons.rankingStar, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                "1st Place",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black, // Set text color to black
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _launchAppLink('geo:0,0?q=Jordan+University+St'), // Replace with your location URL
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.place_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Jordan University St.',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black, // Set text color to black
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _launchAppLink('tel:0798086423'), // Replace with your phone number
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(Icons.phone_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  '0798086423',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black, // Set text color to black
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.access_time_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                '10 AM - 11 PM',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black, // Set text color to black
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.delivery_dining_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Careem - Talabat',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black, // Set text color to black
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.card_giftcard_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'No Vouchers exist currently',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black, // Set text color to black
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.attach_money_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 24), // Increased icon size
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                '\$\$\$\$',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black, // Set text color to black
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Spacer to push the button to the bottom
-                      const Spacer(),
-
-                      // Menu Button
-                      Center(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const MenuPage()),
-                            );
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            child: Text(
-                              'Menu',
-                              style: TextStyle(color: Colors.white, fontSize: 18), // Increased font size
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            )).toList(),
           ),
-          // Positioned Container
-          Positioned(
-            top: 208, // Adjust the position as needed
-            left: 0,
-            right: 0,
-            child: Center(
+          // Positioned Container for Rating
+          Stack(
+            children: [ Transform.translate(
+              offset: Offset(0.0, -screenHeight*0.06 / 2.0),
               child: Container(
-                width: screenWidth / 1.5, // Set the width to half of the screen width
+                width: screenWidth *0.595,
+                height: screenHeight*0.06, // Set the width to half of the screen width
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  color: Color(0xFFF3C623)
+,
                   borderRadius: BorderRadius.circular(30), // Adjust the radius as needed
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: const Center(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.002),
+                child: Center(
                   child: Text(
                     '3.4 Stars | 300+ Reviews',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18, // Increased font size
+                      fontSize:  screenHeight/40// Responsive font size
                     ),
                   ),
                 ),
               ),
             ),
+            ],
           ),
+          // Details Section
+          Flexible(
+            flex: 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+               Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Bab Eleyemen',
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05, // Responsive font size
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black, // Set text color to black
+                      ),
+                    
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                  "assets/icons/facebook.svg",
+                                  width: screenWidth * 0.06, // Responsive icon size
+                                  height: screenWidth * 0.06, // Responsive icon size
+                                ),
+                                onPressed: () => _launchUrl('https://www.facebook.com/share/1BcaP3Xsdz/?mibextid=wwXIfr'),
+                              ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                  "assets/icons/whatsapp.svg",
+                                  width: screenWidth * 0.06, // Responsive icon size
+                                  height: screenWidth * 0.06, // Responsive icon size
+                                ),
+                                onPressed: () => _launchUrl('https://www.youtube.com/'),
+                              ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                  "assets/icons/instagram.svg",
+                                  width: screenWidth * 0.05, // Responsive icon size
+                                  height: screenWidth * 0.05, // Responsive icon size
+                                ),
+                                onPressed: () => _launchUrl('https://www.instagram.com'),
+                              ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: SvgPicture.asset(
+                                  "assets/icons/favorite_icon.svg",
+                                  width: screenWidth * 0.06, // Responsive icon size
+                                  height: screenWidth * 0.06, // Responsive icon size
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                Text(
+                  'Yemeni food',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.04, // Responsive font size
+                    color: Colors.black, // Set text color to black
+                  ),
+                ),
+                
+                    
+                // Information Section
+               Column(
+                 children: [
+                  SizedBox(height: screenHeight * 0.01),
+                   Row(
+                     children: [
+                       Icon(FontAwesomeIcons.rankingStar, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                       SizedBox(width: screenWidth * 0.03),
+                       Expanded(
+                         child: Text(
+                           "1st Place",
+                           style: TextStyle(
+                             fontSize: screenWidth *  0.045,
+                             color: Colors.black, // Set text color to black
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   GestureDetector(
+                     onTap: () => _launchUrl('geo:0,0?q=Jordan+University+St'), // Replace with your location URL
+                     child: Row(
+                       children: [
+                         Icon(Icons.place_outlined, color: const Color.fromARGB(255, 0, 0, 0), size:  screenWidth * 0.06), // Increased icon size
+                         SizedBox(width: screenWidth * 0.03),
+                         Expanded(
+                           child: Text(
+                             'Jordan University St.',
+                             style: TextStyle(
+                               fontSize: screenWidth * 0.045,
+                               color: Colors.black, // Set text color to black
+                             ),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   GestureDetector(
+                     onTap: () => _launchUrl('tel:0798086423'), // Replace with your phone number
+                     child: Row(
+                       children: [
+                         Icon(Icons.phone_outlined, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                         SizedBox(width: screenWidth * 0.03),
+                         Expanded(
+                           child: Text(
+                             '0798086423',
+                             style: TextStyle(
+                               fontSize: screenWidth *  0.045,
+                               color: Colors.black, // Set text color to black
+                             ),
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   Row(
+                     children: [
+                       Icon(Icons.access_time_outlined, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                       SizedBox(width: screenWidth * 0.03),
+                       Expanded(
+                         child: Text(
+                           '10 AM - 11 PM',
+                           style: TextStyle(
+                             fontSize: screenWidth *  0.045,
+                             color: Colors.black, // Set text color to black
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   Row(
+                     children: [
+                       Icon(Icons.delivery_dining_outlined, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                       SizedBox(width: screenWidth * 0.03),
+                       Expanded(
+                         child: Text(
+                           'Careem - Talabat',
+                           style: TextStyle(
+                             fontSize: screenWidth *  0.045,
+                             color: Colors.black, // Set text color to black
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   Row(
+                     children: [
+                       Icon(Icons.card_giftcard_outlined, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                       SizedBox(width: screenWidth * 0.03),
+                       Expanded(
+                         child: Text(
+                           'No Vouchers exist currently',
+                           style: TextStyle(
+                             fontSize: screenWidth *  0.045,
+                             color: Colors.black, // Set text color to black
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: screenHeight * 0.01),
+                   Row(
+                     children: [
+                       Icon(Icons.attach_money_outlined, color: const Color.fromARGB(255, 0, 0, 0), size: screenWidth * 0.06), // Increased icon size
+                       SizedBox(width: screenWidth * 0.03),
+                       Expanded(
+                         child: Text(
+                           '\$\$\$\$',
+                           style: TextStyle(
+                             fontSize: screenWidth *  0.045,
+                             color: Colors.black, // Set text color to black
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                 ],
+               ),
+                    
+                // Menu Button
+            
+              ],
+            ),
+          ),
+          Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFF3C623),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MenuPage()),
+                  );
+                },
+                child: Text(
+                  'Menu',
+                  style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.045), // Increased font size
+                ),
+              ),
+            ],
+          ),
+        ),
+              
         ],
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star_outline),
-            label: 'Rate',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_outline),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
-            label: 'Info',
-          ),
-        ],
-      ),
+      
     );
   }
-}
-
-extension on AppLinks {
-  openAppLink(Uri parse) {}
 }

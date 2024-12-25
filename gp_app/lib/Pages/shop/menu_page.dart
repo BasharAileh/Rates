@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
+import 'rest_info_page.dart';
 import 'view_ratings_page.dart'; // Import the ViewRatingPage
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MenuPage(),
-    );
-  }
-}
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -35,9 +22,40 @@ class _MenuPageState extends State<MenuPage> {
     {"name": "raiz male with vegetables", "image": "assets/images/testpic/raizmalee.jpg"}
   ];
   String searchQuery = "";
+  final ScrollController _scrollController = ScrollController();
+  bool _isVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+        if (_isVisible) {
+          setState(() {
+            _isVisible = false;
+          });
+        }
+      } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+        if (!_isVisible) {
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     List<Map<String, String>> filteredMenuItems = menuItems
         .where((item) => item["name"]!.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
@@ -48,183 +66,223 @@ class _MenuPageState extends State<MenuPage> {
         elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const rest_info_page()),
+            );
+          },
         ),
         title: const Text(
           'Menu',
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_alt, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/babalyamen.jpg'),
-                  backgroundColor: Colors.black,
-                  radius: 40,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        restaurantName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Rating of $rating',
-                        style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ],
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: _isVisible ? kToolbarHeight : 0.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Discover and rate",
+                    style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Color(0xFF5D5C66)),
                   ),
-                ),
-                const Icon(Icons.favorite_border, color: Colors.black),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search menu items...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                prefixIcon: Icon(Icons.search),
+                  SizedBox(width: screenWidth * 0.02), // Add some spacing between the columns
+                  SizedBox(
+                    height: screenHeight * 0.04,
+                    width: screenWidth * 0.55,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        hintText: 'Search for a meal',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                        contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0), // Adjusted padding
+                      ),
+                      style: TextStyle(fontSize: screenWidth * 0.035), // Adjusted font size
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
             ),
           ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: _isVisible ? kToolbarHeight : 0.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: screenWidth * 0.12,
+                    height: screenWidth * 0.12,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/testpic/babalyamen.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          restaurantName,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Rating of $rating',
+                          style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.favorite_border, color: Colors.black, size: screenWidth * 0.06),
+                ],
+              ),
+            ),
+          ),
+          
           Expanded(
+            
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: filteredMenuItems.length,
               itemBuilder: (context, index) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 200,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(20)),
-                          image: DecorationImage(
-                            image: AssetImage(filteredMenuItems[index]["image"]!), // Use the image from the filtered list
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          color: Colors.black.withOpacity(0.5), // Transparent black overlay
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
+                return Column(
+                  
+                  children: [
+                     Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.amber, // Transparent black background
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      shadowColor: Colors.black, // Add dark shadow color
-                                      elevation: 10, // Increase elevation for a more pronounced shadow
-                                    ),
-                                    child: const Text('Rate'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const view_rating()),
-                                      );
-                                    },
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: Colors.black.withOpacity(0.7), // Transparent black background
-                                    ),
-                                    child: const Text(
-                                      'view ratings and comments',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              SizedBox(width: screenWidth*0.059,),
                               Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  filteredMenuItems[index]["name"]!, // Use the name from the filtered list
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          filteredMenuItems[index]["name"]!, // Use the name from the filtered list
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: screenWidth * 0.04,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
                             ],
                           ),
+                    Container(
+                      height: screenHeight / 5.5, // Adjust the height to show 4 items at once
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        image: DecorationImage(
+                          image: AssetImage(filteredMenuItems[index]["image"]!), // Use the image from the filtered list
+                          fit: BoxFit.fill,
                         ),
                       ),
-                    ],
-                  ),
+                      
+                      child: Stack(
+                        
+                        children: [
+                          
+                         
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: const [
+                                 Color.fromRGBO(0, 0, 0, 0.75),
+                                 Color.fromRGBO(0, 0, 0, 0.1875),
+                             
+                            ],
+                          ), // Transparent black overlay
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20),
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.003),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const view_rating()),
+                                          );
+                                        },
+                                        // Transparent black background
+                                        
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              'view ratings and comments',
+                                              style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
+                                            ),
+                                            Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.white,
+                                              size: screenWidth * 0.04,
+                                            ),
+                                          ],
+                                        ),
+                                        
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFFF3C623),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                           // Increase elevation for a more pronounced shadow
+                                        ),
+                                        child: Text('Rate', style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.white)),
+                                      ),
+                                      
+                                    ],
+                                  ),
+                                  
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: 'Rate',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            label: 'About',
-          ),
-        ],
-      ),
+      
     );
   }
 }
