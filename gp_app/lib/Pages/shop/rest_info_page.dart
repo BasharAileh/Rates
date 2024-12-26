@@ -4,14 +4,14 @@ import 'package:app_links/app_links.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'Menu_Page.dart';
 
-class rest_info_page extends StatefulWidget {
-  const rest_info_page({super.key});
+class RestaurantInformationPage extends StatefulWidget {
+  const RestaurantInformationPage({super.key});
 
   @override
-  State<rest_info_page> createState() => _rest_info_pageState();
+  State<RestaurantInformationPage> createState() => RestaurantInformationPageState();
 }
 
-class _rest_info_pageState extends State<rest_info_page> {
+class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   final AppLinks _appLinks = AppLinks();
 
   void _launchAppLink(String url) async {

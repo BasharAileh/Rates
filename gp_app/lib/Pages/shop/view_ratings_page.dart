@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class view_rating extends StatefulWidget {
-  const view_rating({super.key});
+class ViewRating extends StatefulWidget {
+  const ViewRating({super.key});
 
   @override
-  State<view_rating> createState() => _view_ratingState();
+  State<ViewRating> createState() => ViewRatingState();
 }
 
-class _view_ratingState extends State<view_rating> {
+class ViewRatingState extends State<ViewRating> {
   bool isFavorite = false;
 
   void toggleFavorite() {

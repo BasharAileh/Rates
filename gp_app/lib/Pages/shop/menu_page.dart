@@ -163,7 +163,7 @@ class _MenuPageState extends State<MenuPage> {
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => const view_rating()),
+                                        MaterialPageRoute(builder: (context) => const ViewRating()),
                                       );
                                     },
                                     style: TextButton.styleFrom(
