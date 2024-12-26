@@ -6,11 +6,11 @@ import 'menu_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 
-class rest_info_page extends StatefulWidget {
-  const rest_info_page({super.key});
+class RestaurantInformationPage extends StatefulWidget {
+  const RestaurantInformationPage({super.key});
 
   @override
-  State<rest_info_page> createState() => _rest_info_pageState();
+  State<RestaurantInformationPage> createState() => RestaurantInformationPageState();
 }
 
 class _rest_info_pageState extends State<rest_info_page> {
