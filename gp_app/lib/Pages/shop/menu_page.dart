@@ -15,11 +15,27 @@ class _MenuPageState extends State<MenuPage> {
   final String restaurantName = "Bab el-yamen";
   final String rating = "3.5 stars";
   final List<Map<String, String>> menuItems = [
-    {"name": "raiz male with chicken", "image": "assets/images/testpic/raizmalee.jpg"},
-    {"name": "raiz male with beef", "image": "assets/images/testpic/raizmalee.jpg"},
-    {"name": "raiz male with lamb", "image": "assets/images/testpic/raizmalee.jpg"},
-    {"name": "raiz male with fish", "image": "assets/images/testpic/babalyamen.jpg"},
-    {"name": "raiz male with vegetables", "image": "assets/images/testpic/raizmalee.jpg"}
+    {
+      "name": "raiz male with chicken",
+      "image":
+          "/Users/braashaban/offline_programming/Rates/gp_app/assets/images/meals/sweet_chilly_sandwich.jpg"
+    },
+    {
+      "name": "raiz male with beef",
+      "image": "assets/images/testpic/raizmalee.jpg"
+    },
+    {
+      "name": "raiz male with lamb",
+      "image": "assets/images/testpic/raizmalee.jpg"
+    },
+    {
+      "name": "raiz male with fish",
+      "image": "assets/images/testpic/babalyamen.jpg"
+    },
+    {
+      "name": "raiz male with vegetables",
+      "image": "assets/images/testpic/raizmalee.jpg"
+    }
   ];
   String searchQuery = "";
   final ScrollController _scrollController = ScrollController();
@@ -29,13 +45,15 @@ class _MenuPageState extends State<MenuPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
         if (_isVisible) {
           setState(() {
             _isVisible = false;
           });
         }
-      } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
         if (!_isVisible) {
           setState(() {
             _isVisible = true;
@@ -57,7 +75,8 @@ class _MenuPageState extends State<MenuPage> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     List<Map<String, String>> filteredMenuItems = menuItems
-        .where((item) => item["name"]!.toLowerCase().contains(searchQuery.toLowerCase()))
+        .where((item) =>
+            item["name"]!.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -90,9 +109,14 @@ class _MenuPageState extends State<MenuPage> {
                 children: [
                   Text(
                     "Discover and rate",
-                    style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Color(0xFF5D5C66)),
+                    style: TextStyle(
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF5D5C66)),
                   ),
-                  SizedBox(width: screenWidth * 0.02), // Add some spacing between the columns
+                  SizedBox(
+                      width: screenWidth *
+                          0.02), // Add some spacing between the columns
                   SizedBox(
                     height: screenHeight * 0.04,
                     width: screenWidth * 0.55,
@@ -103,9 +127,12 @@ class _MenuPageState extends State<MenuPage> {
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
                         prefixIcon: Icon(Icons.search),
-                        contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0), // Adjusted padding
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 5.0,
+                            horizontal: 15.0), // Adjusted padding
                       ),
-                      style: TextStyle(fontSize: screenWidth * 0.035), // Adjusted font size
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.035), // Adjusted font size
                       onChanged: (value) {
                         setState(() {
                           searchQuery = value;
@@ -130,7 +157,8 @@ class _MenuPageState extends State<MenuPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: const DecorationImage(
-                        image: AssetImage('assets/images/testpic/babalyamen.jpg'),
+                        image:
+                            AssetImage('assets/images/testpic/babalyamen.jpg'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -149,59 +177,61 @@ class _MenuPageState extends State<MenuPage> {
                         ),
                         Text(
                           'Rating of $rating',
-                          style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.grey),
+                          style: TextStyle(
+                              fontSize: screenWidth * 0.03, color: Colors.grey),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.favorite_border, color: Colors.black, size: screenWidth * 0.06),
+                  Icon(Icons.favorite_border,
+                      color: Colors.black, size: screenWidth * 0.06),
                 ],
               ),
             ),
           ),
-          
           Expanded(
-            
             child: ListView.builder(
               controller: _scrollController,
               itemCount: filteredMenuItems.length,
               itemBuilder: (context, index) {
                 return Column(
-                  
                   children: [
-                     Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(width: screenWidth*0.059,),
-                              Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          filteredMenuItems[index]["name"]!, // Use the name from the filtered list
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenWidth * 0.04,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                            ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: screenWidth * 0.059,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            filteredMenuItems[index][
+                                "name"]!, // Use the name from the filtered list
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: screenWidth * 0.04,
+                              color: Colors.black,
+                            ),
                           ),
+                        ),
+                      ],
+                    ),
                     Container(
-                      height: screenHeight / 5.5, // Adjust the height to show 4 items at once
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+                      height: screenHeight /
+                          5.5, // Adjust the height to show 4 items at once
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 3),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
-                          image: AssetImage(filteredMenuItems[index]["image"]!), // Use the image from the filtered list
+                          image: AssetImage(filteredMenuItems[index][
+                              "image"]!), // Use the image from the filtered list
                           fit: BoxFit.fill,
                         ),
                       ),
-                      
+
                       child: Stack(
-                        
                         children: [
-                          
-                         
                           Positioned(
                             bottom: 0,
                             left: 0,
@@ -209,40 +239,46 @@ class _MenuPageState extends State<MenuPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: const [
-                                 Color.fromRGBO(0, 0, 0, 0.75),
-                                 Color.fromRGBO(0, 0, 0, 0.1875),
-                             
-                            ],
-                          ), // Transparent black overlay
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: const [
+                                    Color.fromRGBO(0, 0, 0, 0.75),
+                                    Color.fromRGBO(0, 0, 0, 0.1875),
+                                  ],
+                                ), // Transparent black overlay
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(20),
                                   bottomRight: Radius.circular(20),
                                 ),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.003),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.05,
+                                  vertical: screenHeight * 0.003),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       TextButton(
                                         onPressed: () {
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const view_rating()),
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const view_rating()),
                                           );
                                         },
                                         // Transparent black background
-                                        
+
                                         child: Row(
                                           children: [
                                             Text(
                                               'view ratings and comments',
-                                              style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: screenWidth * 0.03),
                                             ),
                                             Icon(
                                               Icons.arrow_forward_ios,
@@ -251,23 +287,24 @@ class _MenuPageState extends State<MenuPage> {
                                             ),
                                           ],
                                         ),
-                                        
                                       ),
                                       ElevatedButton(
                                         onPressed: () {},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Color(0xFFF3C623),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
-                                           // Increase elevation for a more pronounced shadow
+                                          // Increase elevation for a more pronounced shadow
                                         ),
-                                        child: Text('Rate', style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.white)),
+                                        child: Text('Rate',
+                                            style: TextStyle(
+                                                fontSize: screenWidth * 0.03,
+                                                color: Colors.white)),
                                       ),
-                                      
                                     ],
                                   ),
-                                  
                                 ],
                               ),
                             ),
@@ -282,7 +319,6 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ],
       ),
-      
     );
   }
 }

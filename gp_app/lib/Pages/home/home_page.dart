@@ -134,27 +134,7 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             children: [
                               InkWell(
-                                onTap: () async {
-                                  /* FirebaseCloudStorage cloudStorage =
-                                      FirebaseCloudStorage();
-                                  final a = await cloudStorage.getHttpLink(
-                                      'shops/Food/Nar_Snack/Shop_Images/Nar_Snack.jpg');
-                                  print(a); */
-                                  Shop shop = Shop(
-                                    shopID: 'nar_snack',
-                                    shopName: 'Nar Snack',
-                                    shopLocation: 'Kumasi',
-                                    phoneNumber: '0241234567',
-                                    shopOwnerEmail: '',
-                                    categoryID: 'test_cat',
-                                    shopOwnerID: '1',
-                                    shopImagePath:
-                                        await cloudStorage.getShopImagePath(
-                                            'test_cat', 'nar_snack'),
-                                    addedAt: '2021-10-10',
-                                  );
-                                  print(shop);
-                                },
+                                onTap: () {},
                                 child: SizedBox(
                                   width: AspectRatios.width * 0.10256410256,
                                   height:
