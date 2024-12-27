@@ -103,7 +103,7 @@ class RateMealPageState extends State<RateMealPage> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => rest_info_page());
+            Get.to(() => const rest_info_page());
           },
           child: Image.asset(widget.logo,
               height: AspectRatios.height * 0.08,
@@ -353,7 +353,7 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
                 });
               },
             ),
-            OpinionTextBox(
+            const OpinionTextBox(
               hintText: "How was the overall service at the restaurant?",
             )
           ],
@@ -467,7 +467,7 @@ class MealRatingCardState extends State<MealRatingCard> {
                     ),
                   ],
                 ),
-                OpinionTextBox(
+                const OpinionTextBox(
                   hintText: "Share your thoughts about the meal...",
                 )
               ],

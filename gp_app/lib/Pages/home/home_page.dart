@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -98,9 +96,9 @@ class _HomePageState extends State<HomePage> {
                                       size: AspectRatios.height * 0.02444444444,
                                     ),
                                     const SizedBox(width: 5),
-                                    Text(
+                                    const Text(
                                       'Please verify your email.',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -237,9 +235,9 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 'Food',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 158, 158, 158),
@@ -259,14 +257,14 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                           height: AspectRatios.height * 0.153,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: const [
+                            gradient: const LinearGradient(
+                              colors: [
                                 Color.fromARGB(255, 243, 198, 35),
                                 Color.fromARGB(255, 255, 166, 0),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
-                              stops: const [0.1, 1.0],
+                              stops: [0.1, 1.0],
                             ),
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -324,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                                                                           .toString()),
                                                             );
                                                           }
-                                                          return CircularProgressIndicator(
+                                                          return const CircularProgressIndicator(
                                                             backgroundColor:
                                                                 Colors
                                                                     .transparent,
@@ -336,7 +334,7 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 Flexible(
                                                   child: Container(
-                                                      decoration: BoxDecoration(
+                                                      decoration: const BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.only(
@@ -377,7 +375,7 @@ class _HomePageState extends State<HomePage> {
                                                                     child: Transform
                                                                         .translate(
                                                                       offset:
-                                                                          Offset(
+                                                                          const Offset(
                                                                               2,
                                                                               0),
                                                                       child: SvgPicture
@@ -390,10 +388,10 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                  Text(
+                                                                  const Text(
                                                                     '1',
                                                                     style:
-                                                                        const TextStyle(
+                                                                        TextStyle(
                                                                       fontSize:
                                                                           17,
                                                                       fontWeight:

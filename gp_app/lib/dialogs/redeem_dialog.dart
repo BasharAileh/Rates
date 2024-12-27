@@ -64,7 +64,7 @@ class VerificationDialogPage extends StatelessWidget {
                 height: AspectRatios.height * 0.055,
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                      textSelectionTheme: TextSelectionThemeData(
+                      textSelectionTheme: const TextSelectionThemeData(
                     cursorColor:
                         Color.fromARGB(255, 255, 196, 45),
                     selectionHandleColor:
@@ -76,17 +76,17 @@ class VerificationDialogPage extends StatelessWidget {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(17),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 255, 196, 45),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 255, 196, 45),
                           )),
                       labelText: "Enter Code",
-                      labelStyle: TextStyle(
-                        color: const Color.fromARGB(255, 255, 196, 45),
+                      labelStyle: const TextStyle(
+                        color: Color.fromARGB(255, 255, 196, 45),
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(17),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 255, 196, 45),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 255, 196, 45),
                           )),
                     ),
                   ),
@@ -142,7 +142,7 @@ class VerificationDialogPage extends StatelessWidget {
                         Get.snackbar(
                             "Invalid Code",
                             "The code you entered is not valid.",
-                            titleText: Text(
+                            titleText: const Text(
                               "Invalid Code",
                               style: TextStyle(
                                 fontSize:
@@ -151,7 +151,7 @@ class VerificationDialogPage extends StatelessWidget {
                                     .bold,
                               ),
                             ),
-                            messageText: Text(
+                            messageText: const Text(
                               "The code you entered is not valid.",
                               style: TextStyle(
                                 fontSize:
@@ -161,10 +161,10 @@ class VerificationDialogPage extends StatelessWidget {
                             backgroundColor:
                                 const Color.fromARGB(255, 191, 191, 191),
                             colorText: const Color.fromARGB(255, 255, 255, 255),
-                            margin: EdgeInsets.only(top: 10, left: 7, right: 7),
-                            padding: EdgeInsets.all(5),
+                            margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+                            padding: const EdgeInsets.all(5),
                             boxShadows: [
-                              BoxShadow(
+                              const BoxShadow(
                                   color: Color.fromARGB(255, 56, 56, 56),
                                   offset: Offset(0, 2),
                                   blurRadius: 5,

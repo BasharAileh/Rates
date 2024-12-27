@@ -76,7 +76,7 @@ class _view_ratingState extends State<view_rating> {
             );
           },
         ),
-        title: Center(child: const Text("Ratings", style: TextStyle(color: Colors.black))),
+        title: const Center(child: Text("Ratings", style: TextStyle(color: Colors.black))),
         actions: const [
           Icon(Icons.filter_alt_outlined, color: Colors.black),
         ],
@@ -184,7 +184,7 @@ class _view_ratingState extends State<view_rating> {
                             ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFFF3C623),
+                                backgroundColor: const Color(0xFFF3C623),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -259,7 +259,7 @@ class ReviewTile extends StatelessWidget {
                       5,
                       (index) => SvgPicture.asset(
                         'assets/icons/star.svg',
-                        color: index < rating ?Color(0xFFF3C623) : Colors.grey,
+                        color: index < rating ?const Color(0xFFF3C623) : Colors.grey,
                         width: 16,
                         height: 16,
                       ),

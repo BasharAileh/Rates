@@ -356,7 +356,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                         SizedBox(width: width * 0.03),
                                         Text(
                                           _passwordsMatch!,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.red,
                                             fontSize: 13,
                                           ),

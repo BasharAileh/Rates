@@ -357,7 +357,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Align(
                   alignment:
                       Alignment.bottomCenter + const Alignment(0.0, -0.83),
-                  child: Text(
+                  child: const Text(
                     'Your Guide to the Best of \nEverything',
                     textAlign: TextAlign.center,
                     style: TextStyle(

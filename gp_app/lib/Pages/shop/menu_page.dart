@@ -90,7 +90,7 @@ class _MenuPageState extends State<MenuPage> {
                 children: [
                   Text(
                     "Discover and rate",
-                    style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Color(0xFF5D5C66)),
+                    style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: const Color(0xFF5D5C66)),
                   ),
                   SizedBox(width: screenWidth * 0.02), // Add some spacing between the columns
                   SizedBox(
@@ -207,17 +207,17 @@ class _MenuPageState extends State<MenuPage> {
                             left: 0,
                             right: 0,
                             child: Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                            colors: const [
+                            colors: [
                                  Color.fromRGBO(0, 0, 0, 0.75),
                                  Color.fromRGBO(0, 0, 0, 0.1875),
                              
                             ],
                           ), // Transparent black overlay
-                                borderRadius: const BorderRadius.only(
+                                borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(20),
                                   bottomRight: Radius.circular(20),
                                 ),
@@ -256,7 +256,7 @@ class _MenuPageState extends State<MenuPage> {
                                       ElevatedButton(
                                         onPressed: () {},
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color(0xFFF3C623),
+                                          backgroundColor: const Color(0xFFF3C623),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(20),
                                           ),

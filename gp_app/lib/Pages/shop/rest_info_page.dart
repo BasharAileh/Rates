@@ -73,7 +73,7 @@ Future<void> _launchUrl(String input) async {
                 width: screenWidth *0.595,
                 height: screenHeight*0.06, // Set the width to half of the screen width
                 decoration: BoxDecoration(
-                  color: Color(0xFFF3C623)
+                  color: const Color(0xFFF3C623)
 ,
                   borderRadius: BorderRadius.circular(30), // Adjust the radius as needed
                 ),
@@ -303,7 +303,7 @@ Future<void> _launchUrl(String input) async {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFF3C623),
+                  backgroundColor: const Color(0xFFF3C623),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

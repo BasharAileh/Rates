@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: homeRoute,
-          page: () => PagesWithNavBar(page: 2),
+          page: () => const PagesWithNavBar(page: 2),
         ),
         GetPage(
           name: loginRoute,
@@ -70,15 +70,15 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: profileRoute,
-          page: () => PagesWithNavBar(page: 1),
+          page: () => const PagesWithNavBar(page: 1),
         ),
         GetPage(
           name: topRatedRoute,
-          page: () => FoodPage(),
+          page: () => const FoodPage(),
         ),
         GetPage(
           name: restInfoRoute,
-          page: () => rest_info_page(),
+          page: () => const rest_info_page(),
         ),
         // Add other pages with their respective routes
       ],

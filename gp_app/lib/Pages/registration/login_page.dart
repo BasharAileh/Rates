@@ -1,5 +1,4 @@
 import 'dart:developer' as devtools show log;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -96,14 +95,14 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Row(
                           children: [
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             SizedBox(
                               height: (AspectRatios.height * 0.01895734597),
                               child: Text(index == 0 ? titles[0] : titles[1]),
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 6,
                         ),
                         customTextField(
