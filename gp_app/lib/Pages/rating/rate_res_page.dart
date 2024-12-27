@@ -103,7 +103,7 @@ class RateMealPageState extends State<RateMealPage> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => const rest_info_page());
+            Get.to(() => const RestaurantInformationPage());
           },
           child: Image.asset(widget.logo,
               height: AspectRatios.height * 0.08,
@@ -151,7 +151,7 @@ class RateMealPageState extends State<RateMealPage> {
                             width: AspectRatios.width*0.2,
                             height: AspectRatios.height*0.2,
                           ),
-                           SizedBox(height: AspectRatios.height*0.01),
+                          SizedBox(height: AspectRatios.height*0.01),
                           const Text(
                             'Your ratings have been submitted!',
                             textAlign: TextAlign.center,

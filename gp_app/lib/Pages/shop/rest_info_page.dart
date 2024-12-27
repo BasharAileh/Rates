@@ -5,14 +5,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'menu_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class rest_info_page extends StatefulWidget {
-  const rest_info_page({super.key});
+class RestaurantInformationPage extends StatefulWidget {
+  const RestaurantInformationPage({super.key});
 
   @override
-  State<rest_info_page> createState() => _rest_info_pageState();
+  State<RestaurantInformationPage> createState() => RestInfoPageState();
 }
 
-class _rest_info_pageState extends State<rest_info_page> {
+class RestInfoPageState extends State<RestaurantInformationPage> {
   final List<String> imgList = [
     'assets/images/testpic/babalyamen.jpg',
     'assets/images/testpic/babalyamen.jpg',

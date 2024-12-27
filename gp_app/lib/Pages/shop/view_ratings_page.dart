@@ -3,14 +3,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rates/Pages/shop/menu_page.dart';
 
-class view_rating extends StatefulWidget {
-  const view_rating({super.key});
+class ViewRating extends StatefulWidget {
+  const ViewRating({super.key});
 
   @override
-  State<view_rating> createState() => _view_ratingState();
+  State<ViewRating> createState() => ViewRatingState();
 }
 
-class _view_ratingState extends State<view_rating> {
+class ViewRatingState extends State<ViewRating> {
   bool isFavorite = false;
   bool _isVisible = true;
   final ScrollController _scrollController = ScrollController();

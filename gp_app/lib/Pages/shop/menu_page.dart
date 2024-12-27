@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rates/Pages/shop/rest_info_page.dart';
+import 'package:rates/Pages/shop/view_ratings_page.dart';
 
-import 'rest_info_page.dart';
-import 'view_ratings_page.dart'; // Import the ViewRatingPage
+// Import the ViewRatingPage
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -69,7 +70,7 @@ class _MenuPageState extends State<MenuPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const rest_info_page()),
+              MaterialPageRoute(builder: (context) => const RestaurantInformationPage()),
             );
           },
         ),
@@ -233,7 +234,7 @@ class _MenuPageState extends State<MenuPage> {
                                         onPressed: () {
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const view_rating()),
+                                            MaterialPageRoute(builder: (context) => const ViewRating()),
                                           );
                                         },
                                         // Transparent black background

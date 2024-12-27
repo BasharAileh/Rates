@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: restInfoRoute,
-          page: () => const rest_info_page(),
+          page: () => const RestaurantInformationPage(),
         ),
         // Add other pages with their respective routes
       ],

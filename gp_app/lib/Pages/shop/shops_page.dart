@@ -308,7 +308,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const rest_info_page(),
+                              builder: (context) => const RestaurantInformationPage(),
                             ),
                           );
                         },
