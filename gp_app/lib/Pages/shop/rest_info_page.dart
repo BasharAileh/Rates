@@ -4,16 +4,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'menu_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rates/dialogs/nav_bar.dart';
 
-class rest_info_page extends StatefulWidget {
-  const rest_info_page({super.key});
+class RestaurantInformationPage extends StatefulWidget {
+  const RestaurantInformationPage({super.key});
 
   @override
-  State<rest_info_page> createState() => _rest_info_pageState();
+  State<RestaurantInformationPage> createState() => RestInfoPageState();
 }
 
-class _rest_info_pageState extends State<rest_info_page> {
+class RestInfoPageState extends State<RestaurantInformationPage> {
   final List<String> imgList = [
     'assets/images/testpic/babalyamen.jpg',
     'assets/images/testpic/babalyamen.jpg',
@@ -38,7 +37,6 @@ Future<void> _launchUrl(String input) async {
     throw 'Invalid input: $input';
   }
 }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,7 @@ Future<void> _launchUrl(String input) async {
           // Image Slider Section
           CarouselSlider(
             options: CarouselOptions(
-               aspectRatio: 100/40,
+              aspectRatio: 100/40,
               enlargeCenterPage: true,
               autoPlay: true,
             ),
@@ -75,7 +73,7 @@ Future<void> _launchUrl(String input) async {
                 width: screenWidth *0.595,
                 height: screenHeight*0.06, // Set the width to half of the screen width
                 decoration: BoxDecoration(
-                  color: Color(0xFFF3C623)
+                  color: const Color(0xFFF3C623)
 ,
                   borderRadius: BorderRadius.circular(30), // Adjust the radius as needed
                 ),
@@ -305,7 +303,7 @@ Future<void> _launchUrl(String input) async {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFF3C623),
+                  backgroundColor: const Color(0xFFF3C623),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

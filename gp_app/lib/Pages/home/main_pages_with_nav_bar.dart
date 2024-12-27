@@ -33,42 +33,42 @@ class _PagesWithNavBarState extends State<PagesWithNavBar> {
               // Dynamically load the page based on the selected index
               switch (bottomNavController.currentIndex.value) {
                 case 0:
-                  return HomePage();
+                  return const HomePage();
                 case 1:
-                  return ProfilePage();
+                  return const ProfilePage();
                 case 2:
-                  return HomePage(); // You can use a different page for this if needed
+                  return const HomePage(); // You can use a different page for this if needed
                 case 3:
                   return FavoritesPage(
                     favorites: const [],
                     onRemoveFavorite: (_) {},
                   ); // Or any other page
                 case 4:
-                  return SignupPage(); // Or another page
+                  return const SignupPage(); // Or another page
                 default:
-                  return HomePage(); // Default page
+                  return const HomePage(); // Default page
               }
             })
           : (() {
               switch (page) {
                 case 0:
                   page = null;
-                  return HomePage();
+                  return const HomePage();
                 case 1:
                   page = null;
-                  return ProfilePage();
+                  return const ProfilePage();
                 case 2:
                   page = null;
-                  return HomePage(); // You can use a different page for this if needed
+                  return const HomePage(); // You can use a different page for this if needed
                 case 3:
                   page = null;
-                  return LoginPage(); // Or any other page
+                  return const LoginPage(); // Or any other page
                 case 4:
                   page = null;
-                  return SignupPage(); // Or another page
+                  return const SignupPage(); // Or another page
                 default:
                   page = null;
-                  return HomePage(); // Default page
+                  return const HomePage(); // Default page
               }
             })(),
       bottomNavigationBar: NavigationBarWidget(),

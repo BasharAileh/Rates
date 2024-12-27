@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import '../../dialogs/nav_bar.dart';
 import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
@@ -257,7 +256,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         fontWeight: FontWeight.bold,
                         color: Colors.grey),
                   ),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Expanded(
                     child: SizedBox(
                       height: AspectRatios.height * 0.03197265625,
@@ -309,7 +308,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => rest_info_page(),
+                              builder: (context) => const RestaurantInformationPage(),
                             ),
                           );
                         },
