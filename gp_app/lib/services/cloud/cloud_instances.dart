@@ -8,6 +8,7 @@ class Shop {
   final String shopOwnerID;
   final String shopImagePath;
   final List<String> contactInfo;
+  final double bayesianAverage;
   final String addedAt;
 
   Shop({
@@ -18,6 +19,7 @@ class Shop {
     required this.shopOwnerID,
     required this.shopImagePath,
     required this.contactInfo,
+    required this.bayesianAverage,
     required this.addedAt,
   });
 
@@ -30,6 +32,7 @@ class Shop {
       shopOwnerID: map[cloudShopOwnerID] ?? '',
       shopImagePath: map[cloudShopImagePath] ?? '',
       contactInfo: List<String>.from(map[cloudContactInfo] ?? []),
+      bayesianAverage: (map[cloudBayesianAverage] as num).toDouble() ?? 0.0,
       addedAt: map[cloudAddedAt] ?? '',
     );
   }
@@ -43,13 +46,14 @@ class Shop {
       cloudShopOwnerID: shopOwnerID,
       cloudShopImagePath: shopImagePath,
       cloudContactInfo: contactInfo,
+      cloudContactInfo: bayesianAverage,
       cloudAddedAt: addedAt,
     };
   }
 
   @override
   String toString() {
-    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, contactInfo: $contactInfo, addedAt: $addedAt}';
+    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, contactInfo: $contactInfo, bayesian_average: $bayesianAverage,addedAt: $addedAt}\n\n';
   }
 }
 

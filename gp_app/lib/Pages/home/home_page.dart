@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -5,15 +7,21 @@ import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
+import 'package:rates/services/cloud/cloud_storage_exception.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'dart:developer' as devtools show log;
 
 late bool _showEmailVerificationMessage;
 late bool _isEmailVerified;
 FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
 late String path;
+String? categoryID = 'food';
 
-List<String> categories = ["Serviceis", "Food", "Clothes", "Education", "Cars"];
+List<String> categories = ["Food", "Service", "Clothes", "Education", "Cars"];
+late List<List<Shop>> shops;
+bool showIndicator = false;
+List<String> categoryIDs = [];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,6 +38,8 @@ class _HomePageState extends State<HomePage> {
     _showEmailVerificationMessage = false;
     _isEmailVerified = false;
     _pageController = List.generate(3, (index) => PageController());
+    shops = List.generate(categories.length, (_) => []);
+    _initializeCategoryIDs();
 
     //TODO open DateBase and check if the user is verified
     //unless we used the ensureDbIsOpen() function in all the functions
@@ -51,6 +61,26 @@ class _HomePageState extends State<HomePage> {
     that means never use get.off() to navigate to another page
      */
     super.dispose();
+  }
+
+  Future<void> _initializeCategoryIDs() async {
+    categoryIDs = await Future.wait(categories.map((category) async {
+      try {
+        return await cloudStorage.getCategoryID(category);
+      } on CategoryNotFoundException catch (e) {
+        devtools.log('Caught CategoryNotFoundException: ${e.toString()}');
+        return '20'; // Default fallback category ID
+      } catch (e, stacktrace) {
+        devtools.log('Caught general exception: $e');
+        devtools.log('Stacktrace: $stacktrace');
+        return '20'; // Default fallback category ID
+      }
+    }).toList());
+
+    shops = List.generate(categories.length, (index) => []);
+
+    // Once categoryIDs are fetched, set state to trigger UI update
+    setState(() {});
   }
 
   @override
@@ -184,7 +214,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ...List.generate(
                 3,
-                (index) {
+                (verticalIndex) {
                   List<Map<String, String>> info = [
                     {
                       'title': 'Monthly Finest',
@@ -209,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                info[index]['title']!,
+                                info[verticalIndex]['title']!,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -249,177 +279,267 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: PageView.builder(
-                              controller: _pageController[index],
+                              controller: _pageController[verticalIndex],
                               onPageChanged: (value) {},
                               itemCount: 5,
-                              itemBuilder: (context, index) {
-                                return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        ...List.generate(
-                                          3,
-                                          (index) {
-                                            double imageSize =
-                                                AspectRatios.height * 0.027;
-                                            double imageSizeWithPadding =
-                                                AspectRatios.height * 0.027 +
-                                                    AspectRatios.height * 0.01;
-                                            return Column(
+                              itemBuilder: (context, horizontalIndex) {
+                                try {
+                                  return StreamBuilder<QuerySnapshot>(
+                                    stream: (categoryIDs.isNotEmpty)
+                                        ? FirebaseFirestore.instance
+                                            .collection('shop')
+                                            .where('category_id',
+                                                isEqualTo: categoryIDs[
+                                                    horizontalIndex]) // Use the appropriate index
+                                            .orderBy('bayesian_average',
+                                                descending: true)
+                                            .limit(3)
+                                            .snapshots()
+                                        : Stream.empty(),
+                                    builder: (context, snapshot) {
+                                      try {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        }
+                                        if (snapshot.hasError) {
+                                          devtools.log('Error occurred');
+                                          return const Text(
+                                              'An error occurred');
+                                        }
+                                        if (!snapshot.hasData ||
+                                            snapshot.data!.docs.isEmpty) {
+                                          if (horizontalIndex >= shops.length) {
+                                            shops.add([]);
+                                          } else {
+                                            if (shops[horizontalIndex]
+                                                .isEmpty) {
+                                              shops[horizontalIndex] = [];
+                                            }
+                                          }
+                                        }
+
+                                        // Map Firestore documents to Shop objects
+                                        if (snapshot.hasData) {
+                                          List<Shop> shopList = snapshot
+                                              .data!.docs
+                                              .map((doc) => Shop.fromMap(
+                                                  doc.data()
+                                                      as Map<String, dynamic>))
+                                              .toList();
+
+                                          // Update the shops list without resetting it
+                                          if (horizontalIndex >= shops.length) {
+                                            shops.add(shopList);
+                                          } else {
+                                            if (shopList.isNotEmpty) {
+                                              shops[horizontalIndex] = shopList;
+                                            }
+                                          }
+                                        }
+                                      } on CategoryNotFoundException catch (e) {
+                                        // Log CategoryNotFoundException details
+                                        devtools.log(
+                                            'Caught CategoryNotFoundException: ${e.toString()}');
+                                      } catch (e, stacktrace) {
+                                        // Log general exceptions
+                                        devtools.log(
+                                            'Caught general exception: $e');
+                                        devtools.log('Stacktrace: $stacktrace');
+                                      }
+                                      devtools.log(shops.toString());
+                                      devtools.log(shops.length.toString());
+                                      return LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          try {
+                                            return Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.end,
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
                                               children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical:
-                                                        constraints.maxHeight *
-                                                            0.05,
-                                                  ),
-                                                  child: CircleAvatar(
-                                                      radius: imageSize,
-                                                      child: FutureBuilder(
-                                                        future: cloudStorage
-                                                            .getHttpLink(
-                                                                'shops/food/nar_snack/shop_images/Nar_Snack.jpg'
-                                                                    .toLowerCase()),
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          if (snapshot.connectionState ==
-                                                                  ConnectionState
-                                                                      .done &&
-                                                              snapshot
-                                                                  .hasData) {
-                                                            return CircleAvatar(
-                                                              radius: imageSize,
-                                                              backgroundImage:
-                                                                  NetworkImage(
-                                                                      snapshot
-                                                                          .data
-                                                                          .toString()),
-                                                            );
-                                                          }
-                                                          return const CircularProgressIndicator(
+                                                ...List.generate(
+                                                  3,
+                                                  (index) {
+                                                    shops[horizontalIndex]
+                                                            .isEmpty
+                                                        ? showIndicator = true
+                                                        : shops[horizontalIndex]
+                                                                    [index == 0
+                                                                        ? 1
+                                                                        : index ==
+                                                                                1
+                                                                            ? 0
+                                                                            : 2]
+                                                                .shopImagePath
+                                                                .isEmpty
+                                                            ? showIndicator =
+                                                                true
+                                                            : showIndicator =
+                                                                false;
+                                                    double imageSize =
+                                                        AspectRatios.height *
+                                                            0.027;
+                                                    double
+                                                        imageSizeWithPadding =
+                                                        AspectRatios.height *
+                                                                0.027 +
+                                                            AspectRatios
+                                                                    .height *
+                                                                0.01;
+                                                    return Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                            vertical: constraints
+                                                                    .maxHeight *
+                                                                0.05,
+                                                          ),
+                                                          child: CircleAvatar(
+                                                            radius: imageSize,
                                                             backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            color: Colors.black,
-                                                            strokeWidth: 2,
-                                                          );
-                                                        },
-                                                      )),
-                                                ),
-                                                Flexible(
-                                                  child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  10),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  10),
+                                                                Colors.white,
+                                                            backgroundImage: showIndicator
+                                                                ? null
+                                                                : NetworkImage(shops[horizontalIndex][index == 0
+                                                                        ? 1
+                                                                        : index == 1
+                                                                            ? 0
+                                                                            : 2]
+                                                                    .shopImagePath),
+                                                            child: showIndicator
+                                                                ? CircularProgressIndicator()
+                                                                : null,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      height: index == 1
-                                                          ? constraints
-                                                                  .maxHeight -
-                                                              imageSizeWithPadding
-                                                          : index == 0
-                                                              ? constraints
-                                                                      .maxHeight *
-                                                                  0.35
-                                                              : constraints
-                                                                      .maxHeight *
-                                                                  0.23,
-                                                      width:
-                                                          constraints.maxWidth *
-                                                              0.12,
-                                                      child: index == 1
-                                                          ? Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topCenter,
-                                                              child: Column(
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
+                                                        Flexible(
+                                                          child: Container(
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
                                                                         .only(
-                                                                        top:
-                                                                            4.0),
-                                                                    child: Transform
-                                                                        .translate(
-                                                                      offset:
-                                                                          const Offset(
-                                                                              2,
-                                                                              0),
-                                                                      child: SvgPicture
-                                                                          .asset(
-                                                                        'assets/icons/Crown.svg',
-                                                                        width: constraints.maxWidth *
-                                                                            0.06923076923,
-                                                                        height: constraints.maxHeight *
-                                                                            0.12605042016,
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                ),
+                                                              ),
+                                                              height: index == 1
+                                                                  ? constraints
+                                                                          .maxHeight -
+                                                                      imageSizeWithPadding
+                                                                  : index == 0
+                                                                      ? constraints
+                                                                              .maxHeight *
+                                                                          0.35
+                                                                      : constraints
+                                                                              .maxHeight *
+                                                                          0.23,
+                                                              width: constraints
+                                                                      .maxWidth *
+                                                                  0.12,
+                                                              child: index == 1
+                                                                  ? Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .topCenter,
+                                                                      child:
+                                                                          Column(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.only(top: 4.0),
+                                                                            child:
+                                                                                Transform.translate(
+                                                                              offset: const Offset(2, 0),
+                                                                              child: SvgPicture.asset(
+                                                                                'assets/icons/Crown.svg',
+                                                                                width: constraints.maxWidth * 0.06923076923,
+                                                                                height: constraints.maxHeight * 0.12605042016,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Text(
+                                                                            '1',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: 17,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: Color.fromARGB(255, 0, 0, 0),
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                    ),
-                                                                  ),
-                                                                  const Text(
-                                                                    '1',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          17,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color
-                                                                          .fromARGB(
+                                                                    )
+                                                                  : Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      child:
+                                                                          Text(
+                                                                        index ==
+                                                                                0
+                                                                            ? '2'
+                                                                            : '3',
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontSize:
+                                                                              17,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          color: Color.fromARGB(
                                                                               255,
                                                                               0,
                                                                               0,
                                                                               0),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          : Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child: Text(
-                                                                index == 0
-                                                                    ? '2'
-                                                                    : '3',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 17,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                ),
-                                                              ),
-                                                            )),
-                                                )
+                                                                        ),
+                                                                      ),
+                                                                    )),
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                ),
                                               ],
                                             );
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                          } catch (e) {
+                                            devtools.log(e.toString());
+                                            return Center(
+                                              child: Text(
+                                                e.toString(),
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            );
+                                            /* return const Center(
+                                              child: CircularProgressIndicator(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                color: Colors.black,
+                                                strokeWidth: 2,
+                                              ),
+                                            ); */
+                                          }
+                                        },
+                                      );
+                                    },
+                                  );
+                                } on CategoryNotFoundException catch (_) {
+                                  devtools.log('e');
+                                } catch (e) {
+                                  devtools.log('e');
+                                }
                               }),
                         ),
                       ),
@@ -428,7 +548,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Center(
                         child: SmoothPageIndicator(
-                          controller: _pageController[index],
+                          controller: _pageController[verticalIndex],
                           count: 5,
                           effect: WormEffect(
                             activeDotColor:

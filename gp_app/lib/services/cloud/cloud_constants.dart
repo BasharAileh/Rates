@@ -38,3 +38,4 @@ String cloudContactTypeID = 'contact_type_id';
 String cloudContactName = 'contact_name';
 String cloudContactValue = 'contact_value';
 String cloudShopDeliveryName = 'delivery_App_name';
+String cloudBayesianAverage = 'bayesian_average';

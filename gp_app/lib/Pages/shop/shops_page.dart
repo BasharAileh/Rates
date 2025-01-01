@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/services/cloud/cloud_instances.dart';
 import '../other/favorites_page.dart';
 
 class FoodPage extends StatefulWidget {
@@ -133,12 +135,11 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
       ),
       child: Row(
         children: [
-          ClipOval(
-            child: Image.asset(
+          SizedBox(
+            width: 69,
+            height: 69,
+            child: Image.network(
               image,
-              height: 69,
-              width: 67,
-              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(width: 10),
@@ -201,7 +202,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -291,7 +291,139 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                 ],
               ),
               const SizedBox(height: 10),
-              Expanded(
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('shop')
+                    .orderBy('bayesian_average', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  late List<Shop> shops;
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (snapshot.hasData) {
+                    shops = snapshot.data!.docs
+                        .map((e) =>
+                            Shop.fromMap(e.data() as Map<String, dynamic>))
+                        .toList();
+                    print(shops);
+                  }
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: shops.length,
+                      itemBuilder: (context, index) {
+                        final restaurant = shops[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: restaurantCard(
+                            name: restaurant.shopName,
+                            image: restaurant.shopImagePath,
+                            rating: restaurant.bayesianAverage,
+                            isFavorite: false,
+                            onFavoriteToggle: () => toggleFavorite(index),
+                            onDetailsPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RestaurantInformationPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedListWidget extends StatefulWidget {
+  final List<Map<String, dynamic>> items; // List of items with ratings
+
+  AnimatedListWidget({required this.items});
+
+  @override
+  _AnimatedListWidgetState createState() => _AnimatedListWidgetState();
+}
+
+class _AnimatedListWidgetState extends State<AnimatedListWidget> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+
+  late List<Map<String, dynamic>> _oldItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _oldItems = List.from(widget.items); // Initialize with initial items
+  }
+
+  @override
+  void didUpdateWidget(covariant AnimatedListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Compare the new items with the old ones and apply animations
+    _updateList(widget.items);
+  }
+
+  void _updateList(List<Map<String, dynamic>> newItems) {
+    // Find removed items
+    for (var oldItem in _oldItems) {
+      if (!newItems.contains(oldItem)) {
+        int index = _oldItems.indexOf(oldItem);
+        _listKey.currentState?.removeItem(
+          index,
+          (context, animation) => _buildItem(oldItem, animation),
+        );
+      }
+    }
+
+    // Find added items or changes in position
+    for (var newItem in newItems) {
+      if (!_oldItems.contains(newItem)) {
+        int index = newItems.indexOf(newItem);
+        _listKey.currentState?.insertItem(index);
+      }
+    }
+
+    // Update the local list
+    _oldItems = List.from(newItems);
+  }
+
+  Widget _buildItem(Map<String, dynamic> item, Animation<double> animation) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: ListTile(
+        title: Text(item['name']),
+        subtitle: Text('Rating: ${item['rating']}'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedList(
+      key: _listKey,
+      initialItemCount: widget.items.length,
+      itemBuilder: (context, index, animation) {
+        return _buildItem(widget.items[index], animation);
+      },
+    );
+  }
+}
+
+/* 
+ Expanded(
                 child: ListView.builder(
                   itemCount: restaurantList.length,
                   itemBuilder: (context, index) {
@@ -308,7 +440,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const RestaurantInformationPage(),
+                              builder: (context) =>
+                                  const RestaurantInformationPage(),
                             ),
                           );
                         },
@@ -317,10 +450,4 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   },
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+ */

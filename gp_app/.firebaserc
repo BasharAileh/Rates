@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "rates-12dcc"
-  }
+    "default": "rates-12dcc",
+    "backend_functions": "rates-12dcc"
+  },
+  "targets": {},
+  "etags": {}
 }
