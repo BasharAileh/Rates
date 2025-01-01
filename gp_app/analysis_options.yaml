@@ -8,6 +8,13 @@
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
 analyzer:
+  exclude:
+    - node_modules/**       # Exclude the node_modules folder
+    - functions/node_modules/** # Exclude the functions folder node_modules
+    - backend_functions/node_modules/** # Any backend functions directory
+
+  errors:
+    # You can add specific error rules here if needed.
 
 include: package:flutter_lints/flutter.yaml
 

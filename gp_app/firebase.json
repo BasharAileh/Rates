@@ -37,5 +37,23 @@
         }
       }
     }
+<<<<<<< HEAD
+  },
+    "functions": [
+      {
+        "source": "functions",
+        "codebase": "default",
+        "ignore": [
+          "node_modules",
+          ".git",
+          "firebase-debug.log",
+          "firebase-debug.*.log",
+          "*.local"
+        ],
+        "predeploy": []
+      }
+    ]
+=======
   }
+>>>>>>> 7f5bddd911df89a55d994db3a42140e860676276
 }
