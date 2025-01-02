@@ -16,7 +16,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   List<Map<String, dynamic>> restaurantList = List.generate(
     10,
     (index) => {
-      'name': 'Restaurant #$index',
+      'name': 'Bab Elyamen',
       'rating': 1.5 + (index + 1 % 2) * 0.5,
       'image': 'assets/images/Bashar_Akileh.jpg',
       'isFavorite': false,
@@ -309,7 +309,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RestaurantInformationPage(),
+                              builder: (context) => RestaurantInformationPage(rating: restaurant['rating'],restaurantName:restaurant['name']),
                             ),
                           );
                         },

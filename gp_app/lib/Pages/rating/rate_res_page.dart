@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:rates/Pages/shop/menu_page.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/dialogs/nav_bar.dart';
@@ -8,7 +9,7 @@ import 'package:rates/dialogs/nav_bar.dart';
 class RateMealPage extends StatefulWidget {
   final String restaurant;
   final List<String> meals;
-  final String rating;
+  final double rating;
   final String logo;
 
   const RateMealPage({
@@ -103,7 +104,7 @@ class RateMealPageState extends State<RateMealPage> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => RestaurantInformationPage());
+            Get.to(() => RestaurantInformationPage(rating: widget.rating,restaurantName:widget.restaurant ,));
           },
           child: Image.asset(widget.logo,
               height: AspectRatios.height * 0.08,
