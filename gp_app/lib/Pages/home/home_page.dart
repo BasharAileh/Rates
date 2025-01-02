@@ -296,6 +296,35 @@ class _HomePageState extends State<HomePage> {
                                             .limit(3)
                                             .snapshots()
                                         : Stream.empty(),
+
+                                    /* 
+                                          final shopStream = FirebaseFirestore.instance
+        .collection('shop')
+        .orderBy('bayesian_average', descending: true)
+        .limit(2)
+        .snapshots();
+
+    // Stream for the third document from the 'users' collection
+    final userStream = FirebaseFirestore.instance
+        .collection('users')
+        .orderBy('some_field', descending: true) // Adjust orderBy as needed
+        .limit(1)
+        .snapshots();
+
+    // Combine the two streams
+    final combinedStream = Rx.combineLatest2<QuerySnapshot, QuerySnapshot, List<DocumentSnapshot>>(
+      shopStream,
+      userStream,
+      (shopSnapshot, userSnapshot) {
+        // Combine the documents
+        final combinedDocs = [
+          ...shopSnapshot.docs,
+          ...userSnapshot.docs,
+        ];
+        return combinedDocs;
+      },
+    );
+ */
                                     builder: (context, snapshot) {
                                       try {
                                         if (snapshot.connectionState ==
