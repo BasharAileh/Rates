@@ -1,12 +1,12 @@
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
-const { onDocumentWritten } = require("firebase-functions/v2/firestore");
+const { onDocumentWritten, onDocumentCreated } = require("firebase-functions/v2/firestore");
 
 initializeApp();
 
 const db = getFirestore();
 
-exports.onProductUpdateOrModified = onDocumentWritten(
+exports.onProductUpdateOrModified = onDocumentCreated(
   { document: "product_rating/{docId}" },
   async (event) => {
     try {
@@ -59,7 +59,16 @@ exports.onProductUpdateOrModified = onDocumentWritten(
             minimum_ratings_required : minimumRatingsRequired
           },
           { merge: true }
-        );
+        );  
+
+        const shop = await db.collection("shop")
+        .doc(product.data().shop_id.toString())
+        .get();
+
+        let shopRating = shop.data().shop_rating;
+        let shopNumberOfRatings = shop.data().number_of_ratings;
+        shopRating = ((shopRating * shopNumberOfRatings) + productBayesianAverage) / (shopNumberOfRatings + 1);
+        shopNumberOfRatings = shopNumberOfRatings + 1;
 
       console.log("Target collection updated successfully.");
     } catch (error) {
@@ -71,7 +80,7 @@ exports.onProductUpdateOrModified = onDocumentWritten(
 
 
 
-exports.onSurviceUpdateOrModified = onDocumentWritten(
+exports.onSurviceUpdateOrModified = onDocumentCreated(
   { document: "service_rating/{docId}" },
   async (event) => {
     try {
@@ -126,6 +135,14 @@ exports.onSurviceUpdateOrModified = onDocumentWritten(
           { merge: true }
         );
 
+        const shop = await db.collection("shop")
+        .doc(product.data().shop_id.toString())
+        .get();
+
+        let shopRating = shop.data().shop_rating;
+        let shopNumberOfRatings = shop.data().number_of_ratings;
+        shopRating = ((shopRating * shopNumberOfRatings) + productBayesianAverage) / (shopNumberOfRatings + 1);
+        shopNumberOfRatings = shopNumberOfRatings + 1;
 
       console.log("Target collection updated successfully.");
     } catch (error) {

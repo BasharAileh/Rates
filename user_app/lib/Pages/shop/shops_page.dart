@@ -135,30 +135,43 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
       ),
       child: Row(
         children: [
-          SizedBox(
-            width: 69,
-            height: 69,
-            child: Image.network(
-              image,
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              width: 69,
+              height: 69,
+              child: Image.network(
+                image,
+              ),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 5),
-                    const Text(
-                      "#1st Place",
-                      style: TextStyle(color: Colors.blue),
+                    const Expanded(
+                      child: Text(
+                        "#1st Place",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -167,11 +180,14 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   children: [
                     Text(
                       ratingText,
-                      style: const TextStyle(color: Colors.black, fontSize: 12),
+                      style: const TextStyle(color: Colors.black, fontSize: 11),
                     ),
                     Text(
                       "$rating stars",
-                      style: TextStyle(color: ratingColor, fontSize: 12),
+                      style: TextStyle(
+                        color: ratingColor,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
@@ -181,7 +197,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   child: const Text(
                     "View Details",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.grey),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ],
@@ -317,7 +336,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       itemBuilder: (context, index) {
                         final restaurant = shops[index];
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          padding: const EdgeInsets.only(bottom: 20),
                           child: restaurantCard(
                             name: restaurant.shopName,
                             image: restaurant.shopImagePath,
