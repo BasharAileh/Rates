@@ -1,58 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rates/Pages/shop/menu_page.dart';
+import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/dialogs/redeem_dialog.dart';
 
 class ViewRating extends StatefulWidget {
-  const ViewRating({super.key});
+  const ViewRating({
+    super.key,
+    required this.restaurantName,
+    required this.rating,
+    required this.mealName,
+    required this.imagePath,
+  });
 
+  final String restaurantName;
+  final double rating;
+  final String mealName;
+  final String imagePath;
   @override
-  State<ViewRating> createState() => ViewRatingState();
+  State<ViewRating> createState() => _ViewRatingState();
 }
 
-class ViewRatingState extends State<ViewRating> {
+class _ViewRatingState extends State<ViewRating> {
   bool isFavorite = false;
-  bool _isVisible = true;
   final ScrollController _scrollController = ScrollController();
   final List<Map<String, dynamic>> reviews = [
-    {'user': 'User 1', 'review': 'The rice was cold, not spicy enough', 'rating': 2, 'avatar': 'assets/images/avatar1.png'},
-    {'user': 'User 2', 'review': 'took too long to get ready!', 'rating': 3, 'avatar': 'assets/images/avatar2.png'},
-    {'user': 'User 3', 'review': 'average', 'rating': 3, 'avatar': 'assets/images/avatar3.png'},
-    {'user': 'User 4', 'review': 'loved it!', 'rating': 5, 'avatar': 'assets/images/avatar4.png'},
-    {'user': 'User 5', 'review': 'tasty', 'rating': 4, 'avatar': 'assets/images/avatar5.png'},
-    {'user': 'User 6', 'review': 'eat in restaurant, it\'s a lot better and tasty', 'rating': 4, 'avatar': 'assets/images/avatar6.png'},
+    {
+      'review': 'The rice was cold, not spicy enough',
+      'rating': 2,
+      'avatar': 'assets/images/Bara.jpeg'
+    },
+    {
+      'review': 'took too long to get ready!',
+      'rating': 3,
+      'avatar': 'assets/images/Bashar_Akileh.jpg'
+    },
+    {
+      'review': 'average',
+      'rating': 3,
+      'avatar': 'assets/images/mhmd_adass.png'
+    },
+    {'review': 'loved it!', 'rating': 5, 'avatar': 'assets/images/Bara.jpeg'},
+    {
+      'review': 'tasty',
+      'rating': 4,
+      'avatar': 'assets/images/Bashar_Akileh.jpg'
+    },
+    {
+      'review': 'eat in restaurant, it\'s a lot better and tasty',
+      'rating': 4,
+      'avatar': 'assets/images/mhmd_adass.png'
+    },
+    {
+      'review': 'The rice was cold, not spicy enough',
+      'rating': 1,
+      'avatar': 'assets/images/Bara.jpeg'
+    },
+    {
+      'review': 'took too long to get ready!',
+      'rating': 3,
+      'avatar': 'assets/images/Bashar_Akileh.jpg'
+    },
+    {
+      'review': 'average',
+      'rating': 3,
+      'avatar': 'assets/images/mhmd_adass.png'
+    },
   ];
-
-  @override
-  void initState() {
-  super.initState();
-  _scrollController.addListener(() {
-    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
-      if (_isVisible) {
-        setState(() {
-          _isVisible = false;
-        });
-      }
-    } else if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
-      if (!_isVisible) {
-        setState(() {
-          _isVisible = true;
-        });
-      }
-    }
-  });
-}
-  void toggleFavorite() {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
-  }
-
-  void addReview(String user, String review, int rating, String avatar) {
-    setState(() {
-      reviews.add({'user': user, 'review': review, 'rating': rating, 'avatar': avatar});
-    });
-  }
 
   @override
   void dispose() {
@@ -60,212 +73,176 @@ class ViewRatingState extends State<ViewRating> {
     super.dispose();
   }
 
+  void toggleFavorite() {
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MenuPage()),
-            );
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Center(child: Text("Ratings", style: TextStyle(color: Colors.black))),
-        actions: const [
-          Icon(Icons.filter_alt_outlined, color: Colors.black),
-        ],
+        title: const Text(
+          "Ratings",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          AnimatedOpacity(
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-            opacity: _isVisible ? 1.0 : 0.0,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              height: _isVisible ? null : 0.0,
-              child: Column(
-                children: [
-                  // Restaurant Section
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.asset(
-                            'assets/images/babalyamen.jpg', // Replace with actual logo URL
-                            width: screenWidth * 0.15, // Adjust width based on screen width
-                            height: screenHeight * 0.09, // Adjust height based on screen height
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Bab el-yamen',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                                      color: isFavorite ? Colors.red : Colors.grey,
-                                    ),
-                                    onPressed: toggleFavorite,
-                                  ),
-                                ],
-                              ),
-                              const Row(
-                                children: [
-                                  Text(
-                                    'Rating of ',
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  Text(
-                                    '3.5 stars',
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Restaurant Info Section
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: AspectRatios.width * 0.12,
+                  height: AspectRatios.height * 0.055,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: const DecorationImage(
+                      image: AssetImage('assets/images/testpic/babalyamen.jpg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-
-                  // Food Item Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: Image.asset(
-                            'assets/images/testpic/raizmalee.jpg', // Replace with actual image URL
-                            height: screenHeight * 0.21, // Adjust height based on screen height
-                            width: double.infinity,
-                            fit: BoxFit.fill,
-                          ),
+                ),
+                SizedBox(width: AspectRatios.width * 0.02),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.restaurantName,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Mandi Meal',
-                                  style: TextStyle(fontSize: screenHeight * 0.03, fontWeight: FontWeight.bold),
-                                ),
-                                const Text(
-                                  'Half chicken, rice, 2 spicy sauces',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF3C623),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: const Text('Rate', style: TextStyle(color: Colors.white)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        'Rating of ${widget.rating.toStringAsFixed(1)} stars',
+                        style:
+                            const TextStyle(fontSize: 11, color: Colors.black),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.black,
+                  ),
+                  onPressed: toggleFavorite,
+                ),
+              ],
+            ),
+            SizedBox(height: AspectRatios.height * 0.02),
+            // Meal Image and Details
+            ClipRRect(
+              borderRadius: BorderRadius.circular(17),
+              child: Image.asset(
+                widget.imagePath,
+                height: AspectRatios.height * 0.16,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Review Section
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: reviews.length,
-              itemBuilder: (context, index) {
-                return ReviewTile(
-                  review: reviews[index]['review'],
-                  rating: reviews[index]['rating'],
-                  avatar: reviews[index]['avatar'],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    
-    );
-  }
-}
-
-class ReviewTile extends StatelessWidget {
-  final String review;
-  final int rating;
-  final String avatar;
-
-  const ReviewTile({super.key, required this.review, required this.rating, required this.avatar});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(avatar),
-              radius: 24,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(review),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: List.generate(
-                      5,
-                      (index) => SvgPicture.asset(
-                        'assets/icons/star.svg',
-                        color: index < rating ?const Color(0xFFF3C623) : Colors.grey,
-                        width: 16,
-                        height: 16,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.mealName,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const Text(
+                      'Half chicken, rice, 2 spicy sauces',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const VerificationDialogPage(); // Show the verification dialog
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    backgroundColor: const Color.fromARGB(255, 243, 198, 35),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    // Increase elevation for a more pronounced shadow
                   ),
-                ],
+                  child: const Text('Rate',
+                      style: TextStyle(fontSize: 17, color: Colors.white)),
+                ),
+              ],
+            ),
+            // Reviews Section
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: reviews.length,
+                itemBuilder: (context, index) {
+                  final review = reviews[index];
+                  return Card(
+                    color: Colors.white,
+                    elevation: 0,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(review['avatar']),
+                        onBackgroundImageError: (_, __) {
+                          setState(() {
+                            review['avatar'] =
+                                'assets/images/default_avatar.png'; // Use fallback image
+                          });
+                        },
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            review['review'],
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: List.generate(
+                              5,
+                              (starIndex) => SvgPicture.asset(
+                                'assets/icons/star.svg',
+                                color: starIndex < review['rating']
+                                    ? const Color.fromARGB(255, 255, 193, 7)
+                                    : const Color.fromARGB(200, 0, 0, 0),
+                                width: AspectRatios.width * 0.02,
+                                height: AspectRatios.height * 0.03,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

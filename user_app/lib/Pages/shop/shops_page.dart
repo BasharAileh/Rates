@@ -349,7 +349,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const RestaurantInformationPage(),
+                                      const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',),
                                 ),
                               );
                             },
