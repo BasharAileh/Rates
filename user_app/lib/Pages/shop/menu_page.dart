@@ -3,8 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/Pages/shop/view_ratings_page.dart';
 
-// Import the ViewRatingPage
-
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -17,24 +15,20 @@ class _MenuPageState extends State<MenuPage> {
   final String rating = "3.5 stars";
   final List<Map<String, String>> menuItems = [
     {
-      "name": "raiz male with chicken",
-      "image":
-          "/Users/braashaban/offline_programming/Rates/gp_app/assets/images/meals/sweet_chilly_sandwich.jpg"
+      "name": "Raiz male with chicken",
+      "image": "assets/images/testpic/san.jpg"
     },
+    {"name": "Raiz male with beef", "image": "assets/images/testpic/san.jpg"},
     {
-      "name": "raiz male with beef",
+      "name": "Raiz male with lamb",
       "image": "assets/images/testpic/raizmalee.jpg"
     },
     {
-      "name": "raiz male with lamb",
-      "image": "assets/images/testpic/raizmalee.jpg"
-    },
-    {
-      "name": "raiz male with fish",
+      "name": "Raiz male with fish",
       "image": "assets/images/testpic/babalyamen.jpg"
     },
     {
-      "name": "raiz male with vegetables",
+      "name": "Raiz male with vegetables",
       "image": "assets/images/testpic/raizmalee.jpg"
     }
   ];
@@ -47,19 +41,13 @@ class _MenuPageState extends State<MenuPage> {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (_isVisible) {
-          setState(() {
-            _isVisible = false;
-          });
-        }
+              ScrollDirection.reverse &&
+          _isVisible) {
+        setState(() => _isVisible = false);
       } else if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (!_isVisible) {
-          setState(() {
-            _isVisible = true;
-          });
-        }
+              ScrollDirection.forward &&
+          !_isVisible) {
+        setState(() => _isVisible = true);
       }
     });
   }
@@ -72,10 +60,10 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    List<Map<String, String>> filteredMenuItems = menuItems
+    final filteredMenuItems = menuItems
         .where((item) =>
             item["name"]!.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
@@ -94,10 +82,8 @@ class _MenuPageState extends State<MenuPage> {
             );
           },
         ),
-        title: const Text(
-          'Menu',
-          style: TextStyle(color: Colors.black, fontSize: 18),
-        ),
+        title: const Text('Menu',
+            style: TextStyle(color: Colors.black, fontSize: 18)),
         centerTitle: true,
       ),
       body: Column(
@@ -116,12 +102,8 @@ class _MenuPageState extends State<MenuPage> {
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF5D5C66)),
                   ),
-                  SizedBox(
-                      width: screenWidth *
-                          0.02), // Add some spacing between the columns
-                  SizedBox(
-                    height: screenHeight * 0.04,
-                    width: screenWidth * 0.55,
+                  SizedBox(width: screenWidth * 0.02),
+                  Expanded(
                     child: TextField(
                       decoration: const InputDecoration(
                         hintText: 'Search for a meal',
@@ -129,17 +111,9 @@ class _MenuPageState extends State<MenuPage> {
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                         ),
                         prefixIcon: Icon(Icons.search),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 5.0,
-                            horizontal: 15.0), // Adjusted padding
                       ),
-                      style: TextStyle(
-                          fontSize: screenWidth * 0.035), // Adjusted font size
-                      onChanged: (value) {
-                        setState(() {
-                          searchQuery = value;
-                        });
-                      },
+                      style: TextStyle(fontSize: screenWidth * 0.035),
+                      onChanged: (value) => setState(() => searchQuery = value),
                     ),
                   ),
                 ],
@@ -173,9 +147,8 @@ class _MenuPageState extends State<MenuPage> {
                         Text(
                           restaurantName,
                           style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontSize: screenWidth * 0.04,
+                              fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Rating of $rating',
@@ -196,42 +169,30 @@ class _MenuPageState extends State<MenuPage> {
               controller: _scrollController,
               itemCount: filteredMenuItems.length,
               itemBuilder: (context, index) {
+                final item = filteredMenuItems[index];
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: screenWidth * 0.059,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            filteredMenuItems[index][
-                                "name"]!, // Use the name from the filtered list
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenWidth * 0.04,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.05),
+                      child: Text(
+                        item["name"]!,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenWidth * 0.04),
+                      ),
                     ),
                     Container(
-                      height: screenHeight /
-                          5.5, // Adjust the height to show 4 items at once
+                      height: screenHeight / 5.5,
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 3),
+                          horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
-                          image: AssetImage(filteredMenuItems[index][
-                              "image"]!), // Use the image from the filtered list
-                          fit: BoxFit.fill,
+                          image: AssetImage(item["image"]!),
+                          fit: BoxFit.cover,
                         ),
                       ),
-
                       child: Stack(
                         children: [
                           Positioned(
@@ -241,13 +202,13 @@ class _MenuPageState extends State<MenuPage> {
                             child: Container(
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
                                   colors: [
-                                    const Color.fromRGBO(0, 0, 0, 0.75),
-                                    const Color.fromRGBO(0, 0, 0, 0.1875),
+                                    Color.fromRGBO(0, 0, 0, 0.75),
+                                    Color.fromRGBO(0, 0, 0, 0.2)
                                   ],
-                                ), // Transparent black overlay
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(20),
                                   bottomRight: Radius.circular(20),
@@ -255,58 +216,46 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                               padding: EdgeInsets.symmetric(
                                   horizontal: screenWidth * 0.05,
-                                  vertical: screenHeight * 0.003),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                                  vertical: screenHeight * 0.01),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const ViewRating()),
-                                          );
-                                        },
-                                        // Transparent black background
-
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              'view ratings and comments',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: screenWidth * 0.03),
-                                            ),
-                                            Icon(
-                                              Icons.arrow_forward_ios,
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ViewRating()),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'View ratings and comments',
+                                          style: TextStyle(
                                               color: Colors.white,
-                                              size: screenWidth * 0.04,
-                                            ),
-                                          ],
+                                              fontSize: screenWidth * 0.03),
                                         ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFFF3C623),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          // Increase elevation for a more pronounced shadow
-                                        ),
-                                        child: Text('Rate',
-                                            style: TextStyle(
-                                                fontSize: screenWidth * 0.03,
-                                                color: Colors.white)),
-                                      ),
-                                    ],
+                                        Icon(Icons.arrow_forward_ios,
+                                            color: Colors.white,
+                                            size: screenWidth * 0.04),
+                                      ],
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFF3C623),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                    ),
+                                    child: Text('Rate',
+                                        style: TextStyle(
+                                            fontSize: screenWidth * 0.03,
+                                            color: Colors.white)),
                                   ),
                                 ],
                               ),
