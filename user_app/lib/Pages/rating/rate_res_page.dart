@@ -103,7 +103,7 @@ class RateMealPageState extends State<RateMealPage> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => const RestaurantInformationPage());
+            Get.to(() => const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',));
           },
           child: Image.asset(widget.logo,
               height: AspectRatios.height * 0.08,
