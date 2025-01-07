@@ -45,20 +45,21 @@ async function updateBayesianAndCategory(collectionName, entityID, categoryID, i
 }
 
 async function updateShop(shopID, newRating) {
-  const shopQuery = await db.collection("shop").where("shop_id", "==", shopID.toString()).get();
+  const shopQuery = await db.collection("shop").doc(shopID.toString()).get();
   if (!shopQuery.empty) {
     const shopDocRef = shopQuery.docs[0].ref;
     const shopData = shopQuery.docs[0].data();
 
-    let shopRating = shopData.shop_rating || 3; 
+    let shopRating = shopData.bayesian_average || 3; 
     let shopNumberOfRatings = shopData.number_of_ratings || 0;
     shopRating = ((shopRating * shopNumberOfRatings) + newRating) / (shopNumberOfRatings + 1);
     shopNumberOfRatings++;
 
     await shopDocRef.update({
-      shop_rating: shopRating,
+      bayesian_average: shopRating,
       number_of_ratings: shopNumberOfRatings,
     });
+
   } else {
     console.error("Shop document not found for shop_id:", shopID);
   }
@@ -67,10 +68,13 @@ async function updateShop(shopID, newRating) {
 exports.onProductUpdateOrModified = onDocumentCreated(
   { document: "product_rating/{docId}" },
   async (event) => {
-    try {
-      const ratingDoc = await db.collection("product_rating").doc(event.params.docId).get();
-      const { product_id, product_category_id, rating_value } = ratingDoc.data();
-
+    const ratingDoc = await db.collection("product_rating").doc(event.params.docId).get();
+    const { product_id, product_category_id, rating_value } = ratingDoc.data();
+    
+    if(typeof rating_value === "number" && rating_value >= 0 && rating_value <= 5) {
+      try {
+      console.log("Product rating data:", ratingDoc.data());
+      
       await updateBayesianAndCategory(
         "product",
         product_id,
@@ -88,6 +92,7 @@ exports.onProductUpdateOrModified = onDocumentCreated(
     } catch (error) {
       console.error("Error updating product data:", error);
     }
+  }
   }
 );
 
@@ -119,9 +124,8 @@ exports.onSurviceUpdateOrModified = onDocumentCreated(
 );
 
 
-exports.onUserCreate = functions.auth.user().onCreate((user) => {
-  console.log("User created:", user);
-});
+
+
 
 
 

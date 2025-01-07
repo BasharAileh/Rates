@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:rates/dialogs/error_dialog.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
 import 'package:rates/services/auth/auth_exception.dart';
@@ -39,3 +39,4 @@ Future<void> register(
     }
   }
 }
+ */

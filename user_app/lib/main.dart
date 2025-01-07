@@ -58,7 +58,8 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: verifySuccessRoute,
-          page: () => const Placeholder(), // Replace with SvgTopToBottomFade if defined
+          page: () =>
+              const Placeholder(), // Replace with SvgTopToBottomFade if defined
         ),
         GetPage(
           name: verCodeDialogRoute,
@@ -78,7 +79,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: restInfoRoute,
-          page: () => const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',),
+          page: () => RestaurantInformationPage(),
         ),
         // Add other pages with their respective routes
       ],

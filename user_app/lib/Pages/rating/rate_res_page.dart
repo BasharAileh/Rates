@@ -83,7 +83,7 @@ class RateMealPageState extends State<RateMealPage> {
                     ],
                   ),
                   RestaurantRatingCard(restaurantName: widget.restaurant),
-                   SizedBox(height: AspectRatios.height*0.178),
+                  SizedBox(height: AspectRatios.height * 0.178),
                   buildFooterButtons(context),
                 ],
               ),
@@ -103,7 +103,7 @@ class RateMealPageState extends State<RateMealPage> {
       children: [
         GestureDetector(
           onTap: () {
-            Get.to(() => const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',));
+            Get.to(() => RestaurantInformationPage());
           },
           child: Image.asset(widget.logo,
               height: AspectRatios.height * 0.08,
@@ -148,10 +148,10 @@ class RateMealPageState extends State<RateMealPage> {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/verfication_success.svg',
-                            width: AspectRatios.width*0.2,
-                            height: AspectRatios.height*0.2,
+                            width: AspectRatios.width * 0.2,
+                            height: AspectRatios.height * 0.2,
                           ),
-                          SizedBox(height: AspectRatios.height*0.01),
+                          SizedBox(height: AspectRatios.height * 0.01),
                           const Text(
                             'Your ratings have been submitted!',
                             textAlign: TextAlign.center,

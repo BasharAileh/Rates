@@ -38,7 +38,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   void showSnackBar(bool isFavorite, String name) {
-    String snackBarTitle = isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
+    String snackBarTitle =
+        isFavorite ? "Added to Favorite List" : "Removed from Favorite List";
     String snackBarMessage = isFavorite
         ? "The item has been successfully added to your favorite list."
         : "The item has been removed from your favorite list.";
@@ -72,7 +73,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
           spreadRadius: 0.5,
         ),
       ],
-     
     );
   }
 
@@ -124,7 +124,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             ),
             const SizedBox(width: 20),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +169,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 ],
               ),
             ),
-
             IconButton(
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -218,7 +216,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',),
+                    builder: (context) => RestaurantInformationPage(),
                   ),
                 );
               },

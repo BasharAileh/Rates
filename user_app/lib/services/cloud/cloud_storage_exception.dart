@@ -8,4 +8,6 @@ class CloudStorageException implements Exception {
 
 class CategoryNotFoundException implements Exception {}
 
+class CouldNotInsertDoc implements Exception {}
+
 // ===================== EXCEPTIONS ===================== //

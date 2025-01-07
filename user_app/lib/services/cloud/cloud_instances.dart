@@ -7,7 +7,7 @@ class Shop {
   final String categoryID;
   final String shopOwnerID;
   final String shopImagePath;
-  final List<String> contactInfo;
+  final Map<String, String> contactInfo;
   final double bayesianAverage;
   final double annualBayesianAverage;
   final String addedAt;
@@ -25,18 +25,18 @@ class Shop {
     required this.addedAt,
   });
 
-  factory Shop.fromMap(Map<String, dynamic> map) {
+  factory Shop.fromMap(Map<String, dynamic> map, {String? shopID}) {
     return Shop(
-      shopID: map[cloudShopID] ?? '',
+      shopID: shopID,
       shopName: map[cloudShopName] ?? '',
       shopLocation: map[cloudShopLocation] ?? '',
       categoryID: map[cloudCategoryID] ?? '',
       shopOwnerID: map[cloudShopOwnerID] ?? '',
       shopImagePath: map[cloudShopImagePath] ?? '',
-      contactInfo: List<String>.from(map[cloudContactInfo] ?? []),
+      contactInfo: map[cloudContactInfo] ?? {},
       bayesianAverage: (map[cloudBayesianAverage] as num).toDouble(),
       annualBayesianAverage:
-          (map[cloudAnnualBayesianAverage] as num).toDouble() ?? 0.0,
+          (map[cloudAnnualBayesianAverage] as num).toDouble(),
       addedAt: map[cloudAddedAt] ?? '',
     );
   }

@@ -5,12 +5,15 @@ import 'package:rates/services/auth/auth_provider.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
 class FirebaseAuthProvider implements AuthProvider {
+  FirebaseCloudStorage cloudService = FirebaseCloudStorage();
   @override
   Future<AuthUser> createUser({
     required String email,
     required String password,
+    required String userName,
   }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -19,6 +22,7 @@ class FirebaseAuthProvider implements AuthProvider {
       );
       final user = currentUser;
       if (user != null) {
+        await cloudService.insertDocument('user', user.toMap());
         return user;
       } else {
         throw UserNotLoggedInException();

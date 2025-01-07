@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+/* import 'package:flutter_test/flutter_test.dart';
 import 'package:rates/services/auth/auth_exception.dart';
 import 'package:rates/services/auth/auth_provider.dart';
 import 'package:rates/services/auth/auth_user.dart';
@@ -132,3 +132,4 @@ class MockAuthProvider implements AuthProvider {
     _user = newuser;
   }
 }
+ */

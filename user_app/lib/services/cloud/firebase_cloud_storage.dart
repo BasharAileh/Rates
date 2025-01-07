@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
 
@@ -79,8 +80,8 @@ class FirebaseCloudStorage {
         throw CategoryNotFoundException();
       }
 
-      final category = querySnapshot.docs.first.data() as Map<String, dynamic>;
-      final categoryID = category['category_id'] ?? '';
+      final category = querySnapshot.docs.first;
+      final categoryID = category.id;
 
       // Return the category ID
       return categoryID;
@@ -107,6 +108,72 @@ class FirebaseCloudStorage {
       return querySnapshot;
     } catch (e) {
       throw CategoryNotFoundException();
+    }
+  }
+
+  Future<void> addUserData(AuthUser user) async {
+    try {
+      // Create a reference to the document
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('users').doc(user.id);
+
+      // Update the document with the new user data
+      await docRef.set(user.toMap());
+    } on Error catch (e) {
+      throw Exception('Failed to add user data: $e');
+    }
+  }
+
+  Future<void> insertDocument(String collection, Map<String, dynamic> data,
+      [String? id]) async {
+    try {
+      id == null
+          ? await FirebaseFirestore.instance.collection(collection).add(data)
+          : await FirebaseFirestore.instance
+              .collection(collection)
+              .doc(id)
+              .set(data);
+    } catch (_) {
+      throw CouldNotInsertDoc();
+    }
+  }
+
+  Future<AuthUser> getUserInfo(String id) async {
+    try {
+      // Fetch the document by its ID
+      DocumentSnapshot docSnapshot =
+          await FirebaseFirestore.instance.collection('user').doc(id).get();
+
+      // Check if the document exists
+      if (!docSnapshot.exists) {
+        throw Exception('User not found for ID: $id');
+      }
+
+      AuthUser user =
+          AuthUser.fromMap(docSnapshot.data() as Map<String, dynamic>);
+
+      // Return the email
+      return user;
+    } catch (e) {
+      throw Exception('Failed to get user info: $e');
+    }
+  }
+
+  Future<Shop> getShopInfo(String shopID) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('shops')
+          .doc(shopID)
+          .get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('Shop not found for shopID: $shopID');
+      }
+      Shop shop = Shop.fromMap(docSnapshot.data() as Map<String, dynamic>);
+
+      return shop;
+    } catch (e) {
+      throw Exception('Failed to get shop info: $e');
     }
   }
 }

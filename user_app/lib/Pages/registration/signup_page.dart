@@ -443,7 +443,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             try {
                               if (_isEmailSelected) {
                                 await AuthService.firebase().createUser(
-                                    email: phoneOrEmail, password: password);
+                                    email: phoneOrEmail,
+                                    password: password,
+                                    userName: username);
                                 await AuthService.firebase()
                                     .sendEmailVerification();
                                 Get.snackbar(

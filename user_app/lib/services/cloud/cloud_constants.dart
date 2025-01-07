@@ -1,4 +1,4 @@
-String cloudShopName = 'shop_name';
+String cloudShopName = 'name';
 String cloudShopLocation = 'shop_location';
 String cloudCategoryID = 'category_id';
 String cloudShopOwnerID = 'shop_owner_id';

@@ -1,17 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart' show User;
-import 'package:flutter/material.dart';
 
-@immutable
 class AuthUser {
-  final bool isEmailVerified;
-  final bool isAnonymous;
   final String? email;
   final String id;
-  const AuthUser({
+  bool isEmailVerified;
+  bool isAnonymous;
+  String? profileImageUrl;
+  String userName;
+  int numberOfRatings;
+
+  AuthUser({
     required this.email,
     required this.isEmailVerified,
     required this.isAnonymous,
     required this.id,
+    required this.userName,
+    this.numberOfRatings = 0,
+    this.profileImageUrl,
   });
 
   factory AuthUser.fromFirebase(User user) => AuthUser(
@@ -19,5 +24,37 @@ class AuthUser {
         email: user.email,
         isEmailVerified: user.emailVerified,
         isAnonymous: user.isAnonymous,
+        profileImageUrl: user.photoURL,
+        userName: user.displayName ?? user.email!.split('@').first,
       );
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'email': email,
+      'is_email_verified': isEmailVerified,
+      'is_anonymous': isAnonymous,
+      'profile_imageUrl': profileImageUrl,
+      'user_name': userName,
+      'number_of_ratings': numberOfRatings,
+    };
+  }
+
+  static AuthUser fromMap(Map<String, dynamic> data) {
+    return AuthUser(
+      id: data['id'],
+      email: data['email'],
+      isEmailVerified: data['is_email_verified'],
+      isAnonymous: data['is_anonymous'],
+      profileImageUrl:
+          data['profile_imageUrl'] == '' ? null : data['profile_imageUrl'],
+      userName: data['user_name'],
+      numberOfRatings: data['number_of_ratings'] ?? 0,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AuthUser{id: $id, email: $email, isEmailVerified: $isEmailVerified, isAnonymous: $isAnonymous, profileImageUrl: $profileImageUrl, userName: $userName, numberOfRatings: $numberOfRatings}';
+  }
 }
