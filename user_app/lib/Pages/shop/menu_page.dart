@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
@@ -36,10 +35,8 @@ class MenuPageState extends State<MenuPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'Menu',
-          style: TextStyle(color: Colors.black, fontSize: 18),
-        ),
+        title: const Text('Menu',
+            style: TextStyle(color: Colors.black, fontSize: 18)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
