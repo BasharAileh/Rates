@@ -22,6 +22,7 @@ class FirebaseAuthProvider implements AuthProvider {
       );
       final user = currentUser;
       if (user != null) {
+        FirebaseAuth.instance.currentUser!.updateProfile(displayName: userName);
         await cloudService.insertDocument('user', user.toMap());
         return user;
       } else {
