@@ -19,6 +19,8 @@ class RestaurantInformationPage extends StatefulWidget {
 }
 
 class RestaurantInformationPageState extends State<RestaurantInformationPage> {
+  late final Shop shop;
+
   late final List<String> imgList = [];
 
   final Map<String, String> socialLinks = {
@@ -61,8 +63,21 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
-    final Shop shop = Get.arguments;
-    imgList.add(shop.shopImagePath);
+    if (Get.arguments != null) {
+      shop = Get.arguments;
+    } else {
+      shop = Shop(
+        shopName: '',
+        shopLocation: '',
+        categoryID: '',
+        shopOwnerID: '',
+        shopImagePath: '',
+        contactInfo: {},
+        bayesianAverage: 0,
+        annualBayesianAverage: 0,
+        addedAt: '',
+      );
+    }
 
     Map<String, String> contactInfo = shop.contactInfo;
     return Scaffold(
@@ -90,11 +105,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                 child: Stack(
                   children: [
                     PageView(
-                      children: [
-                        Image.asset(imgList[0], fit: BoxFit.cover),
-                        Image.asset(imgList[1], fit: BoxFit.cover),
-                        Image.asset(imgList[2], fit: BoxFit.cover),
-                      ],
+                      children: [],
                     ),
 
                     // Rating Badge

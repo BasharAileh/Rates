@@ -28,6 +28,8 @@ class AuthUser {
         userName: user.displayName ?? user.email!.split('@').first,
       );
 
+  get emailVerified => null;
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

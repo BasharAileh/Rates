@@ -52,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     FirebaseCloudStorage cloudService = FirebaseCloudStorage();
     final AuthUser user = AuthService.firebase().currentUser!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

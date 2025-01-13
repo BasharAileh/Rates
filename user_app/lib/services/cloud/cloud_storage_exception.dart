@@ -10,4 +10,6 @@ class CategoryNotFoundException implements Exception {}
 
 class CouldNotInsertDoc implements Exception {}
 
+class CodeDoesNotExist implements Exception {}
+
 // ===================== EXCEPTIONS ===================== //

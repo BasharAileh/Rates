@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/Pages/rating/rate_res_page.dart';
+import 'package:rates/services/cloud/cloud_storage_exception.dart';
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
 class VerificationDialogPage extends StatelessWidget {
   const VerificationDialogPage({super.key});
@@ -31,6 +33,7 @@ class VerificationDialogPage extends StatelessWidget {
     };
 
     final TextEditingController codeController = TextEditingController();
+    final FirebaseCloudStorage cloudService = FirebaseCloudStorage();
 
     return Dialog(
       backgroundColor:
@@ -65,24 +68,18 @@ class VerificationDialogPage extends StatelessWidget {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                       textSelectionTheme: const TextSelectionThemeData(
-                    cursorColor:
-                        Color.fromARGB(255, 255, 196, 45),
-                    selectionHandleColor:
-                        Color.fromARGB(255, 255, 196, 45),
+                    cursorColor: Color.fromARGB(255, 255, 196, 45),
+                    selectionHandleColor: Color.fromARGB(255, 255, 196, 45),
                   )),
                   child: TextField(
                     cursorColor: const Color.fromARGB(255, 255, 196, 45),
                     controller: codeController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(17),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 255, 196, 45),
-                          )),
-                      labelText: "Enter Code",
-                      labelStyle: const TextStyle(
-                        color: Color.fromARGB(255, 255, 196, 45),
+                        borderRadius: BorderRadius.circular(17),
                       ),
+                      labelText: "Enter Code",
+                      labelStyle: const TextStyle(),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(17),
                           borderSide: const BorderSide(
@@ -126,42 +123,71 @@ class VerificationDialogPage extends StatelessWidget {
                   ),
                   // Redeem Button
                   ElevatedButton(
-                    onPressed: () {
-                      String enteredCode = codeController.text.trim();
-                      if (validCodes.containsKey(enteredCode)) {
-                        Map<String, dynamic> restaurantData =
-                            validCodes[enteredCode]!;
-                        Get.back(); // Close the dialog
-                        Get.to(() => RateMealPage(
-                              restaurant: restaurantData['restaurant'],
-                              meals: restaurantData['meals'],
-                              rating: restaurantData['rating'],
-                              logo: restaurantData['logo'],
-                            ));
-                      } else {
-                        Get.snackbar(
-                            "Invalid Code",
+                    onPressed: () async {
+                      String enteredCode = codeController.text;
+                      try {
+                        await cloudService.getReceiptInfo(enteredCode);
+                        print('object');
+                        Get.to(
+                            () => RateMealPage(
+                                  restaurant: '',
+                                  meals: [],
+                                  rating: '',
+                                  logo: '',
+                                ),
+                            arguments: {
+                              'order_id': enteredCode,
+                            });
+                      } on CodeDoesNotExist {
+                        Get.snackbar("Invalid Code",
                             "The code you entered is not valid.",
                             titleText: const Text(
                               "Invalid Code",
                               style: TextStyle(
-                                fontSize:
-                                    16, 
-                                fontWeight: FontWeight
-                                    .bold,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             messageText: const Text(
                               "The code you entered is not valid.",
                               style: TextStyle(
-                                fontSize:
-                                    12,
+                                fontSize: 12,
                               ),
                             ),
                             backgroundColor:
                                 const Color.fromARGB(255, 191, 191, 191),
                             colorText: const Color.fromARGB(255, 255, 255, 255),
-                            margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+                            margin: const EdgeInsets.only(
+                                top: 10, left: 7, right: 7),
+                            padding: const EdgeInsets.all(5),
+                            boxShadows: [
+                              const BoxShadow(
+                                  color: Color.fromARGB(255, 56, 56, 56),
+                                  offset: Offset(0, 2),
+                                  blurRadius: 5,
+                                  spreadRadius: 0.5)
+                            ]);
+                      } catch (_) {
+                        Get.snackbar("Invalid Code",
+                            "The code you entered is not valid.",
+                            titleText: const Text(
+                              "Invalid Code",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            messageText: const Text(
+                              "The code you entered is not valid.",
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                            backgroundColor:
+                                const Color.fromARGB(255, 191, 191, 191),
+                            colorText: const Color.fromARGB(255, 255, 255, 255),
+                            margin: const EdgeInsets.only(
+                                top: 10, left: 7, right: 7),
                             padding: const EdgeInsets.all(5),
                             boxShadows: [
                               const BoxShadow(
@@ -173,8 +199,7 @@ class VerificationDialogPage extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color.fromARGB(255, 255, 196, 45),
+                      backgroundColor: const Color.fromARGB(255, 255, 196, 45),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),

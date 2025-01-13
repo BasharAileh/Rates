@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
@@ -18,6 +19,17 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
+  late final Map args;
+  @override
+  void initState() {
+    super.initState();
+    if (Get.arguments != null) {
+      args = Get.arguments;
+    } else {
+      args = {};
+    }
+  }
+
   List<Map<String, dynamic>> restaurantList = List.generate(
     10,
     (index) => {
@@ -230,7 +242,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, dynamic>;
+    final ScrollControllerWithGetX controller =
+        Get.put(ScrollControllerWithGetX());
     devtools.log('Arguments: $args');
     final category = args['category'];
     final categoryID = args['category_id'];
@@ -350,6 +363,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   }
                   return Expanded(
                     child: ListView.builder(
+                      controller: controller.scrollController,
                       itemCount: shops.length,
                       itemBuilder: (context, index) {
                         final restaurant = shops[index];
@@ -384,6 +398,23 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           ),
         ),
       ),
+      floatingActionButton: Obx(() {
+        return controller.showScrollToTopButton.value
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  child: IconButton(
+                    color: Colors.black,
+                    onPressed: controller.scrollToTop,
+                    icon: const Icon(
+                      Icons.arrow_upward,
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(); // Hide button when not needed
+      }),
     );
   }
 }
@@ -459,6 +490,45 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
         return _buildItem(widget.items[index], animation);
       },
     );
+  }
+}
+
+class ScrollControllerWithGetX extends GetxController {
+  var showScrollToTopButton = false.obs;
+
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Add listener to scroll controller
+    scrollController.addListener(() {
+      if (scrollController.offset > 1) {
+        if (!showScrollToTopButton.value) {
+          showScrollToTopButton.value = true;
+        }
+      } else {
+        if (showScrollToTopButton.value) {
+          showScrollToTopButton.value = false;
+        }
+      }
+    });
+  }
+
+  // Scroll to top function
+  void scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 }
 
