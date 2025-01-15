@@ -1,6 +1,7 @@
 import 'package:admin_app/constants/aspect_ratio.dart';
 import 'package:admin_app/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:admin_app/pages/registration/login_page.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -25,7 +26,9 @@ class RatesAdminApp extends StatelessWidget {
       selectionHandleColor: Color.fromARGB(255, 243, 198, 35), // Caret handle color
         )
       ),
-      home: const RestaurantInformationPage(),
+      home: const LoginPage(),
     );
   }
 }
+
+
