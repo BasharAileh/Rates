@@ -20,10 +20,16 @@ class FirebaseAuthProvider implements AuthProvider {
         email: email,
         password: password,
       );
-      final user = currentUser;
+      var user = currentUser;
       if (user != null) {
-        FirebaseAuth.instance.currentUser!.updateProfile(displayName: userName);
-        await cloudService.insertDocument('user', user.toMap());
+        userName =
+            '${userName.split(' ').first[0].toUpperCase()}${userName.split(' ').first.substring(1)} ${userName.split(' ').last[0].toUpperCase()}${userName.split(' ').last.substring(1)}';
+        await FirebaseAuth.instance.currentUser!
+            .updateProfile(displayName: userName);
+        user = currentUser!;
+        Map<String, dynamic> userMap = user.toMap();
+        userMap.remove('id');
+        await cloudService.insertDocument('user', userMap, id: user.id);
         return user;
       } else {
         throw UserNotLoggedInException();

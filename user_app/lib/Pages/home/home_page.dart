@@ -6,15 +6,14 @@ import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
-import 'package:http/http.dart' as http;
+import 'package:rates/services/auth/auth_service.dart';
+import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:developer' as devtools show log;
 
-late bool _showEmailVerificationMessage;
-late bool _isEmailVerified;
 FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
 late String path;
 String? categoryID = 'food';
@@ -33,11 +32,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final List<PageController> _pageController;
+
   @override
   void initState() {
     super.initState();
-    _showEmailVerificationMessage = false;
-    _isEmailVerified = false;
     _pageController = List.generate(3, (index) => PageController());
     shops = List.generate(5, (index) => List.generate(3, (index) => []));
     _initializeCategoryIDs();
@@ -85,6 +83,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
+    AuthUser user = AuthService.firebase().currentUser!;
     devtools.log('Category IDs: $categoryIDs');
     return Scaffold(
       body: SafeArea(
@@ -102,52 +101,83 @@ class _HomePageState extends State<HomePage> {
                   width: AspectRatios.width * 0.14871794871,
                 ),
               ),
-              _showEmailVerificationMessage
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: AspectRatios.height * 0.03444444444,
-                            child: Center(
-                              child: Container(
-                                height: AspectRatios.height * 0.03444444444,
-                                decoration: BoxDecoration(
-                                  color: AppColors.verificationSuccessColor
-                                      .withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.info_outline,
-                                      color: Colors.black,
-                                      size: AspectRatios.height * 0.02444444444,
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Column(
+                  children: [
+                    StreamBuilder(
+                      stream: cloudStorage.getUserStream(user.id),
+                      builder: (context, snapshot) {
+                        final userData =
+                            snapshot.data?.data() as Map<String, dynamic>?;
+
+                        if (userData != null) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator(
+                              backgroundColor: Colors.transparent,
+                              color: Colors.black,
+                              strokeWidth: 2,
+                            );
+                          }
+                          if (snapshot.hasError) {
+                            devtools.log(snapshot.error.toString());
+                            return const Text('An error occurred');
+                          }
+                          if (!snapshot.hasData || !snapshot.data!.exists) {
+                            return const SizedBox();
+                          }
+
+                          if (userData['is_email_verified'] == false) {
+                            return Column(
+                              children: [
+                                Center(
+                                  child: Container(
+                                    height: AspectRatios.height * 0.03444444444,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.verificationSuccessColor
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(50.0),
                                     ),
-                                    const SizedBox(width: 5),
-                                    const Text(
-                                      'Please verify your email.',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: Colors.black,
+                                          size: AspectRatios.height *
+                                              0.02444444444,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        const Text(
+                                          'Please verify your email.',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: AspectRatios.height * 0.01,
-                          ),
-                        ],
-                      ),
-                    )
-                  : SizedBox(
-                      height: AspectRatios.height * 0.03444444444,
+                                const SizedBox(height: 15),
+                              ],
+                            );
+                          } else {
+                            return SizedBox(
+                                height:
+                                    15 + (AspectRatios.height * 0.03444444444));
+                          }
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
                     ),
+                  ],
+                ),
+              ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -208,9 +238,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ).toList(),
                 ),
-              ),
-              SizedBox(
-                height: AspectRatios.height * 0.02,
               ),
               SizedBox(
                 height: AspectRatios.height * 0.02,
@@ -446,7 +473,7 @@ class _HomePageState extends State<HomePage> {
                                                                     ),
                                                                   )
                                                                 : FutureBuilder(
-                                                                    future: isImageAvailable(shops[horizontalIndex]
+                                                                    future: cloudStorage.isImageAvailable(shops[horizontalIndex]
                                                                             [
                                                                             verticalIndex][index ==
                                                                                 1
@@ -695,19 +722,7 @@ Stream<QuerySnapshot> getQueryStream(int verticalIndex, int horizontalIndex) {
   }
 }
 
-Future<bool> isImageAvailable(String url) async {
-  try {
-    final response = await http.head(Uri.parse(url));
 
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (e) {
-    return false;
-  }
-}
 
 
 /*  Container(

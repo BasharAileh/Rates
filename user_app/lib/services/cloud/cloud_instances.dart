@@ -68,6 +68,7 @@ class Product {
   final String productDescription;
   final String productPrice;
   final String productImagePath;
+  final String categoryID;
   final String shopID;
   final String addedAt;
 
@@ -77,6 +78,7 @@ class Product {
     required this.productDescription,
     required this.productPrice,
     required this.productImagePath,
+    required this.categoryID,
     required this.shopID,
     required this.addedAt,
   });
@@ -88,6 +90,7 @@ class Product {
       productDescription: map[cloudProductDescription] ?? '',
       productPrice: map[cloudProductPrice] ?? '',
       productImagePath: map[cloudProductImagePath] ?? '',
+      categoryID: map[cloudCategoryID] ?? '',
       shopID: map[cloudShopID] ?? '',
       addedAt: map[cloudProductAddedAt] ?? '',
     );

@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
+import 'package:http/http.dart' as http;
 
 class FirebaseCloudStorage {
   // Singleton instance
@@ -125,7 +126,7 @@ class FirebaseCloudStorage {
   }
 
   Future<void> insertDocument(String collection, Map<String, dynamic> data,
-      [String? id]) async {
+      {String? id}) async {
     try {
       id == null
           ? await FirebaseFirestore.instance.collection(collection).add(data)
@@ -161,10 +162,8 @@ class FirebaseCloudStorage {
 
   Future<Shop> getShopInfo(String shopID) async {
     try {
-      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
-          .collection('shops')
-          .doc(shopID)
-          .get();
+      DocumentSnapshot docSnapshot =
+          await FirebaseFirestore.instance.collection('shop').doc(shopID).get();
 
       if (!docSnapshot.exists) {
         throw Exception('Shop not found for shopID: $shopID');
@@ -174,6 +173,111 @@ class FirebaseCloudStorage {
       return shop;
     } catch (e) {
       throw Exception('Failed to get shop info: $e');
+    }
+  }
+
+  Stream<DocumentSnapshot> getUserStream(String id) {
+    return FirebaseFirestore.instance.collection('user').doc(id).snapshots();
+  }
+
+  Future<Map<String, dynamic>> getReceiptInfo(String receiptID) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('receipt')
+          .doc(receiptID)
+          .get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('Receipt not found for shopID: $receiptID');
+      }
+
+      final receipt = docSnapshot.data() as Map<String, dynamic>;
+
+      return receipt;
+    } catch (e) {
+      throw Exception('Failed to get receipt info: $e');
+    }
+  }
+
+  Future<bool> isImageAvailable(String url) async {
+    try {
+      final response = await http.head(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<String> getProductID(String productName, String shopID) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('product')
+          .where('product_name', isEqualTo: productName)
+          .where('shop_id', isEqualTo: shopID)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        throw Exception('Product not found for productName: $productName');
+      }
+
+      final product = querySnapshot.docs.first;
+      final productID = product.id;
+
+      return productID;
+    } catch (e) {
+      throw Exception('Failed to get product ID: $e');
+    }
+  }
+
+  Future<Product> getProductInfo(String productID) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('product')
+          .doc(productID)
+          .get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('Product not found for productID: $productID');
+      }
+
+      Product product =
+          Product.fromMap(docSnapshot.data() as Map<String, dynamic>);
+
+      return product;
+    } catch (e) {
+      throw Exception('Failed to get product info: $e');
+    }
+  }
+
+  Future<bool> incrementUserCategoryRatings(String userID, String categoryID,
+      {int? increment = 1}) async {
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('user').doc(userID);
+
+      DocumentSnapshot docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('User not found for userID: $userID');
+      }
+
+      final user = docSnapshot.data() as Map<String, dynamic>;
+
+      user['ratings'][categoryID] = user['ratings'][categoryID] + increment;
+
+      await docRef.set(
+        user,
+        SetOptions(merge: true),
+      );
+
+      return true;
+    } catch (e) {
+      throw Exception('Failed to increment user category ratings: $e');
     }
   }
 }
