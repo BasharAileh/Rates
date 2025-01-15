@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/services/auth/auth_service.dart';
+import 'package:rates/services/cloud/cloud_instances.dart';
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
 class RateMealPage extends StatefulWidget {
   final String restaurant;
@@ -23,8 +24,21 @@ class RateMealPage extends StatefulWidget {
   State<RateMealPage> createState() => RateMealPageState();
 }
 
+final FirebaseCloudStorage cloudService = FirebaseCloudStorage();
+Map<String, double> ratings = {};
+bool isRatingVisible = false;
+late List<TextEditingController> _opinionController;
+
 class RateMealPageState extends State<RateMealPage> {
   double mealRating = 0;
+  final args = Get.arguments;
+
+  final ProductRatingController controller = Get.put(ProductRatingController());
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,90 +56,205 @@ class RateMealPageState extends State<RateMealPage> {
         ),
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: Column(
-                children: [
-                  // Restaurant Header
-                  buildRestaurantHeader(),
-                  SizedBox(height: AspectRatios.height * 0.035),
-                  // Meals List
-                  const Row(
-                    children: [
-                      Text(
-                        "Rate the meals you enjoyed:",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  for (String meal in widget.meals)
-                    MealRatingCard(
-                      mealName: meal,
-                      currentRating: mealRating,
-                      onChanged: (value) {
-                        setState(() {
-                          mealRating = value;
-                        });
-                      },
-                    ),
-                  SizedBox(height: AspectRatios.height * 0.01),
-                  const Row(
-                    children: [
-                      Text(
-                        "Rate the restuarant services:",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  RestaurantRatingCard(restaurantName: widget.restaurant),
-                   SizedBox(height: AspectRatios.height*0.178),
-                  buildFooterButtons(context),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: NavigationBarWidget(),
-    );
-  }
+      body: FutureBuilder(
+        future: cloudService.getReceiptInfo(args['order_id']),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-  // Reusable widget to build the restaurant header
-  Widget buildRestaurantHeader() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () {
-            Get.to(() => const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',));
-          },
-          child: Image.asset(widget.logo,
-              height: AspectRatios.height * 0.08,
-              width: AspectRatios.width * 0.2),
-        ),
-        SizedBox(width: AspectRatios.width * 0.02),
-        Text(
-          widget.restaurant,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
+          Map<String, dynamic> receiptInfo =
+              snapshot.data as Map<String, dynamic>;
 
-  // Reusable footer buttons for submission and problem
-  Widget buildFooterButtons(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              showDialog(
+          _opinionController = List.generate(receiptInfo['products'].length,
+              (index) => TextEditingController());
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            child: Column(
+              children: [
+                // Header Section
+                SizedBox(
+                  height: 100,
+                  child: buildRestaurantHeader(receiptInfo['shop_id']),
+                ),
+                SizedBox(height: 16),
+                const Text(
+                  "Rate the meals you enjoyed",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+
+                // Product List Section
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: receiptInfo['products'].length,
+                    itemBuilder: (context, index) {
+                      final productName =
+                          receiptInfo['products'].keys.elementAt(index);
+                      final product = receiptInfo['products'][productName];
+
+                      return Column(
+                        children: [
+                          // Product Header Row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'x${product['product_quantity'] ?? ''} ',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  productName,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Obx(() {
+                                return controller
+                                            .isRatingVisible[productName] ??
+                                        false == false
+                                    ? IconButton(
+                                        onPressed: () {
+                                          controller
+                                              .toggleVisibility(productName);
+                                        },
+                                        icon: const Icon(
+                                          Icons.keyboard_arrow_down,
+                                          size: 30,
+                                          color:
+                                              Color.fromARGB(255, 255, 196, 45),
+                                        ),
+                                      )
+                                    : TextButton(
+                                        onPressed: () {
+                                          controller
+                                              .toggleVisibility(productName);
+                                        },
+                                        child: const Text(
+                                          'Rate',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Color.fromARGB(
+                                                255, 255, 196, 45),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                              }),
+                            ],
+                          ),
+
+                          // Animated Rating Section
+                          Obx(() {
+                            final isVisible =
+                                controller.isRatingVisible[productName] ??
+                                    false;
+
+                            return AnimatedSize(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              alignment: Alignment.topCenter,
+                              child: isVisible
+                                  ? Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Expanded(
+                                              child: Slider(
+                                                value: controller
+                                                        .ratings[productName] ??
+                                                    0,
+                                                onChanged: (value) {
+                                                  controller.updateRating(
+                                                      productName, value);
+                                                },
+                                                min: 0,
+                                                max: 5,
+                                                label: controller
+                                                    .ratings[productName]
+                                                    ?.toStringAsFixed(1),
+                                                activeColor:
+                                                    const Color.fromARGB(
+                                                        255, 255, 196, 45),
+                                              ),
+                                            ),
+                                            Text(
+                                              "${(controller.ratings[productName] ?? 0).toStringAsFixed(1)} / 5",
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        OpinionTextBox(
+                                          controller: _opinionController[index],
+                                          hintText:
+                                              "How was the overall service at the restaurant?",
+                                        ),
+                                      ],
+                                    )
+                                  : const SizedBox.shrink(),
+                            );
+                          }),
+                          SizedBox(
+                            height: AspectRatios.height * 0.01,
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            controller.ratings.forEach((key, value) async {
+                              var numberOfRatings = 0;
+                              /* numberOfRatings+= receiptInfo['products'][] */
+                              print(
+                                  receiptInfo['products']['product_quantity']);
+                              /* 
+                              final productID = await cloudService.getProductID(
+                                key,
+                                receiptInfo['shop_id'],
+                              );
+
+                              final Product product =
+                                  await cloudService.getProductInfo(productID);
+
+                              await cloudService.insertDocument(
+                                'product_rating',
+                                {
+                                  'product_id': productID,
+                                  'product_category_id': product.categoryID,
+                                  'rating_value': value,
+                                },
+                              );
+
+                              Shop shop = await cloudService
+                                  .getShopInfo(receiptInfo['shop_id']);
+
+                              await cloudService
+                                  .incrementUserCategoryRatings(
+                                AuthService.firebase().currentUser!.id,
+                                shop.categoryID,
+                                increment: 7,
+                              ); */
+                            });
+                          } catch (_) {}
+
+                          /* showDialog(
                 context: context,
                 builder: (context) => Dialog(
                   backgroundColor: Colors.transparent,
@@ -148,10 +277,10 @@ class RateMealPageState extends State<RateMealPage> {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/verfication_success.svg',
-                            width: AspectRatios.width*0.2,
-                            height: AspectRatios.height*0.2,
+                            width: AspectRatios.width * 0.2,
+                            height: AspectRatios.height * 0.2,
                           ),
-                          SizedBox(height: AspectRatios.height*0.01),
+                          SizedBox(height: AspectRatios.height * 0.01),
                           const Text(
                             'Your ratings have been submitted!',
                             textAlign: TextAlign.center,
@@ -170,43 +299,203 @@ class RateMealPageState extends State<RateMealPage> {
               Future.delayed(const Duration(seconds: 4), () {
                 Navigator.pop(context);
                 Navigator.pop(context);
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 255, 196, 45),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
-            child: const Text(
-              "Submit Ratings",
-              style:
-                  TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              showDialog(
-                context: context,
-                builder: (context) => const AlertDialog(
-                  title: Text("We’re Sorry!"),
-                  content: Text("Please let us know what went wrong."),
+              }); */
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 255, 196, 45),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                        child: const Text(
+                          "Submit Ratings",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 0, 0, 0)),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Get.back();
+                          showDialog(
+                            context: context,
+                            builder: (context) => const AlertDialog(
+                              title: Text("We’re Sorry!"),
+                              content:
+                                  Text("Please let us know what went wrong."),
+                            ),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                            foregroundColor:
+                                const Color.fromARGB(255, 33, 150, 243)),
+                        child: const Text(
+                          "This wasn’t what I ordered",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
-            style: TextButton.styleFrom(
-                foregroundColor: const Color.fromARGB(255, 33, 150, 243)),
-            child: const Text(
-              "This wasn’t what I ordered",
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
+}
+
+// Reusable widget to build the restaurant header
+Widget buildRestaurantHeader(String shopID) {
+  Shop? shop;
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      print('constraints: $constraints');
+      return GestureDetector(
+        onTap: () {
+          Get.to(() => RestaurantInformationPage());
+        },
+        child: FutureBuilder(
+          future: cloudService.getShopInfo(shopID),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasData) {
+              shop = snapshot.data;
+            }
+            return Column(
+              children: [
+                FutureBuilder(
+                  future:
+                      cloudService.isImageAvailable(shop?.shopImagePath ?? ''),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasData) {
+                      return Image.network(
+                        height: constraints.maxHeight * 0.8,
+                        width: constraints.maxWidth,
+                        shop!.shopImagePath,
+                      );
+                    }
+                    return const Icon(Icons.error);
+                  },
+                ),
+                SizedBox(
+                  height: constraints.maxHeight * 0.2,
+                  child: Text(
+                    shop?.shopName ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      );
+    },
+  );
+}
+
+// Reusable footer buttons for submission and problem
+Widget buildFooterButtons(BuildContext context) {
+  final ProductRatingController controller = Get.put(ProductRatingController());
+  return Center(
+    child: Column(
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            /* showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/verfication_success.svg',
+                            width: AspectRatios.width * 0.2,
+                            height: AspectRatios.height * 0.2,
+                          ),
+                          SizedBox(height: AspectRatios.height * 0.01),
+                          const Text(
+                            'Your ratings have been submitted!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 196, 45),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+              Future.delayed(const Duration(seconds: 4), () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              }); */
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 255, 196, 45),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+          ),
+          child: const Text(
+            "Submit Ratings",
+            style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Get.back();
+            showDialog(
+              context: context,
+              builder: (context) => const AlertDialog(
+                title: Text("We’re Sorry!"),
+                content: Text("Please let us know what went wrong."),
+              ),
+            );
+          },
+          style: TextButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 33, 150, 243)),
+          child: const Text(
+            "This wasn’t what I ordered",
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 // Reusable Rating Slider Widget
@@ -243,7 +532,7 @@ class RatingSlider extends StatelessWidget {
                 child: Slider(
                   value: currentRating,
                   onChanged: onChanged,
-                  min: 0,
+                  min: 0.5,
                   max: 5,
                   divisions: 10,
                   label: currentRating.toStringAsFixed(1),
@@ -262,6 +551,7 @@ class RatingSlider extends StatelessWidget {
   }
 }
 
+/* 
 // Restaurant Rating Card using RatingSlider
 class RestaurantRatingCard extends StatefulWidget {
   final String restaurantName;
@@ -273,11 +563,6 @@ class RestaurantRatingCard extends StatefulWidget {
 }
 
 class RestaurantRatingCardState extends State<RestaurantRatingCard> {
-  Map<String, double> ratings = {
-    "Delivery": 0,
-    "Cleanliness": 0,
-    "Pricing": 0,
-  };
   bool isRatingVisible = false;
 
   @override
@@ -362,126 +647,139 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
     );
   }
 }
+ */
 
 // Meal Rating Card using RatingSlider
 class MealRatingCard extends StatefulWidget {
   final String mealName;
   final double currentRating;
   final ValueChanged<double> onChanged;
+  final int numberOfItems;
 
-  const MealRatingCard(
-      {super.key,
-      required this.mealName,
-      required this.currentRating,
-      required this.onChanged});
+  const MealRatingCard({
+    super.key,
+    required this.mealName,
+    required this.currentRating,
+    required this.onChanged,
+    required this.numberOfItems,
+  });
 
   @override
   MealRatingCardState createState() => MealRatingCardState();
 }
 
-class MealRatingCardState extends State<MealRatingCard> {
+class MealRatingCardState extends State<MealRatingCard>
+    with SingleTickerProviderStateMixin {
   bool isRatingVisible = false;
   double currentRating = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 6, right: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: AspectRatios.height * 0.01),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  widget.mealName,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w500),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: AspectRatios.height * 0.01),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('x${widget.numberOfItems} ',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+            Expanded(
+              child: Text(
+                widget.mealName,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
-              isRatingVisible
-                  ? IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isRatingVisible = false; // Collapse the slider
-                        });
-                      },
-                      icon: Icon(
-                        Icons.keyboard_arrow_up,
-                        size: AspectRatios.height * 0.040,
-                        color: const Color.fromARGB(255, 255, 196, 45),
-                      ),
-                    )
-                  : TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isRatingVisible = true; // Expand the slider
-                        });
-                      },
-                      child: const Text(
-                        "Rate",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color.fromARGB(255, 255, 196, 45),
-                          fontWeight: FontWeight.bold,
-                        ),
+            ),
+            isRatingVisible
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isRatingVisible = false; // Collapse the slider
+                      });
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_up,
+                      size: AspectRatios.height * 0.040,
+                      color: const Color.fromARGB(255, 255, 196, 45),
+                    ),
+                  )
+                : InkWell(
+                    onTap: () {
+                      setState(() {
+                        isRatingVisible = true; // Expand the slider
+                      });
+                    },
+                    child: const Text(
+                      'Rate',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 255, 196, 45),
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-            ],
-          ),
-          if (isRatingVisible)
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  ),
+          ],
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: isRatingVisible
+              ? Column(
                   children: [
-                    Expanded(
-                      child: SliderTheme(
-                        data: const SliderThemeData(
-                          valueIndicatorTextStyle:
-                              TextStyle(fontSize: 10, color: Colors.black),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: SliderTheme(
+                            data: const SliderThemeData(
+                              valueIndicatorTextStyle:
+                                  TextStyle(fontSize: 10, color: Colors.black),
+                            ),
+                            child: Slider(
+                              value: currentRating,
+                              onChanged: (value) {
+                                setState(() {
+                                  currentRating = value; // Update local state
+                                });
+                                widget.onChanged(
+                                    value); // Call onChanged from parent to update external state
+                              },
+                              min: 0,
+                              max: 5,
+                              divisions: 10,
+                              label: currentRating.toStringAsFixed(1),
+                              activeColor:
+                                  const Color.fromARGB(255, 255, 196, 45),
+                            ),
+                          ),
                         ),
-                        child: Slider(
-                          value: currentRating,
-                          onChanged: (value) {
-                            setState(() {
-                              currentRating = value; // Update local state
-                            });
-                            widget.onChanged(
-                                value); // Call onChanged from parent to update external state
-                          },
-                          min: 0,
-                          max: 5,
-                          divisions: 10,
-                          label: currentRating.toStringAsFixed(1),
-                          activeColor: const Color.fromARGB(255, 255, 196, 45),
+                        Text(
+                          "${currentRating.toStringAsFixed(1)} / 5",
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
                         ),
-                      ),
+                      ],
                     ),
-                    Text(
-                      "${currentRating.toStringAsFixed(1)} / 5",
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.bold),
+                    OpinionTextBox(
+                      controller: _opinionController[widget.numberOfItems],
+                      hintText: "Share your thoughts about the meal...",
                     ),
                   ],
-                ),
-                const OpinionTextBox(
-                  hintText: "Share your thoughts about the meal...",
                 )
-              ],
-            ),
-        ],
-      ),
+              : Container(),
+        ),
+      ],
     );
   }
 }
 
 class OpinionTextBox extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller;
 
-  const OpinionTextBox({super.key, required this.hintText});
+  const OpinionTextBox(
+      {super.key, required this.hintText, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -505,5 +803,23 @@ class OpinionTextBox extends StatelessWidget {
         style: const TextStyle(fontSize: 14, color: Colors.black),
       ),
     );
+  }
+}
+
+class ProductRatingController extends GetxController {
+  // Tracks which product's rating is visible
+  final isRatingVisible = {}.obs; // Key: product_name, Value: visibility (bool)
+
+  // Tracks ratings for each product
+  final ratings = {}.obs; // Key: product_name, Value: rating (double)
+
+  // Toggle visibility for a product
+  void toggleVisibility(String productName) {
+    isRatingVisible[productName] = !(isRatingVisible[productName] ?? false);
+  }
+
+  // Update rating for a product
+  void updateRating(String productName, double value) {
+    ratings[productName] = value;
   }
 }

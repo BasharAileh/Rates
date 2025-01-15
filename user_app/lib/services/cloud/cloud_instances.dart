@@ -7,8 +7,9 @@ class Shop {
   final String categoryID;
   final String shopOwnerID;
   final String shopImagePath;
-  final List<String> contactInfo;
+  final Map<String, String> contactInfo;
   final double bayesianAverage;
+  final double annualBayesianAverage;
   final String addedAt;
 
   Shop({
@@ -20,19 +21,22 @@ class Shop {
     required this.shopImagePath,
     required this.contactInfo,
     required this.bayesianAverage,
+    required this.annualBayesianAverage,
     required this.addedAt,
   });
 
-  factory Shop.fromMap(Map<String, dynamic> map) {
+  factory Shop.fromMap(Map<String, dynamic> map, {String? shopID}) {
     return Shop(
-      shopID: map[cloudShopID] ?? '',
+      shopID: shopID,
       shopName: map[cloudShopName] ?? '',
       shopLocation: map[cloudShopLocation] ?? '',
       categoryID: map[cloudCategoryID] ?? '',
       shopOwnerID: map[cloudShopOwnerID] ?? '',
       shopImagePath: map[cloudShopImagePath] ?? '',
-      contactInfo: List<String>.from(map[cloudContactInfo] ?? []),
-      bayesianAverage: (map[cloudBayesianAverage] as num).toDouble() ?? 0.0,
+      contactInfo: map[cloudContactInfo] ?? {},
+      bayesianAverage: (map[cloudBayesianAverage] as num).toDouble(),
+      annualBayesianAverage:
+          (map[cloudAnnualBayesianAverage] as num).toDouble(),
       addedAt: map[cloudAddedAt] ?? '',
     );
   }
@@ -47,13 +51,14 @@ class Shop {
       cloudShopImagePath: shopImagePath,
       cloudContactInfo: contactInfo,
       cloudContactInfo: bayesianAverage,
+      cloudContactInfo: annualBayesianAverage,
       cloudAddedAt: addedAt,
     };
   }
 
   @override
   String toString() {
-    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, contactInfo: $contactInfo, bayesian_average: $bayesianAverage,addedAt: $addedAt}\n\n';
+    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, contactInfo: $contactInfo, bayesianAverage: $bayesianAverage, annualBayesianAverage: $annualBayesianAverage, addedAt: $addedAt} \n\n\n\n';
   }
 }
 
@@ -63,6 +68,7 @@ class Product {
   final String productDescription;
   final String productPrice;
   final String productImagePath;
+  final String categoryID;
   final String shopID;
   final String addedAt;
 
@@ -72,6 +78,7 @@ class Product {
     required this.productDescription,
     required this.productPrice,
     required this.productImagePath,
+    required this.categoryID,
     required this.shopID,
     required this.addedAt,
   });
@@ -83,6 +90,7 @@ class Product {
       productDescription: map[cloudProductDescription] ?? '',
       productPrice: map[cloudProductPrice] ?? '',
       productImagePath: map[cloudProductImagePath] ?? '',
+      categoryID: map[cloudCategoryID] ?? '',
       shopID: map[cloudShopID] ?? '',
       addedAt: map[cloudProductAddedAt] ?? '',
     );

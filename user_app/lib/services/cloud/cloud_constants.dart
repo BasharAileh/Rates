@@ -1,4 +1,4 @@
-String cloudShopName = 'shop_name';
+String cloudShopName = 'name';
 String cloudShopLocation = 'shop_location';
 String cloudCategoryID = 'category_id';
 String cloudShopOwnerID = 'shop_owner_id';
@@ -39,3 +39,4 @@ String cloudContactName = 'contact_name';
 String cloudContactValue = 'contact_value';
 String cloudShopDeliveryName = 'delivery_App_name';
 String cloudBayesianAverage = 'bayesian_average';
+String cloudAnnualBayesianAverage = 'annual_bayesian_average';

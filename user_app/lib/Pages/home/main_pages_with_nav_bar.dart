@@ -6,6 +6,7 @@ import 'package:rates/Pages/other/profile_page.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
 import 'package:rates/dialogs/nav_bar.dart';
+import 'package:rates/services/cloud/temp_page.dart';
 
 int? page;
 
@@ -44,7 +45,7 @@ class _PagesWithNavBarState extends State<PagesWithNavBar> {
                     onRemoveFavorite: (_) {},
                   ); // Or any other page
                 case 4:
-                  return const SignupPage(); // Or another page
+                  return const RatingsPage(); // Or another page
                 default:
                   return const HomePage(); // Default page
               }

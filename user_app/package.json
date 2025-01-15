@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "axios": "^1.7.9",
+    "firebase-functions": "^6.2.0",
+    "pdfkit": "^0.16.0"
+  }
+}

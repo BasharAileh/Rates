@@ -5,20 +5,31 @@ import 'package:rates/services/auth/auth_provider.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
 class FirebaseAuthProvider implements AuthProvider {
+  FirebaseCloudStorage cloudService = FirebaseCloudStorage();
   @override
   Future<AuthUser> createUser({
     required String email,
     required String password,
+    required String userName,
   }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final user = currentUser;
+      var user = currentUser;
       if (user != null) {
+        userName =
+            '${userName.split(' ').first[0].toUpperCase()}${userName.split(' ').first.substring(1)} ${userName.split(' ').last[0].toUpperCase()}${userName.split(' ').last.substring(1)}';
+        await FirebaseAuth.instance.currentUser!
+            .updateProfile(displayName: userName);
+        user = currentUser!;
+        Map<String, dynamic> userMap = user.toMap();
+        userMap.remove('id');
+        await cloudService.insertDocument('user', userMap, id: user.id);
         return user;
       } else {
         throw UserNotLoggedInException();
@@ -125,6 +136,15 @@ class FirebaseAuthProvider implements AuthProvider {
       }
     } catch (_) {
       throw GenericAuthException();
+    }
+  }
+
+  Future<void> changeDisplayName(String displayName) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.updateProfile(displayName: displayName);
+    } else {
+      throw UserNotLoggedInException();
     }
   }
 }

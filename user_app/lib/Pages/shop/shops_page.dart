@@ -1,10 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:rates/Pages/shop/rest_info_page.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import '../other/favorites_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:developer' as devtools show log;
 
 class FoodPage extends StatefulWidget {
   const FoodPage({super.key});
@@ -14,6 +19,17 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
+  late final Map args;
+  @override
+  void initState() {
+    super.initState();
+    if (Get.arguments != null) {
+      args = Get.arguments;
+    } else {
+      args = {};
+    }
+  }
+
   List<Map<String, dynamic>> restaurantList = List.generate(
     10,
     (index) => {
@@ -25,22 +41,18 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     },
   );
 
-  void _filterRestaurants(String query) {
-    setState(() {
-      restaurantList = List.generate(
-        10,
-        (index) => {
-          'name': 'Restaurant #$index',
-          'rating': 1.5 + (index + 1 % 2) * 0.5,
-          'image': 'assets/images/Bashar_Akileh.jpg',
-          'isFavorite': false,
-          'index': index,
-        },
-      ).where((restaurant) {
-        final name = restaurant['name'] as String?;
-        return name != null && name.toLowerCase().contains(query.toLowerCase());
-      }).toList();
-    });
+  Future<bool> isImageAvailable(String url) async {
+    try {
+      final response = await http.head(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
   void _sortRestaurants(String criteria) {
@@ -109,6 +121,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     required bool isFavorite,
     required VoidCallback onFavoriteToggle,
     required VoidCallback onDetailsPressed,
+    required int index,
   }) {
     Color ratingColor;
     String ratingText = "Rating of ";
@@ -121,80 +134,89 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
       ratingColor = Colors.red;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.1),
-            blurRadius: 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: SizedBox(
-              width: 69,
-              height: 69,
-              child: Image.network(
-                image,
+    return InkWell(
+      onTap: onDetailsPressed,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white.withOpacity(0.1),
+              blurRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: SizedBox(
+                width: 69,
+                height: 69,
+                child: image.contains('http')
+                    ? Image.network(
+                        image,
+                      )
+                    : CircleAvatar(
+                        backgroundColor: Colors.black,
+                        child: SvgPicture.asset(
+                          'assets/logos/yallow_logo.svg',
+                          height: 50,
+                          width: 50,
+                        ),
+                      ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Expanded(
-                      child: Text(
-                        "#1st Place",
+                      Expanded(
+                        child: Text(
+                          "#${index}st Place",
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Text(
+                        ratingText,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 11),
+                      ),
+                      Text(
+                        "$rating stars",
                         style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 12,
+                          color: ratingColor,
+                          fontSize: 11,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Text(
-                      ratingText,
-                      style: const TextStyle(color: Colors.black, fontSize: 11),
-                    ),
-                    Text(
-                      "$rating stars",
-                      style: TextStyle(
-                        color: ratingColor,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 3),
-                InkWell(
-                  onTap: onDetailsPressed,
-                  child: const Text(
+                    ],
+                  ),
+                  const SizedBox(height: 3),
+                  const Text(
                     "View Details",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -202,25 +224,29 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       fontSize: 12,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.grey,
+            IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : Colors.grey,
+              ),
+              onPressed: onFavoriteToggle,
             ),
-            onPressed: onFavoriteToggle,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final ScrollControllerWithGetX controller =
+        Get.put(ScrollControllerWithGetX());
+    devtools.log('Arguments: $args');
+    final category = args['category'];
+    final categoryID = args['category_id'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -231,9 +257,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'Food',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        title: Text(
+          category,
+          style:
+              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -314,6 +341,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                 stream: FirebaseFirestore.instance
                     .collection('shop')
                     .orderBy('bayesian_average', descending: true)
+                    .where('category_id', isEqualTo: categoryID)
                     .snapshots(),
                 builder: (context, snapshot) {
                   late List<Shop> shops;
@@ -325,34 +353,41 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   }
                   if (snapshot.hasData) {
                     shops = snapshot.data!.docs
-                        .map((e) =>
-                            Shop.fromMap(e.data() as Map<String, dynamic>))
+                        .map(
+                          (e) => Shop.fromMap(
+                            e.data() as Map<String, dynamic>,
+                            shopID: e.id,
+                          ),
+                        )
                         .toList();
-                    print(shops);
                   }
                   return Expanded(
                     child: ListView.builder(
+                      controller: controller.scrollController,
                       itemCount: shops.length,
                       itemBuilder: (context, index) {
                         final restaurant = shops[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 20),
-                          child: restaurantCard(
-                            name: restaurant.shopName,
-                            image: restaurant.shopImagePath,
-                            rating: restaurant.bayesianAverage,
-                            isFavorite: false,
-                            onFavoriteToggle: () => toggleFavorite(index),
-                            onDetailsPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const RestaurantInformationPage(rating:3,restaurantName: 'Bab Elyamen',),
-                                ),
-                              );
-                            },
-                          ),
+                          child: FutureBuilder(
+                              future:
+                                  isImageAvailable(restaurant.shopImagePath),
+                              builder: (context, snapshot) {
+                                return restaurantCard(
+                                  name: restaurant.shopName,
+                                  image: restaurant.shopImagePath,
+                                  rating: restaurant.bayesianAverage,
+                                  index: index + 1,
+                                  isFavorite: false,
+                                  onFavoriteToggle: () => toggleFavorite(index),
+                                  onDetailsPressed: () {
+                                    Get.toNamed(
+                                      restInfoRoute,
+                                      arguments: restaurant,
+                                    );
+                                  },
+                                );
+                              }),
                         );
                       },
                     ),
@@ -363,6 +398,23 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           ),
         ),
       ),
+      floatingActionButton: Obx(() {
+        return controller.showScrollToTopButton.value
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  child: IconButton(
+                    color: Colors.black,
+                    onPressed: controller.scrollToTop,
+                    icon: const Icon(
+                      Icons.arrow_upward,
+                    ),
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(); // Hide button when not needed
+      }),
     );
   }
 }
@@ -438,6 +490,45 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
         return _buildItem(widget.items[index], animation);
       },
     );
+  }
+}
+
+class ScrollControllerWithGetX extends GetxController {
+  var showScrollToTopButton = false.obs;
+
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Add listener to scroll controller
+    scrollController.addListener(() {
+      if (scrollController.offset > 1) {
+        if (!showScrollToTopButton.value) {
+          showScrollToTopButton.value = true;
+        }
+      } else {
+        if (showScrollToTopButton.value) {
+          showScrollToTopButton.value = false;
+        }
+      }
+    });
+  }
+
+  // Scroll to top function
+  void scrollToTop() {
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 }
 
