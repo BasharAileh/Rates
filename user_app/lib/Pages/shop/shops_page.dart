@@ -20,6 +20,7 @@ class FoodPage extends StatefulWidget {
 
 class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   late final Map args;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +45,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
   Future<bool> isImageAvailable(String url) async {
     try {
       final response = await http.head(Uri.parse(url));
-
       if (response.statusCode == 200) {
         return true;
       } else {
@@ -83,23 +83,23 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
         : "The item has been removed from your favorite list.";
 
     Get.snackbar(
-      snackBarTitle, // Title
-      snackBarMessage, // Message
+      snackBarTitle,
+      snackBarMessage,
       titleText: Text(
         snackBarTitle,
         style: const TextStyle(
-          fontSize: 16, // Title font size
-          fontWeight: FontWeight.bold, // Bold title
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
       messageText: Text(
         snackBarMessage,
         style: const TextStyle(
-          fontSize: 12, // Message font size
-          fontWeight: FontWeight.normal, // Regular weight for message
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+      backgroundColor: Colors.grey,
       colorText: const Color.fromARGB(255, 255, 255, 255),
       margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
       padding: const EdgeInsets.all(5),
@@ -138,12 +138,16 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
       onTap: onDetailsPressed,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey[900]
+              : Colors.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.white.withOpacity(0.1),
-              blurRadius: 0,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.withOpacity(0)
+                  : Colors.white.withOpacity(0),
+              blurRadius: 5,
               offset: const Offset(0, 2),
             ),
           ],
@@ -160,7 +164,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         image,
                       )
                     : CircleAvatar(
-                        backgroundColor: Colors.black,
+                        backgroundColor: Colors.grey[900],
                         child: SvgPicture.asset(
                           'assets/logos/yallow_logo.svg',
                           height: 50,
@@ -181,17 +185,22 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       Expanded(
                         child: Text(
                           name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Text(
                           "#${index}st Place",
-                          style: const TextStyle(
-                            color: Colors.blue,
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.yellow
+                                : Colors.blue,
                             fontSize: 12,
                           ),
                         ),
@@ -203,8 +212,12 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                     children: [
                       Text(
                         ratingText,
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 11),
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : Colors.black,
+                          fontSize: 11,
+                        ),
                       ),
                       Text(
                         "$rating stars",
@@ -216,11 +229,13 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                     ],
                   ),
                   const SizedBox(height: 3),
-                  const Text(
+                  Text(
                     "View Details",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white54
+                          : Colors.grey,
                       fontSize: 12,
                     ),
                   ),
@@ -249,23 +264,38 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     final categoryID = args['category_id'];
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0.0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text(
           category,
-          style:
-              const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.red),
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.red,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -286,8 +316,11 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           ),
         ],
       ),
+      
       body: Container(
-        color: Colors.white, // Set body background color to white
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.white,
         child: Padding(
           padding: EdgeInsets.only(left: AspectRatios.width * 0.045),
           child: Column(
@@ -295,12 +328,15 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  const Text(
+                  Text(
                     "Discover and Rate",
                     style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white54
+                          : Colors.grey,
+                    ),
                   ),
                   const SizedBox(width: 5),
                   Expanded(
@@ -308,28 +344,53 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                       height: AspectRatios.height * 0.03197265625,
                       width: AspectRatios.width * 0.4807692307692308,
                       child: TextField(
-                        //onChanged: ,
                         decoration: InputDecoration(
                           hintText: 'Search for restaurants',
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white54
+                                : Colors.black,
+                          ),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: const BorderSide(color: Colors.grey),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white54
+                                  : Colors.grey,
+                            ),
                           ),
+                        ),
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                     ),
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.filter_list, color: Colors.black),
+                    icon: Icon(
+                      Icons.filter_list,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                     onSelected: _sortRestaurants,
                     itemBuilder: (BuildContext context) {
                       return ['Rating', 'Alphabetical']
                           .map((String choice) => PopupMenuItem<String>(
                                 value: choice,
-                                child: Text(choice),
+                                child: Text(
+                                  choice,
+                                  style: TextStyle(
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ))
                           .toList();
                     },
@@ -413,14 +474,14 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                   ),
                 ),
               )
-            : const SizedBox.shrink(); // Hide button when not needed
+            : const SizedBox.shrink();
       }),
     );
   }
 }
 
 class AnimatedListWidget extends StatefulWidget {
-  final List<Map<String, dynamic>> items; // List of items with ratings
+  final List<Map<String, dynamic>> items;
 
   const AnimatedListWidget({super.key, required this.items});
 
@@ -436,19 +497,17 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
   @override
   void initState() {
     super.initState();
-    _oldItems = List.from(widget.items); // Initialize with initial items
+    _oldItems = List.from(widget.items);
   }
 
   @override
   void didUpdateWidget(covariant AnimatedListWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Compare the new items with the old ones and apply animations
     _updateList(widget.items);
   }
 
   void _updateList(List<Map<String, dynamic>> newItems) {
-    // Find removed items
     for (var oldItem in _oldItems) {
       if (!newItems.contains(oldItem)) {
         int index = _oldItems.indexOf(oldItem);
@@ -459,7 +518,6 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
       }
     }
 
-    // Find added items or changes in position
     for (var newItem in newItems) {
       if (!_oldItems.contains(newItem)) {
         int index = newItems.indexOf(newItem);
@@ -467,7 +525,6 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
       }
     }
 
-    // Update the local list
     _oldItems = List.from(newItems);
   }
 
@@ -494,34 +551,24 @@ class _AnimatedListWidgetState extends State<AnimatedListWidget> {
 }
 
 class ScrollControllerWithGetX extends GetxController {
+  ScrollController scrollController = ScrollController();
   var showScrollToTopButton = false.obs;
-
-  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
 
-    // Add listener to scroll controller
     scrollController.addListener(() {
-      if (scrollController.offset > 1) {
-        if (!showScrollToTopButton.value) {
-          showScrollToTopButton.value = true;
-        }
-      } else {
-        if (showScrollToTopButton.value) {
-          showScrollToTopButton.value = false;
-        }
-      }
+      showScrollToTopButton.value =
+          scrollController.position.pixels > 500;
     });
   }
 
-  // Scroll to top function
   void scrollToTop() {
     scrollController.animateTo(
       0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -531,6 +578,7 @@ class ScrollControllerWithGetX extends GetxController {
     super.onClose();
   }
 }
+
 
 /* 
  Expanded(

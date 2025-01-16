@@ -25,13 +25,53 @@ class MyApp extends StatelessWidget {
     Get.put(BottomNavController());
     return GetMaterialApp(
       title: 'Flutter Demo',
+      themeMode: ThemeMode.system, // Automatically switch theme based on device setting
       theme: ThemeData(
+        brightness: Brightness.light,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           toolbarHeight: MediaQuery.of(context).size.height * 0.0663507109,
         ),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.light(
+          primary: Colors.black,
+          onPrimary: Colors.white,
+          secondary: Colors.grey[800]!,
+          onSecondary: Colors.white,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.black),
+          bodyMedium: TextStyle(color: Colors.black),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white, backgroundColor: Colors.black, // Button text color
+          ),
+        ),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          toolbarHeight: MediaQuery.of(context).size.height * 0.0663507109,
+        ),
+        colorScheme: ColorScheme.dark(
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          secondary: Colors.grey[400]!,
+          onSecondary: Colors.black,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.black, backgroundColor: Colors.white, // Button text color
+          ),
+        ),
         useMaterial3: true,
       ),
       initialRoute: initRoute,

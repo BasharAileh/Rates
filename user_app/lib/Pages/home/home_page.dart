@@ -39,13 +39,6 @@ class _HomePageState extends State<HomePage> {
     _pageController = List.generate(3, (index) => PageController());
     shops = List.generate(5, (index) => List.generate(3, (index) => []));
     _initializeCategoryIDs();
-
-    //TODO open DateBase and check if the user is verified
-    //unless we used the ensureDbIsOpen() function in all the functions
-    //then we don't need to open the database here
-    /* 
-    you'll be able to open, close and do every other functions using the rates seraice class
-    */
   }
 
   @override
@@ -53,12 +46,6 @@ class _HomePageState extends State<HomePage> {
     for (var controller in _pageController) {
       controller.dispose();
     }
-
-    //TODO close the DataBase
-    /* 
-    make sure this page never gets closed when the user is still using the app
-    that means never use get.off() to navigate to another page
-     */
     super.dispose();
   }
 
@@ -85,598 +72,583 @@ class _HomePageState extends State<HomePage> {
     FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
     AuthUser user = AuthService.firebase().currentUser!;
     devtools.log('Category IDs: $categoryIDs');
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+        color: isDarkMode ? Colors.grey[900] : Colors.white, // Dynamic background color
+        child: SafeArea(
           child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AspectRatios.width * 0.07307692307,
-          ),
-          child: Column(
-            children: [
-              Center(
-                child: SvgPicture.asset(
-                  'assets/logos/black_logo.svg',
-                  height: AspectRatios.height * 0.04333333333,
-                  width: AspectRatios.width * 0.14871794871,
-                ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AspectRatios.width * 0.07307692307,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Column(
-                  children: [
-                    StreamBuilder(
-                      stream: cloudStorage.getUserStream(user.id),
-                      builder: (context, snapshot) {
-                        final userData =
-                            snapshot.data?.data() as Map<String, dynamic>?;
-
-                        if (userData != null) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator(
-                              backgroundColor: Colors.transparent,
-                              color: Colors.black,
-                              strokeWidth: 2,
-                            );
-                          }
-                          if (snapshot.hasError) {
-                            devtools.log(snapshot.error.toString());
-                            return const Text('An error occurred');
-                          }
-                          if (!snapshot.hasData || !snapshot.data!.exists) {
-                            return const SizedBox();
-                          }
-
-                          if (userData['is_email_verified'] == false) {
-                            return Column(
-                              children: [
-                                Center(
-                                  child: Container(
-                                    height: AspectRatios.height * 0.03444444444,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.verificationSuccessColor
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.info_outline,
-                                          color: Colors.black,
-                                          size: AspectRatios.height *
-                                              0.02444444444,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        const Text(
-                                          'Please verify your email.',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                              ],
-                            );
-                          } else {
-                            return SizedBox(
-                                height:
-                                    15 + (AspectRatios.height * 0.03444444444));
-                          }
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
+              child: Column(
+                children: [
+                  Center(
+                    child: SvgPicture.asset(
+                      'assets/logos/black_logo.svg',
+                      height: AspectRatios.height * 0.04333333333,
+                      width: AspectRatios.width * 0.14871794871,
+                      color: isDarkMode ? Colors.white : Colors.grey[900], // Dynamic logo color
                     ),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: categories.map(
-                    (category) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: AspectRatios.width * 0.03607692307,
-                        ),
-                        child: SizedBox(
-                          width: AspectRatios.width * 0.14256410256,
-                          child: Column(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  devtools.log(FirebaseAuth.instance.currentUser
-                                      .toString());
-                                },
-                                child: SizedBox(
-                                  width: AspectRatios.width * 0.10256410256,
-                                  height:
-                                      AspectRatios.heightWithoutAppBar * 0.044,
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        color: AppColors.iconBackground
-                                            .withOpacity(0.15),
-                                        height: AspectRatios.height * 0.044,
-                                        width:
-                                            AspectRatios.width * 0.10256410256,
-                                      ),
-                                      Center(
-                                        child: SvgPicture.asset(
-                                          'assets/icons/${category.toLowerCase()}_icon.svg',
-                                          width: AspectRatios.width *
-                                              0.08974358974,
-                                          height: AspectRatios.height * 0.044,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      children: [
+                        StreamBuilder(
+                          stream: cloudStorage.getUserStream(user.id),
+                          builder: (context, snapshot) {
+                            final userData =
+                                snapshot.data?.data() as Map<String, dynamic>?;
+
+                            if (userData != null) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator(
+                                  backgroundColor: Colors.transparent,
+                                  color: Colors.black,
+                                  strokeWidth: 2,
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                devtools.log(snapshot.error.toString());
+                                return const Text('An error occurred');
+                              }
+                              if (!snapshot.hasData || !snapshot.data!.exists) {
+                                return const SizedBox();
+                              }
+
+                              if (userData['is_email_verified'] == false) {
+                                return Column(
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        height: AspectRatios.height * 0.03444444444,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.verificationSuccessColor
+                                              .withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(50.0),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.info_outline,
+                                              color: isDarkMode ? Colors.white : Colors.black, // Dynamic icon color
+                                              size: AspectRatios.height *
+                                                  0.02444444444,
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              'Please verify your email.',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                    const SizedBox(height: 15),
+                                  ],
+                                );
+                              } else {
+                                return SizedBox(
+                                    height:
+                                        15 + (AspectRatios.height * 0.03444444444));
+                              }
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: categories.map(
+                        (category) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              right: AspectRatios.width * 0.03607692307,
+                            ),
+                            child: SizedBox(
+                              width: AspectRatios.width * 0.14256410256,
+                              child: Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      devtools.log(FirebaseAuth.instance.currentUser
+                                          .toString());
+                                    },
+                                    child: SizedBox(
+                                      width: AspectRatios.width * 0.10256410256,
+                                      height:
+                                          AspectRatios.heightWithoutAppBar * 0.044,
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            height: AspectRatios.height * 0.044,
+                                            width:
+                                                AspectRatios.width * 0.10256410256,
+                                          ),
+                                          Center(
+                                            child: SvgPicture.asset(
+                                              'assets/icons/${category.toLowerCase()}_icon.svg',
+                                              width: AspectRatios.width *
+                                                  0.08974358974,
+                                              height: AspectRatios.height * 0.044,
+                                               // Dynamic icon color
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(
+                                    height: AspectRatios.height * 0.01,
+                                  ),
+                                  Text(
+                                    category,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                height: AspectRatios.height * 0.01,
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: AspectRatios.height * 0.02,
+                  ),
+                  ...List.generate(
+                    3,
+                    (verticalIndex) {
+                      List<Map<String, String>> info = [
+                        {
+                          'title': 'Monthly Finest',
+                          'content': "assets/images/FireFly_Logo.png",
+                        },
+                        {
+                          'title': 'Yearly Finest',
+                          'content': "assets/images/_4chicks_logo.png",
+                        },
+                        {
+                          'title': 'Rating Experts',
+                          'content': "assets/images/CloudShot_logo.png",
+                        },
+                      ];
+                      return Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizedBox(
+                              width: AspectRatios.width * 0.8,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    info[verticalIndex]['title']!,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                    ),
+                                  ),
+                                  Text(
+                                    'Food',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDarkMode ? Colors.grey[400] : Colors.grey[700], // Dynamic text color
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                category,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-              ),
-              SizedBox(
-                height: AspectRatios.height * 0.02,
-              ),
-              ...List.generate(
-                3,
-                (verticalIndex) {
-                  List<Map<String, String>> info = [
-                    {
-                      'title': 'Monthly Finest',
-                      'content': "assets/images/FireFly_Logo.png",
-                    },
-                    {
-                      'title': 'Yearly Finest',
-                      'content': "assets/images/_4chicks_logo.png",
-                    },
-                    {
-                      'title': 'Rating Experts',
-                      'content': "assets/images/CloudShot_logo.png",
-                    },
-                  ];
-                  return Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: SizedBox(
-                          width: AspectRatios.width * 0.8,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                info[verticalIndex]['title']!,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Text(
-                                'Food',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 158, 158, 158),
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            height: AspectRatios.height * 0.01,
                           ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: AspectRatios.height * 0.01,
-                      ),
-                      Container(
-                        height: AspectRatios.height * 0.153,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color.fromARGB(255, 243, 198, 35),
-                              Color.fromARGB(255, 255, 166, 0),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: [0.1, 1.0],
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: PageView.builder(
-                            controller: _pageController[verticalIndex],
-                            onPageChanged: (value) {},
-                            itemCount: 5,
-                            itemBuilder: (context, horizontalIndex) {
-                              try {
-                                return StreamBuilder<QuerySnapshot>(
-                                  stream: getQueryStream(
-                                      verticalIndex, horizontalIndex),
-                                  builder: (context, snapshot) {
-                                    try {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator(
-                                          backgroundColor: Colors.transparent,
-                                          color: Colors.black,
-                                          strokeWidth: 2,
-                                        );
-                                      }
-                                      if (snapshot.hasError) {
-                                        shops[horizontalIndex]
-                                            [verticalIndex] = [];
-                                        devtools.log(snapshot.error.toString());
-                                        return const Text('An error occurred');
-                                      }
-                                      if (!snapshot.hasData ||
-                                          snapshot.data!.docs.isEmpty) {
-                                        if (shops[horizontalIndex]
-                                                [verticalIndex]
-                                            .isEmpty) {
-                                          shops[horizontalIndex]
-                                              [verticalIndex] = [];
-                                        }
-                                      }
-
-                                      // Map Firestore documents to Shop objects
-                                      if (snapshot.hasData) {
-                                        List<Shop> shopList = snapshot
-                                            .data!.docs
-                                            .map((doc) => Shop.fromMap(
-                                                doc.data()
-                                                    as Map<String, dynamic>,
-                                                shopID: doc.id))
-                                            .toList();
-                                        // Update the shops list without resetting it
-                                        /*   if (horizontalIndex >= shops.length) {
-                                          shops[horizontalIndex]
-                                              [verticalIndex] = shopList;
-                                        } else { */
-                                        /*   if (shopList.isNotEmpty) { */
-                                        shops[horizontalIndex][verticalIndex] =
-                                            shopList;
-                                        /*  } */
-                                        /* } */
-                                      }
-                                    } on CategoryNotFoundException catch (e) {
-                                      // Log CategoryNotFoundException details
-                                      devtools.log(
-                                          'Caught CategoryNotFoundException: ${e.toString()}');
-                                    } catch (e, stacktrace) {
-                                      // Log general exceptions
-                                      devtools
-                                          .log('Caught general exception: $e');
-                                      devtools.log('Stacktrace: $stacktrace');
-                                    }
-                                    devtools.log(shops.toString());
-                                    devtools.log(shops.length.toString());
-                                    return InkWell(
-                                      onTap: () {
-                                        Get.toNamed(
-                                          topRatedRoute,
-                                          arguments: {
-                                            'category':
-                                                categories[horizontalIndex],
-                                            'category_id':
-                                                categoryIDs[horizontalIndex],
-                                          },
-                                        );
-                                      },
-                                      child: LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          try {
+                          Container(
+                            height: AspectRatios.height * 0.153,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(255, 243, 198, 35),
+                                  Color.fromARGB(255, 255, 166, 0),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                stops: [0.1, 1.0],
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: PageView.builder(
+                                controller: _pageController[verticalIndex],
+                                onPageChanged: (value) {},
+                                itemCount: 5,
+                                itemBuilder: (context, horizontalIndex) {
+                                  try {
+                                    return StreamBuilder<QuerySnapshot>(
+                                      stream: getQueryStream(
+                                          verticalIndex, horizontalIndex),
+                                      builder: (context, snapshot) {
+                                        try {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator(
+                                              backgroundColor: Colors.transparent,
+                                              color: Colors.black,
+                                              strokeWidth: 2,
+                                            );
+                                          }
+                                          if (snapshot.hasError) {
+                                            shops[horizontalIndex]
+                                                [verticalIndex] = [];
+                                            devtools.log(snapshot.error.toString());
+                                            return const Text('An error occurred');
+                                          }
+                                          if (!snapshot.hasData ||
+                                              snapshot.data!.docs.isEmpty) {
                                             if (shops[horizontalIndex]
                                                     [verticalIndex]
                                                 .isEmpty) {
-                                              return Center(
-                                                child: Text(
-                                                  '${categories[horizontalIndex]}\n Coming Soon',
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    fontSize: 17,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  ...List.generate(
-                                                    3,
-                                                    (index) {
-                                                      shops[horizontalIndex][
-                                                                  verticalIndex]
-                                                              .isEmpty
-                                                          ? showIndicator = true
-                                                          : shops[horizontalIndex]
-                                                                      [
-                                                                      verticalIndex][index ==
-                                                                          0
-                                                                      ? 1
-                                                                      : index ==
-                                                                              1
-                                                                          ? 0
-                                                                          : 2]
-                                                                  .shopImagePath
+                                              shops[horizontalIndex]
+                                                  [verticalIndex] = [];
+                                            }
+                                          }
+
+                                          if (snapshot.hasData) {
+                                            List<Shop> shopList = snapshot
+                                                .data!.docs
+                                                .map((doc) => Shop.fromMap(
+                                                    doc.data()
+                                                        as Map<String, dynamic>,
+                                                    shopID: doc.id))
+                                                .toList();
+                                            shops[horizontalIndex][verticalIndex] =
+                                                shopList;
+                                          }
+                                        } on CategoryNotFoundException catch (e) {
+                                          devtools.log(
+                                              'Caught CategoryNotFoundException: ${e.toString()}');
+                                        } catch (e, stacktrace) {
+                                          devtools
+                                              .log('Caught general exception: $e');
+                                          devtools.log('Stacktrace: $stacktrace');
+                                        }
+                                        return InkWell(
+                                          onTap: () {
+                                            Get.toNamed(
+                                              topRatedRoute,
+                                              arguments: {
+                                                'category':
+                                                    categories[horizontalIndex],
+                                                'category_id':
+                                                    categoryIDs[horizontalIndex],
+                                              },
+                                            );
+                                          },
+                                          child: LayoutBuilder(
+                                            builder: (context, constraints) {
+                                              try {
+                                                if (shops[horizontalIndex]
+                                                        [verticalIndex]
+                                                    .isEmpty) {
+                                                  return Center(
+                                                    child: Text(
+                                                      '${categories[horizontalIndex]}\n Coming Soon',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                                        fontStyle: FontStyle.italic,
+                                                      ),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      ...List.generate(
+                                                        3,
+                                                        (index) {
+                                                          shops[horizontalIndex][
+                                                                      verticalIndex]
                                                                   .isEmpty
-                                                              ? showIndicator =
-                                                                  true
-                                                              : showIndicator =
-                                                                  false;
-                                                      double imageSize =
-                                                          AspectRatios.height *
-                                                              0.027;
-                                                      double
-                                                          imageSizeWithPadding =
-                                                          AspectRatios.height *
-                                                                  0.027 +
-                                                              AspectRatios
-                                                                      .height *
-                                                                  0.01;
-                                                      return Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                              vertical: constraints
-                                                                      .maxHeight *
-                                                                  0.05,
-                                                            ),
-                                                            child: showIndicator ==
-                                                                    true
-                                                                ? CircleAvatar(
-                                                                    radius:
-                                                                        imageSize,
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    child:
-                                                                        const CircularProgressIndicator(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .white,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      strokeWidth:
-                                                                          2,
-                                                                    ),
-                                                                  )
-                                                                : FutureBuilder(
-                                                                    future: cloudStorage.isImageAvailable(shops[horizontalIndex]
-                                                                            [
-                                                                            verticalIndex][index ==
-                                                                                1
-                                                                            ? 0
-                                                                            : index == 0
-                                                                                ? 1
-                                                                                : 2]
-                                                                        .shopImagePath),
-                                                                    builder:
-                                                                        (context,
-                                                                            snapShot) {
-                                                                      if (snapShot
-                                                                              .connectionState ==
-                                                                          ConnectionState
-                                                                              .waiting) {
-                                                                        return CircleAvatar(
-                                                                          radius:
-                                                                              imageSize,
+                                                              ? showIndicator = true
+                                                              : shops[horizontalIndex]
+                                                                          [
+                                                                          verticalIndex][index ==
+                                                                              0
+                                                                          ? 1
+                                                                          : index ==
+                                                                                  1
+                                                                              ? 0
+                                                                              : 2]
+                                                                      .shopImagePath
+                                                                      .isEmpty
+                                                                  ? showIndicator =
+                                                                      true
+                                                                  : showIndicator =
+                                                                      false;
+                                                          double imageSize =
+                                                              AspectRatios.height *
+                                                                  0.027;
+                                                          double
+                                                              imageSizeWithPadding =
+                                                              AspectRatios.height *
+                                                                      0.027 +
+                                                                  AspectRatios
+                                                                          .height *
+                                                                      0.01;
+                                                          return Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                  vertical: constraints
+                                                                          .maxHeight *
+                                                                      0.05,
+                                                                ),
+                                                                child: showIndicator == 
+                                                                        true
+                                                                    ? CircleAvatar(
+                                                                        radius:
+                                                                            imageSize,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        child:
+                                                                            const CircularProgressIndicator(
                                                                           backgroundColor:
-                                                                              Colors.white,
-                                                                          child:
-                                                                              const CircularProgressIndicator(
-                                                                            backgroundColor:
-                                                                                Colors.white,
-                                                                            color:
-                                                                                Colors.black,
-                                                                            strokeWidth:
-                                                                                2,
-                                                                          ),
-                                                                        );
-                                                                      }
-                                                                      if (snapShot
-                                                                              .hasError ||
-                                                                          snapShot.data ==
-                                                                              false) {
-                                                                        return CircleAvatar(
+                                                                              Colors
+                                                                                  .white,
+                                                                          color: Colors
+                                                                              .black,
+                                                                          strokeWidth:
+                                                                              2,
+                                                                        ),
+                                                                      )
+                                                                    : FutureBuilder(
+                                                                        future: cloudStorage.isImageAvailable(shops[horizontalIndex]
+                                                                                [
+                                                                                verticalIndex][index == 
+                                                                                    1
+                                                                                ? 0
+                                                                                : index == 0 
+                                                                                    ? 1 
+                                                                                    : 2]
+                                                                            .shopImagePath),
+                                                                        builder:
+                                                                            (context,
+                                                                                snapShot) {
+                                                                          if (snapShot
+                                                                                  .connectionState ==
+                                                                              ConnectionState
+                                                                                  .waiting) {
+                                                                            return CircleAvatar(
+                                                                              radius:
+                                                                                  imageSize,
+                                                                              backgroundColor:
+                                                                                  Colors.white,
+                                                                              child:
+                                                                                  const CircularProgressIndicator(
+                                                                                backgroundColor:
+                                                                                    Colors.white,
+                                                                                color:
+                                                                                    Colors.black,
+                                                                                strokeWidth:
+                                                                                    2,
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                          if (snapShot
+                                                                                  .hasError ||
+                                                                              snapShot.data == 
+                                                                                  false) {
+                                                                            return CircleAvatar(
+                                                                                radius:
+                                                                                    imageSize,
+                                                                                backgroundColor:
+                                                                                    Colors.white,
+                                                                                child: const Icon(Icons.error));
+                                                                          }
+                                                                          return CircleAvatar(
                                                                             radius:
                                                                                 imageSize,
                                                                             backgroundColor:
                                                                                 Colors.white,
-                                                                            child: const Icon(Icons.error));
-                                                                      }
-                                                                      return CircleAvatar(
-                                                                        radius:
-                                                                            imageSize,
-                                                                        backgroundColor:
-                                                                            Colors.white,
-                                                                        backgroundImage:
-                                                                            NetworkImage(
-                                                                          shops[horizontalIndex][verticalIndex][index == 1
-                                                                                  ? 0
-                                                                                  : index == 0
-                                                                                      ? 1
-                                                                                      : 2]
-                                                                              .shopImagePath,
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                  ),
-                                                          ),
-                                                          Flexible(
-                                                            child: Container(
-                                                                decoration:
-                                                                    const BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            10),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            10),
-                                                                  ),
-                                                                ),
-                                                                height: index ==
-                                                                        1
-                                                                    ? constraints
-                                                                            .maxHeight -
-                                                                        imageSizeWithPadding
-                                                                    : index == 0
-                                                                        ? constraints.maxHeight *
-                                                                            0.35
-                                                                        : constraints.maxHeight *
-                                                                            0.23,
-                                                                width: constraints
-                                                                        .maxWidth *
-                                                                    0.12,
-                                                                child:
-                                                                    index == 1
-                                                                        ? Align(
-                                                                            alignment:
-                                                                                Alignment.topCenter,
-                                                                            child:
-                                                                                Column(
-                                                                              children: [
-                                                                                Padding(
-                                                                                  padding: const EdgeInsets.only(top: 4.0),
-                                                                                  child: Transform.translate(
-                                                                                    offset: const Offset(2, 0),
-                                                                                    child: SvgPicture.asset(
-                                                                                      'assets/icons/Crown.svg',
-                                                                                      width: constraints.maxWidth * 0.06923076923,
-                                                                                      height: constraints.maxHeight * 0.12605042016,
+                                                                            backgroundImage:
+                                                                                NetworkImage(
+                                                                              shops[horizontalIndex][verticalIndex][index == 1
+                                                                                      ? 0
+                                                                                      : index == 0
+                                                                                          ? 1
+                                                                                          : 2]
+                                                                                  .shopImagePath,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                              ),
+                                                              Flexible(
+                                                                child: Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: isDarkMode ? Colors.grey[800] : Colors.white, // Dynamic container color
+                                                                      borderRadius:
+                                                                          const BorderRadius
+                                                                              .only(
+                                                                        topLeft: Radius
+                                                                            .circular(
+                                                                                10),
+                                                                        topRight: Radius
+                                                                            .circular(
+                                                                                10),
+                                                                      ),
+                                                                    ),
+                                                                    height: index == 1
+                                                                        ? constraints
+                                                                                .maxHeight -
+                                                                            imageSizeWithPadding
+                                                                        : index == 0
+                                                                            ? constraints.maxHeight *
+                                                                                0.35
+                                                                            : constraints.maxHeight *
+                                                                                0.23,
+                                                                    width: constraints
+                                                                            .maxWidth *
+                                                                        0.12,
+                                                                    child:
+                                                                        index == 1
+                                                                            ? Align(
+                                                                                alignment:
+                                                                                    Alignment.topCenter,
+                                                                                child:
+                                                                                    Column(
+                                                                                  children: [
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsets.only(top: 4.0),
+                                                                                      child: Transform.translate(
+                                                                                        offset: const Offset(2, 0),
+                                                                                        child: SvgPicture.asset(
+                                                                                          'assets/icons/Crown.svg',
+                                                                                          width: constraints.maxWidth * 0.06923076923,
+                                                                                          height: constraints.maxHeight * 0.12605042016,
+                                                                                          color: isDarkMode ? Colors.white : Colors.black, // Dynamic icon color
+                                                                                        ),
+                                                                                      ),
                                                                                     ),
-                                                                                  ),
+                                                                                    Text(
+                                                                                      '1',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 17,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
                                                                                 ),
-                                                                                const Text(
-                                                                                  '1',
+                                                                              )
+                                                                            : Align(
+                                                                                alignment:
+                                                                                    Alignment.center,
+                                                                                child:
+                                                                                    Text(
+                                                                                  index == 0 ? '2' : '3',
                                                                                   style: TextStyle(
                                                                                     fontSize: 17,
                                                                                     fontWeight: FontWeight.bold,
-                                                                                    color: Color.fromARGB(255, 0, 0, 0),
+                                                                                    color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
                                                                                   ),
                                                                                 ),
-                                                                              ],
-                                                                            ),
-                                                                          )
-                                                                        : Align(
-                                                                            alignment:
-                                                                                Alignment.center,
-                                                                            child:
-                                                                                Text(
-                                                                              index == 0 ? '2' : '3',
-                                                                              style: const TextStyle(
-                                                                                fontSize: 17,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: Color.fromARGB(255, 0, 0, 0),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
+                                                                              )),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                }
+                                              } catch (e) {
+                                                devtools.log(e.toString());
+                                                return Center(
+                                                  child: Text(
+                                                    '${categories[horizontalIndex]}\n Coming Soon',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: isDarkMode ? Colors.white : Colors.black, // Dynamic text color
+                                                      fontStyle: FontStyle.italic,
+                                                    ),
                                                   ),
-                                                ],
-                                              );
-                                            }
-                                          } catch (e) {
-                                            devtools.log(e.toString());
-                                            return Center(
-                                              child: Text(
-                                                '${categories[horizontalIndex]}\n Coming Soon',
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontStyle: FontStyle.italic,
-                                                ),
-                                              ),
-                                            );
-                                            /* return const Cen
-                                            ter(
-                                              child: CircularProgressIndicator(
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                color: Colors.black,
-                                                strokeWidth: 2,
-                                              ),
-                                            ); */
-                                          }
-                                        },
-                                      ),
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              } on CategoryNotFoundException catch (e) {
-                                devtools.log(e.toString());
-                              } catch (e) {
-                                devtools.log(e.toString());
-                                return const Text(
-                                    'An error occurred. Please try again later.');
-                              }
-                              return null;
-                            }),
-                      ),
-                      SizedBox(
-                        height: AspectRatios.height * 0.01,
-                      ),
-                      Center(
-                        child: SmoothPageIndicator(
-                          controller: _pageController[verticalIndex],
-                          count: 5,
-                          effect: WormEffect(
-                            activeDotColor:
-                                const Color.fromARGB(255, 255, 196, 45),
-                            dotHeight: AspectRatios.height * 0.007,
-                            dotWidth: AspectRatios.width * 0.015,
+                                  } on CategoryNotFoundException catch (e) {
+                                    devtools.log(e.toString());
+                                  } catch (e) {
+                                    devtools.log(e.toString());
+                                    return const Text(
+                                        'An error occurred. Please try again later.');
+                                  }
+                                  return null;
+                                }),
                           ),
-                        ),
-                      )
-                    ],
-                  );
-                },
-              )
-            ],
+                          SizedBox(
+                            height: AspectRatios.height * 0.01,
+                          ),
+                          Center(
+                            child: SmoothPageIndicator(
+                              controller: _pageController[verticalIndex],
+                              count: 5,
+                              effect: WormEffect(
+                                activeDotColor:
+                                    const Color.fromARGB(255, 255, 196, 45),
+                                dotHeight: AspectRatios.height * 0.007,
+                                dotWidth: AspectRatios.width * 0.015,
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  )
+                ],
+              ),
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -721,7 +693,6 @@ Stream<QuerySnapshot> getQueryStream(int verticalIndex, int horizontalIndex) {
     return const Stream.empty(); // No valid query, return empty stream
   }
 }
-
 
 
 
