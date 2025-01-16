@@ -23,32 +23,28 @@ class ProductPageState extends State<ProductPage> {
   String searchQuery = "";
   List<Map<String, dynamic>> meals = [];
   final ImagePicker _picker = ImagePicker();
-  
+
   Future<void> addMeal({Map<String, dynamic>? existingMeal}) async {
     String? mealName = existingMeal?["name"];
     String? mealDesc = existingMeal?["desc"];
     String? mealPrice = existingMeal?["price"];
-    XFile? image = existingMeal != null
-        ? XFile(existingMeal["image"])
-        : null;
+    XFile? image = existingMeal != null ? XFile(existingMeal["image"]) : null;
 
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
             width: AspectRatios.width * 0.8,
             padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                 Center(
-                  child: Text(
-                      existingMeal == null ? "Add Meal" : "Edit Meal",
-                      style: const TextStyle(fontSize: 20))),
+                Center(
+                    child: Text(existingMeal == null ? "Add Meal" : "Edit Meal",
+                        style: const TextStyle(fontSize: 20))),
                 TextFormField(
                   initialValue: mealName,
                   decoration: const InputDecoration(
@@ -112,64 +108,60 @@ class ProductPageState extends State<ProductPage> {
                     ),
                   ),
                   onPressed: () async {
-                    image = await _picker.pickImage(source: ImageSource.gallery);
+                    image =
+                        await _picker.pickImage(source: ImageSource.gallery);
                     setState(() {});
                   },
                   child: Text(
-                    image == null
-                        ? 'Upload Meal Image'
-                        : 'Change Meal Image',
+                    image == null ? 'Upload Meal Image' : 'Change Meal Image',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black,
                     ),
                   ),
                 ),
-                 Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    "Cancel",
-                    style: TextStyle(color: AppColors.primaryColor),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(color: AppColors.primaryColor),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (mealName != null && image != null) {
+                          if (existingMeal != null) {
+                            // Update existing meal
+                            existingMeal["name"] = mealName;
+                            existingMeal["desc"] = mealDesc;
+                            existingMeal["price"] = mealPrice;
+                            existingMeal["image"] = image!.path;
+                          } else {
+                            // Add new meal
+                            meals.add({
+                              "name": mealName!,
+                              "desc": mealDesc,
+                              "price": mealPrice,
+                              "image": image!.path
+                            });
+                          }
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(color: AppColors.primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    if (mealName != null && image != null) {
-                      if (existingMeal != null) {
-                        // Update existing meal
-                        existingMeal["name"] = mealName;
-                        existingMeal["desc"] = mealDesc;
-                        existingMeal["price"] = mealPrice;
-                        existingMeal["image"] = image!.path;
-                      } else {
-                        // Add new meal
-                        meals.add({
-                          "name": mealName!,
-                          "desc": mealDesc,
-                          "price": mealPrice,
-                          "image": image!.path
-                        });
-                      }
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(color: AppColors.primaryColor),
-                  ),
-                ),
-              ],
-            ),
-         
               ],
             ),
           ),
-          
-           
         );
       },
     );
@@ -215,8 +207,8 @@ class ProductPageState extends State<ProductPage> {
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
                       prefixIcon: Icon(Icons.search),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 5.0, horizontal: 15.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
                     ),
                     style: TextStyle(fontSize: AspectRatios.width * 0.035),
                     onChanged: (value) {
@@ -268,20 +260,6 @@ class ProductPageState extends State<ProductPage> {
             SizedBox(height: AspectRatios.height * 0.02),
             Column(
               children: [
-                ...meals.map((meal) {
-                  return MealCard(
-                    mealName: meal["name"],
-                    mealImage: meal["image"],
-                    onDelete: () {
-                      setState(() {
-                        meals.remove(meal);
-                      });
-                    },
-                    onEdit: () {
-                      addMeal(existingMeal: meal);
-                    },
-                  );
-                }),
                 GestureDetector(
                   onTap: addMeal,
                   child: Container(
@@ -304,6 +282,21 @@ class ProductPageState extends State<ProductPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: AspectRatios.height * 0.02),
+                ...meals.map((meal) {
+                  return MealCard(
+                    mealName: meal["name"],
+                    mealImage: meal["image"],
+                    onDelete: () {
+                      setState(() {
+                        meals.remove(meal);
+                      });
+                    },
+                    onEdit: () {
+                      addMeal(existingMeal: meal);
+                    },
+                  );
+                }),
               ],
             ),
           ],
@@ -381,7 +374,7 @@ class MealCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                     TextButton(
+                      TextButton(
                         onPressed: () {
                           // Navigator.push(
                           //   context,

@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
-
 class RestaurantInformationPage extends StatefulWidget {
   const RestaurantInformationPage({
     super.key,
@@ -41,7 +40,11 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   };
   List<Map<String, String?>> infoRows = [
     {'icon': 'assets/icons/location.svg', 'text': 'shop location', 'link': ''},
-    {'icon': 'assets/icons/phone.svg', 'text': '07(contact number)', 'link': ''},
+    {
+      'icon': 'assets/icons/phone.svg',
+      'text': '07(contact number)',
+      'link': ''
+    },
     {
       'icon': 'assets/icons/watch.svg',
       'text': 'Opening Hours:\n 9:00  - 1:00 '
@@ -53,23 +56,55 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   double rating = 3.5;
   bool isExpanded = false;
 
-void _pickImage() async {
-  final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
-  if (pickedFile != null) {
-    final mimeType = lookupMimeType(pickedFile.path);
-    if (mimeType != null && mimeType.startsWith('image/')) {
-      setState(() {
-        imagePath = pickedFile.path;
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image file'))
-      );
+  void _editTextDialog(
+      String title, String initialValue, Function(String) onSave) {
+    TextEditingController controller =
+        TextEditingController(text: initialValue);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Center(child: Text(title)),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: "Enter text",
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.primaryColor),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              onSave(controller.text);
+              Navigator.pop(context);
+            },
+            child: const Text(
+              "Save",
+              style: TextStyle(color: AppColors.primaryColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _pickImage() async {
+    final pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final mimeType = lookupMimeType(pickedFile.path);
+      if (mimeType != null && mimeType.startsWith('image/')) {
+        setState(() {
+          imagePath = pickedFile.path;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select an image file')));
+      }
     }
   }
-}
-
-
 
   void _editSocialLink(String platform) {
     TextEditingController controller =
@@ -106,71 +141,74 @@ void _pickImage() async {
       ),
     );
   }
-void _editPhoneNumber(String initialValue) {
-  TextEditingController controller = TextEditingController(text: initialValue);
-  
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Center(child: Text("Edit Contact Number")),
-      content: SizedBox(
-        width: AspectRatios.width * 0.46,
-        child: TextFormField(
-          controller: controller,
-          keyboardType: TextInputType.phone, // Restrict to numeric input
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly, // Allow only digits
-          ],
-          decoration: const InputDecoration(
-            labelText: "Contact Number",
-            floatingLabelStyle: TextStyle(
-              color: AppColors.primaryColor,
+
+  void _editPhoneNumber(String initialValue) {
+    TextEditingController controller =
+        TextEditingController(text: initialValue);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Center(child: Text("Edit Contact Number")),
+        content: SizedBox(
+          width: AspectRatios.width * 0.46,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.phone, // Restrict to numeric input
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly, // Allow only digits
+            ],
+            decoration: const InputDecoration(
+              labelText: "Contact Number",
+              floatingLabelStyle: TextStyle(
+                color: AppColors.primaryColor,
+              ),
+              enabledBorder: UnderlineInputBorder(),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+              ),
             ),
-            enabledBorder: UnderlineInputBorder(),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+            onChanged: (value) {
+              infoRows[1]['text'] =
+                  value; // Update the phone number in the infoRows
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                infoRows[1]['text'] =
+                    controller.text; // Update the infoRows with the new value
+              });
+              Navigator.pop(context);
+            },
+            child: const Text(
+              "Save",
+              style: TextStyle(
+                color: AppColors.primaryColor,
+              ),
             ),
           ),
-          onChanged: (value) {
-            infoRows[1]['text'] = value;  // Update the phone number in the infoRows
-          },
-        ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            setState(() {
-              infoRows[1]['text'] = controller.text; // Update the infoRows with the new value
-            });
-            Navigator.pop(context);
-          },
-          child: const Text(
-            "Save",
-            style: TextStyle(
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   void _editInfoRow(int index) {
     if (infoRows[index]['text']!.startsWith("Opening Hours")) {
       _editHours();
     } else if (infoRows[index]['text']!.startsWith("Delivery Apps")) {
       _editDeliveryPlatforms();
-    }else if(infoRows[index]['text']!.startsWith("07")){
+    } else if (infoRows[index]['text']!.startsWith("07")) {
       _editPhoneNumber(infoRows[index]['text'] ?? "");
-    }
-     else {
+    } else {
       TextEditingController controller =
           TextEditingController(text: infoRows[index]['text']);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title:const Center(child:  Text("Edit Information")),
+          title: const Center(child: Text("Edit Information")),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
@@ -406,113 +444,133 @@ void _editPhoneNumber(String initialValue) {
               ),
 
               // Details Section
-              Padding(
-                padding: EdgeInsets.only(
-                  left: AspectRatios.width * 0.05769230,
-                  right: AspectRatios.width * 0.0576923,
-                  top: AspectRatios.height * 0.03332938,
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: AspectRatios.width * 0.05769230,
+                      right: AspectRatios.width * 0.0276923,
+                      top: AspectRatios.height * 0.03332938,
+                    ),
+                    child: Stack(
                       children: [
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: SizedBox(
-                                width: AspectRatios.width * 0.46,
-                                child: TextFormField(
-                                  initialValue: shopName,
-                                  cursorColor:
-                                       AppColors.primaryColor,
-                                  decoration: const InputDecoration(
-                                    labelText: "Shop Name",
-                                    floatingLabelStyle: TextStyle(
-                                      color: AppColors.primaryColor,
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(),
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              AppColors.primaryColor,
-                                          width:
-                                              2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    shopName,
+                                    style: const TextStyle(
+                                      fontSize: 18,
                                     ),
                                   ),
-                                  onChanged: (value) => shopName = value,
                                 ),
-                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    
+                                IconButton(
+                                  icon:  Icon(Icons.edit,
+                                      size: AspectRatios.height * 0.025,
+                                      color: AppColors.primaryColor),
+                                  onPressed: () {
+                                    _editTextDialog("Edit Shop Name", shopName,
+                                        (newValue) {
+                                      setState(() {
+                                        shopName = newValue;
+                                      });
+                                    });
+                                  },
+                                ),
+                                    Row(
+                                      children: socialLinks.keys.map((platform) {
+                                        return SizedBox(
+                                          height: AspectRatios.height*0.05,
+                                          width: AspectRatios.width*0.1,
+                                          
+                                          child: IconButton(
+                                            padding: const EdgeInsets.all(0),
+                                            icon: SvgPicture.asset(
+                                                "assets/icons/$platform.svg"),
+                                            onPressed: () =>
+                                                _editSocialLink(platform),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             Row(
-                              children: socialLinks.keys.map((platform) {
-                                return IconButton(
-                                  icon: SvgPicture.asset(
-                                      "assets/icons/$platform.svg"),
-                                  onPressed: () => _editSocialLink(platform),
-                                );
-                              }).toList(),
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    description,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                    IconButton(
+                                      icon:  Icon(Icons.edit,
+                                          size: AspectRatios.height * 0.025,
+                                          color: AppColors.primaryColor),
+                                      onPressed: () {
+                                        _editTextDialog("Edit Description", description,
+                                            (newValue) {
+                                          setState(() {
+                                            description  = newValue;
+                                          });
+                                        });
+                                      },
+                                    ),
+                              ],
+                            ),
+                            SizedBox(height: AspectRatios.height * 0.02),
+                            const Text(
+                              'Information',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: AspectRatios.width * 0.46,
-                          child: TextFormField(
-                            initialValue: description,
-                            decoration: const InputDecoration(
-                              labelText: "Description",
-                              floatingLabelStyle: TextStyle(
-                                color: AppColors.primaryColor,
-                              ),
-                              enabledBorder: UnderlineInputBorder(),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: AppColors.primaryColor,
-                                    width: 2),
-                              ),
-                            ),
-                            onChanged: (value) => description = value,
-                          ),
-                        ),
-                         SizedBox(height: AspectRatios.height*0.02),
-                        const Text(
-                          'Information',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Column(
-                          children: List.generate(
-                            infoRows.length,
-                            (index) => ListTile(
-                              leading: SvgPicture.asset(
-                                infoRows[index]['icon']!,
-                                width: AspectRatios.width * 0.06153846153,
-                                height: AspectRatios.height * 0.02843601895,
-                              ),
-                              title: Text(infoRows[index]['text']!),
-                              trailing: IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  size: AspectRatios.height * 0.025,
-                                  color:
-                                       AppColors.primaryColor,
-                                ),
-                                onPressed: () => _editInfoRow(index),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  Column(
+                    children: List.generate(
+                      infoRows.length,
+                      (index) => ListTile(
+                        leading: SvgPicture.asset(
+                          infoRows[index]['icon']!,
+                          width: AspectRatios.width * 0.06853846153,
+                          height: AspectRatios.height * 0.02893601895,
+                        ),
+                        title: Text(infoRows[index]['text']!),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: AspectRatios.height * 0.025,
+                            color: AppColors.primaryColor,
+                          ),
+                          onPressed: () => _editInfoRow(index),
+                        ),
+                        contentPadding:  EdgeInsets.symmetric(horizontal: AspectRatios.width * 0.0276923,),
+                        horizontalTitleGap: 5,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:  AppColors.primaryColor,
+                    backgroundColor: AppColors.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
@@ -525,7 +583,7 @@ void _editPhoneNumber(String initialValue) {
                         ));
                   },
                   child: const Text(
-                    'Menu',
+                    'Edit Menu',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.black,
