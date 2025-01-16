@@ -7,10 +7,15 @@ class Shop {
   final String categoryID;
   final String shopOwnerID;
   final String shopImagePath;
-  final Map<String, String> contactInfo;
+  final String googleMapLink;
+  final Map<String, dynamic> contactInfo;
+  final String availableHours;
   final double bayesianAverage;
   final double annualBayesianAverage;
   final String addedAt;
+  final Map<String, dynamic> deliveryApps;
+
+  String description;
 
   Shop({
     this.shopID,
@@ -19,10 +24,14 @@ class Shop {
     required this.categoryID,
     required this.shopOwnerID,
     required this.shopImagePath,
+    required this.googleMapLink,
     required this.contactInfo,
     required this.bayesianAverage,
     required this.annualBayesianAverage,
+    required this.description,
     required this.addedAt,
+    required this.availableHours,
+    required this.deliveryApps,
   });
 
   factory Shop.fromMap(Map<String, dynamic> map, {String? shopID}) {
@@ -33,11 +42,19 @@ class Shop {
       categoryID: map[cloudCategoryID] ?? '',
       shopOwnerID: map[cloudShopOwnerID] ?? '',
       shopImagePath: map[cloudShopImagePath] ?? '',
-      contactInfo: map[cloudContactInfo] ?? {},
+      googleMapLink: map[cloudGoogleMapLink] ?? '',
+      contactInfo: map[cloudContactInfo] is Map<String, dynamic>
+          ? map[cloudContactInfo]
+          : {},
       bayesianAverage: (map[cloudBayesianAverage] as num).toDouble(),
       annualBayesianAverage:
           (map[cloudAnnualBayesianAverage] as num).toDouble(),
+      description: map[cloudShopDescription] ?? '',
       addedAt: map[cloudAddedAt] ?? '',
+      availableHours: map[cloudAvailableHours] ?? '',
+      deliveryApps: map[cloudDeliveryApps] is Map<String, dynamic>
+          ? map[cloudDeliveryApps]
+          : {},
     );
   }
 
@@ -49,16 +66,65 @@ class Shop {
       cloudCategoryID: categoryID,
       cloudShopOwnerID: shopOwnerID,
       cloudShopImagePath: shopImagePath,
+      cloudGoogleMapLink: googleMapLink,
       cloudContactInfo: contactInfo,
-      cloudContactInfo: bayesianAverage,
-      cloudContactInfo: annualBayesianAverage,
+      cloudBayesianAverage: bayesianAverage,
+      cloudAnnualBayesianAverage: annualBayesianAverage,
+      cloudShopDescription: description,
       cloudAddedAt: addedAt,
+      cloudAvailableHours: availableHours,
+      cloudDeliveryApps: deliveryApps,
     };
   }
 
+  String get imagePath => shopImagePath;
+
   @override
   String toString() {
-    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, contactInfo: $contactInfo, bayesianAverage: $bayesianAverage, annualBayesianAverage: $annualBayesianAverage, addedAt: $addedAt} \n\n\n\n';
+    return 'Shop{shopID: $shopID, shopName: $shopName, shopLocation: $shopLocation, categoryID: $categoryID, shopOwnerID: $shopOwnerID, shopImagePath: $shopImagePath, googleMapLink: $googleMapLink, contactInfo: $contactInfo, bayesianAverage: $bayesianAverage, annualBayesianAverage: $annualBayesianAverage, description: $description, addedAt: $addedAt, availableHours: $availableHours, deliveryApps: $deliveryApps}';
+  }
+}
+
+class FireStoreUser {
+  final String email;
+  final String id;
+  final bool isAnonymous;
+  final bool isEmailVerified;
+  final String numberOfRatings;
+  final String profileImageURL;
+  final String userName;
+  final Map<String, dynamic> ratings;
+
+  FireStoreUser({
+    required this.email,
+    required this.id,
+    required this.isAnonymous,
+    required this.isEmailVerified,
+    required this.numberOfRatings,
+    required this.profileImageURL,
+    required this.userName,
+    required this.ratings,
+  });
+
+  factory FireStoreUser.fromMap(Map<String, dynamic> map, {String? id}) {
+    return FireStoreUser(
+      email: map[cloudEmail] ?? '',
+      id: id ?? '',
+      isAnonymous: map[cloudIsAnonymous] ?? true,
+      isEmailVerified: map[cloudIsEmailVerified] ?? false,
+      numberOfRatings: map[cloudNumberOfRatings]?.toString() ?? '',
+      profileImageURL: map[cloudProfileImageURL] ?? 'default_image_url',
+      userName: map[cloudUserName] ?? '',
+      ratings:
+          map[cloudRatings] is Map<String, dynamic> ? map[cloudRatings] : {},
+    );
+  }
+
+  String get imagePath => profileImageURL;
+
+  @override
+  String toString() {
+    return 'FireStoreUser{email: $email, id: $id, isAnonymous: $isAnonymous, isEmailVerified: $isEmailVerified, numberOfRatings: $numberOfRatings, profileImageURL: $profileImageURL, userName: $userName, ratings: $ratings}';
   }
 }
 
@@ -69,6 +135,7 @@ class Product {
   final String productPrice;
   final String productImagePath;
   final String categoryID;
+  final double bayesianAverage;
   final String shopID;
   final String addedAt;
 
@@ -78,6 +145,7 @@ class Product {
     required this.productDescription,
     required this.productPrice,
     required this.productImagePath,
+    required this.bayesianAverage,
     required this.categoryID,
     required this.shopID,
     required this.addedAt,
@@ -90,6 +158,7 @@ class Product {
       productDescription: map[cloudProductDescription] ?? '',
       productPrice: map[cloudProductPrice] ?? '',
       productImagePath: map[cloudProductImagePath] ?? '',
+      bayesianAverage: map[cloudBayesianAverage] ?? '',
       categoryID: map[cloudCategoryID] ?? '',
       shopID: map[cloudShopID] ?? '',
       addedAt: map[cloudProductAddedAt] ?? '',
@@ -103,6 +172,7 @@ class Product {
       cloudProductDescription: productDescription,
       cloudProductPrice: productPrice,
       cloudProductImagePath: productImagePath,
+      cloudProductImagePath: bayesianAverage,
       cloudShopID: shopID,
       cloudProductAddedAt: addedAt,
     };
@@ -110,7 +180,7 @@ class Product {
 
   @override
   String toString() {
-    return 'Product{productID: $productID, productName: $productName, productDescription: $productDescription, productPrice: $productPrice, productImagePath: $productImagePath, shopID: $shopID, addedAt: $addedAt}';
+    return 'Product{productID: $productID, productName: $productName, productDescription: $productDescription, productPrice: $productPrice, productImagePath: $productImagePath, bayesianAverage: $bayesianAverage,shopID: $shopID, addedAt: $addedAt}';
   }
 }
 

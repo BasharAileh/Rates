@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/dialogs/verification_dialog.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
@@ -19,12 +20,13 @@ late String path;
 String? categoryID = 'food';
 
 List<String> categories = ["Food", "Services", "Clothes", "Education", "Cars"];
-late List<List<List<Shop>>> shops;
+late List<List<List<dynamic>>> shops;
 bool showIndicator = false;
 List<String> categoryIDs = [];
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool removeVerificationMessage;
+  const HomePage({super.key, this.removeVerificationMessage = false});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,12 +35,19 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final List<PageController> _pageController;
 
+  bool _showVerificationMessage = false;
+
   @override
   void initState() {
     super.initState();
     _pageController = List.generate(3, (index) => PageController());
     shops = List.generate(5, (index) => List.generate(3, (index) => []));
     _initializeCategoryIDs();
+    if (widget.removeVerificationMessage) {
+      _showVerificationMessage = true;
+    } else {
+      _showVerificationMessage = false;
+    }
 
     //TODO open DateBase and check if the user is verified
     //unless we used the ensureDbIsOpen() function in all the functions
@@ -83,6 +92,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
+    final controller = Get.put(TemporaryWidgetController());
     AuthUser user = AuthService.firebase().currentUser!;
     devtools.log('Category IDs: $categoryIDs');
     return Scaffold(
@@ -110,7 +120,6 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         final userData =
                             snapshot.data?.data() as Map<String, dynamic>?;
-
                         if (userData != null) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -128,47 +137,27 @@ class _HomePageState extends State<HomePage> {
                             return const SizedBox();
                           }
 
-                          if (userData['is_email_verified'] == false) {
-                            return Column(
-                              children: [
-                                Center(
-                                  child: Container(
-                                    height: AspectRatios.height * 0.03444444444,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.verificationSuccessColor
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(50.0),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.info_outline,
-                                          color: Colors.black,
-                                          size: AspectRatios.height *
-                                              0.02444444444,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        const Text(
-                                          'Please verify your email.',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                              ],
+                          if (userData['is_email_verified'] == true &&
+                              _showVerificationMessage) {
+                            devtools.log('hi');
+                            return Obx(
+                              () => controller.showWidget.value
+                                  ? buildVerificationMessage(
+                                      AppColors.verificationSuccessColor,
+                                      userData['is_anonymous'],
+                                      context,
+                                      gotVerified: _showVerificationMessage,
+                                    )
+                                  : const SizedBox(),
                             );
+                          }
+                          if (userData['is_email_verified'] == false) {
+                            return buildVerificationMessage(
+                                Colors.grey, userData['is_anonymous'], context);
                           } else {
                             return SizedBox(
-                                height:
-                                    15 + (AspectRatios.height * 0.03444444444));
+                              height: AspectRatios.height * 0.03,
+                            );
                           }
                         } else {
                           return const SizedBox();
@@ -240,7 +229,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SizedBox(
-                height: AspectRatios.height * 0.02,
+                height: user.isEmailVerified == false
+                    ? AspectRatios.height * 0.02
+                    : AspectRatios.height * 0.034,
               ),
               ...List.generate(
                 3,
@@ -341,13 +332,31 @@ class _HomePageState extends State<HomePage> {
 
                                       // Map Firestore documents to Shop objects
                                       if (snapshot.hasData) {
-                                        List<Shop> shopList = snapshot
-                                            .data!.docs
-                                            .map((doc) => Shop.fromMap(
+                                        List<Object> shopList;
+                                        if (verticalIndex != 2) {
+                                          shopList =
+                                              snapshot.data!.docs.map((doc) {
+                                            devtools.log(
+                                                'Document data: ${doc.data()}');
+
+                                            return Shop.fromMap(
                                                 doc.data()
                                                     as Map<String, dynamic>,
-                                                shopID: doc.id))
-                                            .toList();
+                                                shopID: doc.id);
+                                          }).toList();
+                                        } else {
+                                          devtools.log('shopList: hi');
+                                          shopList = snapshot.data!.docs
+                                              .map(
+                                                (doc) => FireStoreUser.fromMap(
+                                                  doc.data()
+                                                      as Map<String, dynamic>,
+                                                  id: doc.id,
+                                                ),
+                                              )
+                                              .toList();
+                                          devtools.log('shopList: $shopList');
+                                        }
                                         // Update the shops list without resetting it
                                         /*   if (horizontalIndex >= shops.length) {
                                           shops[horizontalIndex]
@@ -412,21 +421,23 @@ class _HomePageState extends State<HomePage> {
                                                   ...List.generate(
                                                     3,
                                                     (index) {
+                                                      devtools.log(
+                                                          'Image path: ${shops[horizontalIndex][verticalIndex][index == 1 ? 0 : index == 0 ? 1 : 2].imagePath}');
                                                       shops[horizontalIndex][
                                                                   verticalIndex]
                                                               .isEmpty
                                                           ? showIndicator = true
                                                           : shops[horizontalIndex]
-                                                                      [
-                                                                      verticalIndex][index ==
-                                                                          0
-                                                                      ? 1
-                                                                      : index ==
-                                                                              1
-                                                                          ? 0
-                                                                          : 2]
-                                                                  .shopImagePath
-                                                                  .isEmpty
+                                                                          [
+                                                                          verticalIndex][index ==
+                                                                              0
+                                                                          ? 1
+                                                                          : index ==
+                                                                                  1
+                                                                              ? 0
+                                                                              : 2]
+                                                                      .imagePath ==
+                                                                  null
                                                               ? showIndicator =
                                                                   true
                                                               : showIndicator =
@@ -481,7 +492,7 @@ class _HomePageState extends State<HomePage> {
                                                                             : index == 0
                                                                                 ? 1
                                                                                 : 2]
-                                                                        .shopImagePath),
+                                                                        .imagePath!),
                                                                     builder:
                                                                         (context,
                                                                             snapShot) {
@@ -528,7 +539,7 @@ class _HomePageState extends State<HomePage> {
                                                                                   : index == 0
                                                                                       ? 1
                                                                                       : 2]
-                                                                              .shopImagePath,
+                                                                              .imagePath!,
                                                                         ),
                                                                       );
                                                                     },
@@ -692,38 +703,121 @@ class CurrentCategoryController extends GetxController {
 Stream<QuerySnapshot> getQueryStream(int verticalIndex, int horizontalIndex) {
   devtools
       .log('verticalIndex: $verticalIndex, horizontalIndex: $horizontalIndex');
-  if (categoryIDs.isNotEmpty) {
-    if (verticalIndex == 0) {
-      // Fetching from 'shop' with 'bayesian_average'
-      return FirebaseFirestore.instance
-          .collection('shop')
-          .where('category_id', isEqualTo: categoryIDs[horizontalIndex])
-          .orderBy('bayesian_average', descending: true)
-          .limit(3)
-          .snapshots();
-    } else if (verticalIndex == 1) {
-      // Fetching from 'shop' with 'annual_bayesian_average'
-      return FirebaseFirestore.instance
-          .collection('shop')
-          .where('category_id', isEqualTo: categoryIDs[horizontalIndex])
-          .orderBy('annual_bayesian_average', descending: true)
-          .limit(3)
-          .snapshots();
+
+  try {
+    if (categoryIDs.isNotEmpty) {
+      if (verticalIndex == 0) {
+        // Fetching from 'shop' with 'bayesian_average'
+        return FirebaseFirestore.instance
+            .collection('shop')
+            .where('category_id', isEqualTo: categoryIDs[horizontalIndex])
+            .orderBy('bayesian_average', descending: true)
+            .limit(3)
+            .snapshots();
+      } else if (verticalIndex == 1) {
+        // Fetching from 'shop' with 'annual_bayesian_average'
+        return FirebaseFirestore.instance
+            .collection('shop')
+            .where('category_id', isEqualTo: categoryIDs[horizontalIndex])
+            .orderBy('annual_bayesian_average', descending: true)
+            .limit(3)
+            .snapshots();
+      } else {
+        // Fetching from 'user' collection
+        return FirebaseFirestore.instance
+            .collection('user')
+            .orderBy('ratings.${categoryIDs[horizontalIndex]}',
+                descending: true)
+            .limit(3)
+            .snapshots();
+      }
     } else {
-      // Fetching from 'user' collection
-      return FirebaseFirestore.instance
-          .collection('user')
-          .orderBy('number_of_ratings', descending: true)
-          .limit(3)
-          .snapshots();
+      return const Stream.empty(); // No valid query, return empty stream
     }
-  } else {
-    return const Stream.empty(); // No valid query, return empty stream
+  } catch (e) {
+    devtools.log("hehe" + e.toString());
+    return const Stream.empty(); // Return empty stream on error
   }
 }
 
+Widget buildVerificationMessage(
+    Color color, bool isAnonymous, BuildContext context,
+    {bool? gotVerified}) {
+  return Column(
+    children: [
+      InkWell(
+        onTap: isAnonymous
+            ? () {}
+            : () {
+                showVerificationDialog(context);
+              },
+        child: Center(
+          child: Container(
+            height: 40, // Adjust as needed
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (gotVerified == null)
+                  const Icon(
+                    Icons.info_outline,
+                    color: Colors.black,
+                    size: 20, // Adjust as needed
+                  ),
+                const SizedBox(width: 5),
+                Text(
+                  isAnonymous == false
+                      ? (gotVerified == true
+                          ? 'Email is verified successfully'
+                          : 'Please verify your email')
+                      : 'You are anonymous',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: gotVerified == null
+                        ? Colors.black
+                        : AppColors.textGreenColor,
+                  ),
+                ),
+                if (gotVerified == true)
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SvgPicture.asset(
+                        colorFilter: const ColorFilter.mode(
+                            AppColors.textGreenColor, BlendMode.srcIn),
+                        'assets/icons/bold_verifcation_success.svg',
+                        height: 20,
+                        width: 20,
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 15),
+    ],
+  );
+}
 
+class TemporaryWidgetController extends GetxController {
+  var showWidget = true.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    Future.delayed(const Duration(seconds: 5), () {
+      showWidget.value = false;
+    });
+  }
+}
 
 /*  Container(
                       height: AspectRatios.height * 0.153,

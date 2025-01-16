@@ -3,7 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rates/constants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final bool shouldSkipAnimation;
+  const SplashScreen({super.key, this.shouldSkipAnimation = false});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -41,8 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   final List<String> starPaths = List.generate(
     7,
-    (index) =>
-        'assets/logos/stars/small_star_${index + 1}.svg',
+    (index) => 'assets/logos/stars/small_star_${index + 1}.svg',
   );
   final List<double> starSzie = List.generate(7, (index) {
     double startSize = 1.85;
@@ -197,35 +197,46 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    // Start Animations in Sequence
-    _lettersController.forward().then(
-      (_) {
-        Future.delayed(
-          const Duration(milliseconds: 200),
-          () {
-            _lowerStarController.forward();
-            for (int i = 0; i < _popupControllers.length; i++) {
+    if (widget.shouldSkipAnimation) {
+      // Skip animations by jumping controllers to their final states
+      _lettersController.value = 1.0;
+      _sentenceController.value = 1.0;
+      _lowerStarController.value = 1.0;
+      _upperStarController.value = 1.0;
+      for (var controller in _popupControllers) {
+        controller.value = 1.0;
+      }
+    } else {
+      // Start Animations in Sequence
+      _lettersController.forward().then(
+        (_) {
+          Future.delayed(
+            const Duration(milliseconds: 200),
+            () {
+              _lowerStarController.forward();
+              for (int i = 0; i < _popupControllers.length; i++) {
+                Future.delayed(
+                  Duration(milliseconds: i * 50),
+                  () {
+                    _popupControllers[i].forward().then(
+                      (_) {
+                        _sentenceController.forward();
+                      },
+                    );
+                  },
+                );
+              }
               Future.delayed(
-                Duration(milliseconds: i * 50),
+                const Duration(milliseconds: 300),
                 () {
-                  _popupControllers[i].forward().then(
-                    (_) {
-                      _sentenceController.forward();
-                    },
-                  );
+                  _upperStarController.forward();
                 },
               );
-            }
-            Future.delayed(
-              const Duration(milliseconds: 300),
-              () {
-                _upperStarController.forward();
-              },
-            );
-          },
-        );
-      },
-    );
+            },
+          );
+        },
+      );
+    }
   }
 
   @override
