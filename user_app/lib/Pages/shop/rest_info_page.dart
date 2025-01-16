@@ -105,7 +105,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                 child: Stack(
                   children: [
                     PageView(
-                      children: [],
+                      children: const [],
                     ),
 
                     // Rating Badge

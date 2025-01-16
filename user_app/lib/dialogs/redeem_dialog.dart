@@ -129,7 +129,7 @@ class VerificationDialogPage extends StatelessWidget {
                         await cloudService.getReceiptInfo(enteredCode);
                         print('object');
                         Get.to(
-                            () => RateMealPage(
+                            () => const RateMealPage(
                                   restaurant: '',
                                   meals: [],
                                   rating: '',

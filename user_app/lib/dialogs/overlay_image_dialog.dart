@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
-import 'package:rates/constants/aspect_ratio.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OverlayImageDialog extends StatefulWidget {
