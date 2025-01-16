@@ -145,16 +145,15 @@ class VerificationDialogPage extends StatelessWidget {
                         await cloudService.getReceiptInfo(enteredCode);
                         print('object');
                         Get.to(
-                          () => RateMealPage(
-                            restaurant: '',
-                            meals: [],
-                            rating: '',
-                            logo: '',
-                          ),
-                          arguments: {
-                            'order_id': enteredCode,
-                          },
-                        );
+                            () => const RateMealPage(
+                                  restaurant: '',
+                                  meals: [],
+                                  rating: '',
+                                  logo: '',
+                                ),
+                            arguments: {
+                              'order_id': enteredCode,
+                            });
                       } on CodeDoesNotExist {
                         Get.snackbar(
                           "Invalid Code",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
+
 import 'view_ratings_page.dart'; // Import the ViewRatingPage
 
 class MenuPage extends StatefulWidget {

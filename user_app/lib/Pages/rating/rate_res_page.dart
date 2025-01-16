@@ -78,12 +78,12 @@ class RateMealPageState extends State<RateMealPage> {
                   height: 100,
                   child: buildRestaurantHeader(receiptInfo['shop_id']),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 const Text(
                   "Rate the meals you enjoyed",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Product List Section
                 Expanded(
@@ -358,7 +358,7 @@ Widget buildRestaurantHeader(String shopID) {
       print('constraints: $constraints');
       return GestureDetector(
         onTap: () {
-          Get.to(() => RestaurantInformationPage());
+          Get.to(() => const RestaurantInformationPage());
         },
         child: FutureBuilder(
           future: cloudService.getShopInfo(shopID),
@@ -683,7 +683,7 @@ class MealRatingCardState extends State<MealRatingCard>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('x${widget.numberOfItems} ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             Expanded(
               child: Text(
                 widget.mealName,

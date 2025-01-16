@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
 class RatingsPage extends StatefulWidget {

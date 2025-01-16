@@ -259,7 +259,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantInformationPage(),
+                    builder: (context) => const RestaurantInformationPage(),
                   ),
                 );
               },
