@@ -146,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                             Text(
-                              "${user.numberOfRatings} Total Ratings",
+                              " Total Ratings",
                               style: const TextStyle(fontSize: 12),
                             ),
                           ],

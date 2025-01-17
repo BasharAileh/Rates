@@ -220,37 +220,39 @@ class RateMealPageState extends State<RateMealPage> {
                         onPressed: () async {
                           try {
                             controller.ratings.forEach((key, value) async {
-                              var numberOfRatings = 0;
-                              /* numberOfRatings+= receiptInfo['products'][] */
-                              print(
-                                  receiptInfo['products']['product_quantity']);
-                              /* 
-                              final productID = await cloudService.getProductID(
-                                key,
-                                receiptInfo['shop_id'],
-                              );
+                              for (int number = 0;
+                                  number <
+                                      receiptInfo['products'][key]
+                                          ['product_quantity'];
+                                  number++) {
+                                final productID =
+                                    await cloudService.getProductID(
+                                  key,
+                                  receiptInfo['shop_id'],
+                                );
 
-                              final Product product =
-                                  await cloudService.getProductInfo(productID);
+                                final Product product = await cloudService
+                                    .getProductInfo(productID);
+                                Shop? shop = await cloudService
+                                    .getShopInfo(receiptInfo['shop_id']);
 
-                              await cloudService.insertDocument(
-                                'product_rating',
-                                {
-                                  'product_id': productID,
-                                  'product_category_id': product.categoryID,
-                                  'rating_value': value,
-                                },
-                              );
+                                cloudService.insertDocument(
+                                  'product_rating',
+                                  {
+                                    'product_id': productID,
+                                    'product_category_id': product.categoryID,
+                                    'rating_value': value,
+                                  },
+                                );
 
-                              Shop shop = await cloudService
-                                  .getShopInfo(receiptInfo['shop_id']);
-
-                              await cloudService
-                                  .incrementUserCategoryRatings(
-                                AuthService.firebase().currentUser!.id,
-                                shop.categoryID,
-                                increment: 7,
-                              ); */
+                                if (shop != null) {
+                                  await cloudService
+                                      .incrementUserCategoryRatings(
+                                    AuthService.firebase().currentUser!.id,
+                                    shop.categoryID,
+                                  );
+                                }
+                              }
                             });
                           } catch (_) {}
 

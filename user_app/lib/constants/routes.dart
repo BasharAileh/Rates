@@ -16,3 +16,5 @@ const String resetPassMethodRoute = '/resetPassMethod/';
 const String profileRoute = '/profileRoute/';
 const String topRatedRoute = '/topRatedRoute/';
 const String restInfoRoute = '/restInfoRoute/';
+const String menuPageRoute = '/menu/';
+const String viewRatingRoute = '/ratingRoute/';
