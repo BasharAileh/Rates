@@ -62,12 +62,6 @@ class _HomePageState extends State<HomePage> {
     for (var controller in _pageController) {
       controller.dispose();
     }
-
-    //TODO close the DataBase
-    /* 
-    make sure this page never gets closed when the user is still using the app
-    that means never use get.off() to navigate to another page
-     */
     super.dispose();
   }
 
@@ -95,8 +89,12 @@ class _HomePageState extends State<HomePage> {
     final controller = Get.put(TemporaryWidgetController());
     AuthUser user = AuthService.firebase().currentUser!;
     devtools.log('Category IDs: $categoryIDs');
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: SafeArea(
+      body: Container(
+        color: isDarkMode ? Colors.grey[900] : Colors.white, // Dynamic background color
+        child: SafeArea(
           child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
@@ -109,6 +107,7 @@ class _HomePageState extends State<HomePage> {
                   'assets/logos/black_logo.svg',
                   height: AspectRatios.height * 0.04333333333,
                   width: AspectRatios.width * 0.14871794871,
+                  color: isDarkMode?Colors.white:Colors.black,
                 ),
               ),
               Padding(
@@ -192,8 +191,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Stack(
                                     children: [
                                       Container(
-                                        color: AppColors.iconBackground
-                                            .withOpacity(0.15),
+                                      
                                         height: AspectRatios.height * 0.044,
                                         width:
                                             AspectRatios.width * 0.10256410256,
@@ -204,6 +202,7 @@ class _HomePageState extends State<HomePage> {
                                           width: AspectRatios.width *
                                               0.08974358974,
                                           height: AspectRatios.height * 0.044,
+                                          
                                         ),
                                       ),
                                     ],
@@ -688,7 +687,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       )),
-    );
+    ));
   }
 }
 

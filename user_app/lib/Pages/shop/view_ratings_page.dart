@@ -98,21 +98,26 @@ class _ViewRatingState extends State<ViewRating> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDarkMode = brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
+
     late final Product product;
     late final Shop shop;
     late final bool isImageAvailable;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: iconColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           "Ratings",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[900],
         elevation: 0,
       ),
       body: FutureBuilder(
@@ -155,6 +160,7 @@ class _ViewRatingState extends State<ViewRating> {
                                   'assets/logos/yallow_logo.svg',
                                   height: AspectRatios.height * 0.05,
                                   width: AspectRatios.width * 0.05,
+                                  color: iconColor,
                                 )
                               : Image.network(shop.shopImagePath),
                         )),
@@ -165,15 +171,15 @@ class _ViewRatingState extends State<ViewRating> {
                         children: [
                           Text(
                             shop.shopName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: textColor,
                             ),
                           ),
                           Text(
                             'Rating of ${shop.bayesianAverage.toStringAsFixed(1)} stars',
-                            style: const TextStyle(
-                                fontSize: 11, color: Colors.black),
+                            style: TextStyle(fontSize: 11, color: textColor),
                           ),
                         ],
                       ),
@@ -181,7 +187,7 @@ class _ViewRatingState extends State<ViewRating> {
                     IconButton(
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? Colors.red : Colors.black,
+                        color: isFavorite ? Colors.red : iconColor,
                       ),
                       onPressed: toggleFavorite,
                     ),
@@ -208,23 +214,25 @@ class _ViewRatingState extends State<ViewRating> {
                           children: [
                             Text(
                               mealName,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
+                                color: textColor,
                               ),
                             ),
                             Text(
                               ' - ${product.productPrice.toString()}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
+                                color: textColor,
                               ),
                             ),
                           ],
                         ),
-                        const Text(
+                        Text(
                           'Half chicken, rice, 2 spicy sauces',
-                          style: TextStyle(fontSize: 11),
+                          style: TextStyle(fontSize: 11, color: textColor),
                         ),
                       ],
                     ),
@@ -245,7 +253,6 @@ class _ViewRatingState extends State<ViewRating> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        // Increase elevation for a more pronounced shadow
                       ),
                       child: const Text('Rate',
                           style: TextStyle(fontSize: 17, color: Colors.white)),
@@ -260,7 +267,7 @@ class _ViewRatingState extends State<ViewRating> {
                     itemBuilder: (context, index) {
                       final review = reviews[index];
                       return Card(
-                        color: Colors.white,
+                        color: Colors.grey[900],
                         elevation: 0,
                         child: ListTile(
                           leading: CircleAvatar(
@@ -277,7 +284,7 @@ class _ViewRatingState extends State<ViewRating> {
                             children: [
                               Text(
                                 review['review'],
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(fontSize: 13, color: textColor),
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -287,7 +294,7 @@ class _ViewRatingState extends State<ViewRating> {
                                     'assets/icons/star.svg',
                                     color: starIndex < review['rating']
                                         ? const Color.fromARGB(255, 255, 193, 7)
-                                        : const Color.fromARGB(200, 0, 0, 0),
+                                        : iconColor,
                                     width: AspectRatios.width * 0.02,
                                     height: AspectRatios.height * 0.03,
                                   ),

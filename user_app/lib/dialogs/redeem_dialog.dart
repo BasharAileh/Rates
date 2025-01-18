@@ -35,14 +35,16 @@ class VerificationDialogPage extends StatelessWidget {
     final TextEditingController codeController = TextEditingController();
     final FirebaseCloudStorage cloudService = FirebaseCloudStorage();
 
+    // Get the current theme
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Dialog(
-      backgroundColor:
-          const Color.fromARGB(0, 0, 0, 0), // Transparent background
+      backgroundColor: const Color.fromARGB(0, 0, 0, 0), // Transparent background
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // Blur effect
         child: Container(
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255),
+            color: isDarkMode ? Color(0xFF212121) : Colors.white, // Set background to grey[900] in dark mode and white in light mode
             borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.all(20),
@@ -53,13 +55,15 @@ class VerificationDialogPage extends StatelessWidget {
               SvgPicture.asset(
                 'assets/logos/black_logo.svg',
                 height: AspectRatios.height * 0.06,
+                color: isDarkMode ? Colors.white : Colors.black, // Change color of SVG icons
               ),
               SizedBox(height: AspectRatios.height * 0.02),
-              const Text(
+              Text(
                 "Redeem Your Meal Code",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black, // Adjust text color based on theme
                 ),
               ),
               SizedBox(height: AspectRatios.height * 0.02),
@@ -67,34 +71,44 @@ class VerificationDialogPage extends StatelessWidget {
                 height: AspectRatios.height * 0.055,
                 child: Theme(
                   data: Theme.of(context).copyWith(
-                      textSelectionTheme: const TextSelectionThemeData(
-                    cursorColor: Color.fromARGB(255, 255, 196, 45),
-                    selectionHandleColor: Color.fromARGB(255, 255, 196, 45),
-                  )),
+                    textSelectionTheme: const TextSelectionThemeData(
+                      cursorColor: Color.fromARGB(255, 255, 196, 45),
+                      selectionHandleColor: Color.fromARGB(255, 255, 196, 45),
+                    ),
+                  ),
                   child: TextField(
                     cursorColor: const Color.fromARGB(255, 255, 196, 45),
                     controller: codeController,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(17),
+                        borderSide: BorderSide(
+                          color: isDarkMode ? Colors.white : Colors.black, // Adjust border color based on theme
+                        ),
                       ),
                       labelText: "Enter Code",
-                      labelStyle: const TextStyle(),
+                      labelStyle: TextStyle(
+                        color: isDarkMode ? Colors.white70 : Colors.black54, // Adjust label text color
+                      ),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(17),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 255, 196, 45),
-                          )),
+                        borderRadius: BorderRadius.circular(17),
+                        borderSide: BorderSide(
+                          color: Color.fromARGB(255, 255, 196, 45),
+                        ),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black, // Adjust text field text color
                     ),
                   ),
                 ),
               ),
               SizedBox(height: AspectRatios.height * 0.01),
-              const Text(
+              Text(
                 "Codes are found at the end or top of your bill.",
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color.fromARGB(255, 158, 158, 158),
+                  color: isDarkMode ? Colors.white70 : Colors.black54, // Adjust text color
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -108,16 +122,18 @@ class VerificationDialogPage extends StatelessWidget {
                       Get.back();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+                      backgroundColor: isDarkMode
+                          ? Color(0xFF616161) // Darker color in dark mode
+                          : Colors.grey[300], // Lighter color in light mode
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Cancel",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
                       ),
                     ),
                   ),
@@ -129,7 +145,7 @@ class VerificationDialogPage extends StatelessWidget {
                         await cloudService.getReceiptInfo(enteredCode);
                         print('object');
                         Get.to(
-                            () => RateMealPage(
+                            () => const RateMealPage(
                                   restaurant: '',
                                   meals: [],
                                   rating: '',
@@ -139,63 +155,65 @@ class VerificationDialogPage extends StatelessWidget {
                               'order_id': enteredCode,
                             });
                       } on CodeDoesNotExist {
-                        Get.snackbar("Invalid Code",
+                        Get.snackbar(
+                          "Invalid Code",
+                          "The code you entered is not valid.",
+                          titleText: const Text(
+                            "Invalid Code",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          messageText: const Text(
                             "The code you entered is not valid.",
-                            titleText: const Text(
-                              "Invalid Code",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            style: TextStyle(
+                              fontSize: 12,
                             ),
-                            messageText: const Text(
-                              "The code you entered is not valid.",
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                            backgroundColor:
-                                const Color.fromARGB(255, 191, 191, 191),
-                            colorText: const Color.fromARGB(255, 255, 255, 255),
-                            margin: const EdgeInsets.only(
-                                top: 10, left: 7, right: 7),
-                            padding: const EdgeInsets.all(5),
-                            boxShadows: [
-                              const BoxShadow(
-                                  color: Color.fromARGB(255, 56, 56, 56),
-                                  offset: Offset(0, 2),
-                                  blurRadius: 5,
-                                  spreadRadius: 0.5)
-                            ]);
+                          ),
+                          backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+                          colorText: Colors.white,
+                          margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+                          padding: const EdgeInsets.all(5),
+                          boxShadows: [
+                            const BoxShadow(
+                              color: Color.fromARGB(255, 56, 56, 56),
+                              offset: Offset(0, 2),
+                              blurRadius: 5,
+                              spreadRadius: 0.5,
+                            )
+                          ],
+                        );
                       } catch (_) {
-                        Get.snackbar("Invalid Code",
+                        Get.snackbar(
+                          "Invalid Code",
+                          "The code you entered is not valid.",
+                          titleText: const Text(
+                            "Invalid Code",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          messageText: const Text(
                             "The code you entered is not valid.",
-                            titleText: const Text(
-                              "Invalid Code",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            style: TextStyle(
+                              fontSize: 12,
                             ),
-                            messageText: const Text(
-                              "The code you entered is not valid.",
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                            backgroundColor:
-                                const Color.fromARGB(255, 191, 191, 191),
-                            colorText: const Color.fromARGB(255, 255, 255, 255),
-                            margin: const EdgeInsets.only(
-                                top: 10, left: 7, right: 7),
-                            padding: const EdgeInsets.all(5),
-                            boxShadows: [
-                              const BoxShadow(
-                                  color: Color.fromARGB(255, 56, 56, 56),
-                                  offset: Offset(0, 2),
-                                  blurRadius: 5,
-                                  spreadRadius: 0.5)
-                            ]);
+                          ),
+                          backgroundColor: const Color.fromARGB(255, 191, 191, 191),
+                          colorText: Colors.white,
+                          margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
+                          padding: const EdgeInsets.all(5),
+                          boxShadows: [
+                            const BoxShadow(
+                              color: Color.fromARGB(255, 56, 56, 56),
+                              offset: Offset(0, 2),
+                              blurRadius: 5,
+                              spreadRadius: 0.5,
+                            )
+                          ],
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -204,11 +222,11 @@ class VerificationDialogPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Redeem",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: isDarkMode ? Colors.black : Colors.white, // Adjust button text color
                       ),
                     ),
                   ),

@@ -34,6 +34,7 @@ class RateMealPageState extends State<RateMealPage> {
   final args = Get.arguments;
 
   final ProductRatingController controller = Get.put(ProductRatingController());
+
   @override
   void initState() {
     super.initState();
@@ -41,26 +42,34 @@ class RateMealPageState extends State<RateMealPage> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    final isDarkMode = brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Rate your meals',
-          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+          style: TextStyle(color: textColor),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
         leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back, color: Color.fromARGB(255, 0, 0, 0)),
+          icon: Icon(Icons.arrow_back, color: iconColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
       body: FutureBuilder(
         future: cloudService.getReceiptInfo(args['order_id']),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color.fromARGB(255, 255, 196, 45),
+              ),
+            );
           }
 
           Map<String, dynamic> receiptInfo =
@@ -78,12 +87,16 @@ class RateMealPageState extends State<RateMealPage> {
                   height: 100,
                   child: buildRestaurantHeader(receiptInfo['shop_id']),
                 ),
-                SizedBox(height: 16),
-                const Text(
+                const SizedBox(height: 16),
+                Text(
                   "Rate the meals you enjoyed",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Product List Section
                 Expanded(
@@ -102,17 +115,19 @@ class RateMealPageState extends State<RateMealPage> {
                             children: [
                               Text(
                                 'x${product['product_quantity'] ?? ''} ',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w500,
+                                  color: textColor,
                                 ),
                               ),
                               Expanded(
                                 child: Text(
                                   productName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
+                                    color: textColor,
                                   ),
                                 ),
                               ),
@@ -189,9 +204,11 @@ class RateMealPageState extends State<RateMealPage> {
                                             ),
                                             Text(
                                               "${(controller.ratings[productName] ?? 0).toStringAsFixed(1)} / 5",
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: textColor,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -199,6 +216,7 @@ class RateMealPageState extends State<RateMealPage> {
                                           controller: _opinionController[index],
                                           hintText:
                                               "How was the overall service at the restaurant?",
+                                          textColor: textColor, // Pass textColor here
                                         ),
                                       ],
                                     )
@@ -315,8 +333,9 @@ class RateMealPageState extends State<RateMealPage> {
                         child: const Text(
                           "Submit Ratings",
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 0, 0, 0)),
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       TextButton(
@@ -324,10 +343,17 @@ class RateMealPageState extends State<RateMealPage> {
                           Get.back();
                           showDialog(
                             context: context,
-                            builder: (context) => const AlertDialog(
-                              title: Text("We’re Sorry!"),
-                              content:
-                                  Text("Please let us know what went wrong."),
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                "We’re Sorry!",
+                                style: TextStyle(color: textColor),
+                              ),
+                              content: Text(
+                                "Please let us know what went wrong.",
+                                style: TextStyle(color: textColor),
+                              ),
+                              backgroundColor:
+                                  isDarkMode ? Colors.grey[900] : Colors.white,
                             ),
                           );
                         },
@@ -337,7 +363,10 @@ class RateMealPageState extends State<RateMealPage> {
                         child: const Text(
                           "This wasn’t what I ordered",
                           style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromARGB(255, 33, 150, 243),
+                          ),
                         ),
                       ),
                     ],
@@ -360,13 +389,17 @@ Widget buildRestaurantHeader(String shopID) {
       print('constraints: $constraints');
       return GestureDetector(
         onTap: () {
-          Get.to(() => RestaurantInformationPage());
+          Get.to(() => const RestaurantInformationPage());
         },
         child: FutureBuilder(
           future: cloudService.getShopInfo(shopID),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Color.fromARGB(255, 255, 196, 45),
+                ),
+              );
             }
             if (snapshot.hasData) {
               shop = snapshot.data;
@@ -378,7 +411,11 @@ Widget buildRestaurantHeader(String shopID) {
                       cloudService.isImageAvailable(shop?.shopImagePath ?? ''),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color.fromARGB(255, 255, 196, 45),
+                        ),
+                      );
                     }
                     if (snapshot.hasData) {
                       return Image.network(
@@ -387,16 +424,22 @@ Widget buildRestaurantHeader(String shopID) {
                         shop!.shopImagePath,
                       );
                     }
-                    return const Icon(Icons.error);
+                    return const Icon(
+                      Icons.error,
+                      color: Color.fromARGB(255, 255, 196, 45),
+                    );
                   },
                 ),
                 SizedBox(
                   height: constraints.maxHeight * 0.2,
                   child: Text(
                     shop?.shopName ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -685,7 +728,7 @@ class MealRatingCardState extends State<MealRatingCard>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('x${widget.numberOfItems} ',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
             Expanded(
               child: Text(
                 widget.mealName,
@@ -766,6 +809,9 @@ class MealRatingCardState extends State<MealRatingCard>
                     OpinionTextBox(
                       controller: _opinionController[widget.numberOfItems],
                       hintText: "Share your thoughts about the meal...",
+                      textColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black, // Pass textColor here
                     ),
                   ],
                 )
@@ -779,9 +825,14 @@ class MealRatingCardState extends State<MealRatingCard>
 class OpinionTextBox extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
+  final Color textColor; // Add textColor parameter
 
-  const OpinionTextBox(
-      {super.key, required this.hintText, required this.controller});
+  const OpinionTextBox({
+    super.key,
+    required this.hintText,
+    required this.controller,
+    required this.textColor, // Add textColor parameter
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -789,7 +840,9 @@ class OpinionTextBox extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       margin: const EdgeInsets.only(left: 13, right: 13),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[800]
+            : Colors.white,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.grey, width: 1),
       ),
@@ -802,7 +855,7 @@ class OpinionTextBox extends StatelessWidget {
           border: InputBorder.none,
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
-        style: const TextStyle(fontSize: 14, color: Colors.black),
+        style: TextStyle(fontSize: 14, color: textColor), // Use textColor here
       ),
     );
   }

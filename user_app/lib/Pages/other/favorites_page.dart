@@ -32,8 +32,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
     });
 
     widget.onRemoveFavorite(removedRestaurant['index']);
-
-    // Replace the snackbar with Get.snackbar
     showSnackBar(false, removedRestaurant['name']);
   }
 
@@ -45,30 +43,39 @@ class _FavoritesPageState extends State<FavoritesPage> {
         : "The item has been removed from your favorite list.";
 
     Get.snackbar(
-      snackBarTitle, // Title
-      snackBarMessage, // Message
+      snackBarTitle,
+      snackBarMessage,
       titleText: Text(
         snackBarTitle,
-        style: const TextStyle(
-          fontSize: 16, // Title font size
-          fontWeight: FontWeight.bold, // Bold title
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black,
         ),
       ),
       messageText: Text(
         snackBarMessage,
-        style: const TextStyle(
-          fontSize: 12, // Message font size
-          fontWeight: FontWeight.normal, // Regular weight for message
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black,
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 191, 191, 191),
-      colorText: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.grey[800]
+          : const Color.fromARGB(255, 191, 191, 191),
       margin: const EdgeInsets.only(top: 10, left: 7, right: 7),
       padding: const EdgeInsets.all(5),
       boxShadows: [
-        const BoxShadow(
-          color: Color.fromARGB(255, 56, 56, 56),
-          offset: Offset(0, 2),
+        BoxShadow(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : const Color.fromARGB(255, 56, 56, 56),
+          offset: const Offset(0, 2),
           blurRadius: 5,
           spreadRadius: 0.5,
         ),
@@ -100,11 +107,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey[900]
+              : Colors.white,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withOpacity(0.5)
+                  : Colors.grey.withOpacity(0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -119,7 +130,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
               child: Center(
                 child: Text(
                   logo,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -133,8 +148,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       const Text(
@@ -148,8 +168,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     children: [
                       Text(
                         ratingText,
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 12),
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12,
+                        ),
                       ),
                       Text(
                         "$rating stars",
@@ -160,10 +184,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   const SizedBox(height: 7),
                   InkWell(
                     onTap: onDetailsPressed,
-                    child: const Text(
+                    child: Text(
                       "View Details",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.grey),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.grey,
+                      ),
                     ),
                   ),
                 ],
@@ -185,18 +213,33 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           'Favorites',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -216,7 +259,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RestaurantInformationPage(),
+                    builder: (context) => const RestaurantInformationPage(),
                   ),
                 );
               },

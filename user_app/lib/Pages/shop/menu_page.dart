@@ -40,18 +40,29 @@ class MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white, // Explicit grey[900] color for background
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white, // Grey[900] for app bar
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Menu',
-            style: TextStyle(color: Colors.black, fontSize: 18)),
+        title: Text(
+          'Menu',
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontSize: 18,
+          ),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -60,12 +71,15 @@ class MenuPageState extends State<MenuPage> {
           children: [
             Row(
               children: [
-                const Text(
+                Text(
                   "Discover and rate",
                   style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 93, 92, 102)),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode
+                        ? Colors.white70
+                        : const Color.fromARGB(255, 93, 92, 102),
+                  ),
                 ),
                 SizedBox(
                     width: AspectRatios.width *
@@ -74,18 +88,22 @@ class MenuPageState extends State<MenuPage> {
                   height: AspectRatios.height * 0.04,
                   width: AspectRatios.width * 0.55,
                   child: TextField(
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Search for a meal',
-                      border: OutlineInputBorder(
+                      border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                       ),
-                      prefixIcon: Icon(Icons.search),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 5.0, horizontal: 15.0), // Adjusted padding
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 5.0, horizontal: 15.0),
                     ),
                     style: TextStyle(
-                        fontSize:
-                            AspectRatios.width * 0.035), // Adjusted font size
+                      fontSize: AspectRatios.width * 0.035,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     onChanged: (value) {
                       setState(() {
                         searchQuery = value;
@@ -110,24 +128,25 @@ class MenuPageState extends State<MenuPage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                    width: AspectRatios.width *
-                        0.02), // Add some spacing between the columns
+                SizedBox(width: AspectRatios.width * 0.02),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         shop.shopName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                       Text(
                         'Rating of ${shop.bayesianAverage}',
-                        style:
-                            const TextStyle(fontSize: 11, color: Colors.black),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDarkMode ? Colors.white70 : Colors.black,
+                        ),
                       ),
                     ],
                   ),
@@ -135,7 +154,7 @@ class MenuPageState extends State<MenuPage> {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.black,
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
                   onPressed: toggleFavorite,
                 ),
@@ -160,7 +179,6 @@ class MenuPageState extends State<MenuPage> {
                 },
               ),
               builder: (context, snapshot) {
-                final productID = snapshot.data!.docs.first.id;
                 if (!snapshot.hasData) {
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -169,6 +187,7 @@ class MenuPageState extends State<MenuPage> {
                 return Column(
                   children:
                       snapshot.data!.docs.map<Widget>((DocumentSnapshot shop) {
+                    final productID = shop.id;
                     return FutureBuilder(
                         future: cloudService
                             .isImageAvailable(shop['product_image_path']),
@@ -185,6 +204,7 @@ class MenuPageState extends State<MenuPage> {
                               "image": imageUrl,
                               'product_id': productID,
                             },
+                            isDarkMode: isDarkMode, // Pass isDarkMode to MealCard
                           );
                         });
                   }).toList(),
@@ -202,12 +222,14 @@ class MealCard extends StatelessWidget {
   const MealCard({
     super.key,
     required this.menuItem,
+    required this.isDarkMode,
   });
 
   final Map<String, dynamic> menuItem;
+  final bool isDarkMode;
+
   @override
   Widget build(BuildContext context) {
-    print(menuItem['product_id']);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -227,7 +249,8 @@ class MealCard extends StatelessWidget {
                   image: DecorationImage(
                     image: snapshot.hasData && snapshot.data == true
                         ? NetworkImage(menuItem["image"])
-                        : const AssetImage('assets/images/testpic/zerbyan.jpg'),
+                        : const AssetImage('assets/images/testpic/zerbyan.jpg')
+                            as ImageProvider,
                     fit: BoxFit.cover,
                   ),
                 ),

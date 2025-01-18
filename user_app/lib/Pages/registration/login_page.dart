@@ -7,8 +7,6 @@ import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/constants/widgets.dart';
 import 'package:rates/services/auth/auth_exception.dart';
-// ignore: unused_import
-
 import 'package:rates/services/auth/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -37,30 +35,29 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: Padding(
         padding: EdgeInsets.only(
           top: AspectRatios.height * 0.150379146919,
           left: AspectRatios.width * 0.07051282051,
           right: AspectRatios.width * 0.07051282051,
         ),
-        /* symmetric(
-          vertical: AspectRatios.height * 0.19379146919,
-          horizontal: AspectRatios.width * 0.07051282051,
-        ), */
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            /*  final width = constraints.maxWidth;
-            final height = constraints.maxHeight; */
-
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: SvgPicture.asset(
-                      width: 80,
                       'assets/logos/black_logo.svg',
+                      width: 80,
+                      color: isDarkMode ? AppColors.primaryColor : Colors.white,
                     ),
                   ),
                   SizedBox(
@@ -73,16 +70,9 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontSize: AspectRatios.width * 0.05641025641,
                           fontWeight: FontWeight.bold,
+                          color: textColor,
                         ),
                       ),
-                      /*
-                    Transform.translate(
-                      offset: Offset(0, -10),
-                      child: SvgPicture.asset(
-                        height: AspectRatios.height * 0.04909953,
-                        'assets/logos/black_logo.svg',
-                      ),
-                    ), */
                     ],
                   ),
                   SizedBox(height: AspectRatios.height * 0.03554502369),
@@ -98,7 +88,10 @@ class _LoginPageState extends State<LoginPage> {
                             const SizedBox(width: 10),
                             SizedBox(
                               height: (AspectRatios.height * 0.01895734597),
-                              child: Text(index == 0 ? titles[0] : titles[1]),
+                              child: Text(
+                                index == 0 ? titles[0] : titles[1],
+                                style: TextStyle(color: textColor),
+                              ),
                             ),
                           ],
                         ),
@@ -197,11 +190,10 @@ class _LoginPageState extends State<LoginPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                            /* width: constraints.maxWidth * 0.02, */
-                            ),
-                        const Text(
+                        const SizedBox(),
+                        Text(
                           'Don\'t have an account?',
+                          style: TextStyle(color: textColor),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -222,19 +214,20 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: AspectRatios.height * 0.03406398,
                   ),
-                  const Center(
+                  Center(
                     child: Row(
                       children: [
                         Expanded(
                           child: Divider(
-                            color: Colors.black,
+                            color: textColor,
                             thickness: 1,
                           ),
                         ),
-                        Text('or sign in with email'),
+                        Text('or sign in with email',
+                            style: TextStyle(color: textColor)),
                         Expanded(
                           child: Divider(
-                            color: Colors.black,
+                            color: textColor,
                             thickness: 1,
                           ),
                         ),
@@ -247,17 +240,18 @@ class _LoginPageState extends State<LoginPage> {
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0),
-                          shadowColor: Colors.white.withOpacity(0),
-                          fixedSize: Size(AspectRatios.width,
-                              AspectRatios.height * 0.05450236966),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(37.5),
-                          ),
-                          side: const BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                          )),
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        fixedSize: Size(AspectRatios.width,
+                            AspectRatios.height * 0.05450236966),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(37.5),
+                        ),
+                        side: BorderSide(
+                          color: textColor,
+                          width: 1,
+                        ),
+                      ),
                       onPressed: () async {
                         try {
                           await AuthService.google().logIn();
@@ -274,13 +268,14 @@ class _LoginPageState extends State<LoginPage> {
                               'assets/icons/google.svg',
                               width: 20,
                               height: 20,
+                            
                             ),
                             SizedBox(
                               width: AspectRatios.width * 0.02564102564,
                             ),
-                            const Text(
+                            Text(
                               'Continue with Google',
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: textColor),
                             ),
                           ],
                         ),
@@ -292,18 +287,19 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Center(
                     child: TextButton(
-                        onPressed: () async {
-                          await AuthService.firebase().logInAnonymously();
-                          devtools.log(
-                              'User: ${AuthService.firebase().currentUser}');
-                          Get.offNamed(homeRoute);
-                        },
-                        child: const Text(
-                          'Continue as Guest',
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                          ),
-                        )),
+                      onPressed: () async {
+                        await AuthService.firebase().logInAnonymously();
+                        devtools.log(
+                            'User: ${AuthService.firebase().currentUser}');
+                        Get.offNamed(homeRoute);
+                      },
+                      child: const Text(
+                        'Continue as Guest',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
