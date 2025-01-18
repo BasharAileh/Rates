@@ -7,7 +7,6 @@ class AuthUser {
   bool isAnonymous;
   String? profileImageUrl;
   String userName;
-  int numberOfRatings;
 
   AuthUser({
     required this.email,
@@ -15,7 +14,6 @@ class AuthUser {
     required this.isAnonymous,
     required this.id,
     required this.userName,
-    this.numberOfRatings = 0,
     this.profileImageUrl,
   });
 
@@ -38,7 +36,6 @@ class AuthUser {
       'is_anonymous': isAnonymous,
       'profile_imageUrl': profileImageUrl,
       'user_name': userName,
-      'number_of_ratings': numberOfRatings,
     };
   }
 
@@ -51,12 +48,11 @@ class AuthUser {
       profileImageUrl:
           data['profile_imageUrl'] == '' ? null : data['profile_imageUrl'],
       userName: data['user_name'],
-      numberOfRatings: data['number_of_ratings'] ?? 0,
     );
   }
 
   @override
   String toString() {
-    return 'AuthUser{id: $id, email: $email, isEmailVerified: $isEmailVerified, isAnonymous: $isAnonymous, profileImageUrl: $profileImageUrl, userName: $userName, numberOfRatings: $numberOfRatings}';
+    return 'AuthUser{id: $id, email: $email, isEmailVerified: $isEmailVerified, isAnonymous: $isAnonymous, profileImageUrl: $profileImageUrl, userName: $userName, }';
   }
 }

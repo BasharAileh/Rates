@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +20,8 @@ class RestaurantInformationPage extends StatefulWidget {
 }
 
 class RestaurantInformationPageState extends State<RestaurantInformationPage> {
-  Shop? shop;  // Declare shop as nullable
+  Shop? shop;
+
   late final List<String> imgList = [];
 
   final Map<String, String> socialLinks = {
@@ -27,14 +29,13 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
     'whatsapp': 'https://www.whatsapp.com/',
     'instagram': 'https://www.instagram.com',
   };
-  List<Map<String, String?>> infoRows = [
-    {'icon': 'assets/icons/podium_icon.svg', 'text': ''},
-    {'icon': 'assets/icons/location.svg', 'text': '', 'link': ''},
-    {'icon': 'assets/icons/phone.svg', 'text': '', 'link': ''},
-    {'icon': 'assets/icons/watch.svg', 'text': ''},
-    {'icon': 'assets/icons/delivery.svg', 'text': ''},
-    {'icon': 'assets/icons/Voucher.svg', 'text': ''},
-  ];
+  Map icons = {
+    'rank': {'icon': 'assets/icons/podium_icon.svg', 'value': ""},
+    'shopLocation': {'icon': 'assets/icons/location.svg', 'value': ""},
+    'contactInfo': {'icon': 'assets/icons/phone.svg', 'value': ""},
+    'available hours': {'icon': 'assets/icons/watch.svg', 'value': ""},
+    'delivery': {'icon': 'assets/icons/delivery.svg', 'value': ""},
+  };
   final String rank = "#1st Place";
   String reviews = "300";
 
@@ -61,26 +62,69 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   bool isExpanded = false;
 
   @override
-  Widget build(BuildContext context) {
-    if (Get.arguments != null && shop == null) {
-      shop = Get.arguments;
-    } else {
-      shop ??= Shop(
-        shopName: '',
-        shopLocation: '',
-        categoryID: '',
-        shopOwnerID: '',
-        shopImagePath: '',
-        contactInfo: {},
-        bayesianAverage: 0,
-        annualBayesianAverage: 0,
-        addedAt: '',
-      );
-    }
+  void initState() {
+    super.initState();
 
-    Map<String, String> contactInfo = shop!.contactInfo;
+    if (Get.arguments != null && Get.arguments is Map<String, dynamic>) {
+      final args = Get.arguments as Map<String, dynamic>;
+
+      if (args.containsKey('shop')) {
+        shop = args['shop'] as Shop;
+
+        if (args.containsKey('rank')) {
+          final rankValue = args['rank'];
+          icons['rank']['value'] = rankValue != null
+              ? rankValue.toString()
+              : ''; // Ensure rank is a valid string
+        }
+        print('hehe$shop');
+
+        icons.forEach((key, value) async {
+          switch (key) {
+            case 'shopLocation':
+              icons[key]['value'] = shop?.shopLocation ?? '';
+              break;
+            case 'contactInfo':
+              icons[key]['value'] = shop?.contactInfo['phone_number'] ?? '';
+              break;
+            case 'available hours':
+              icons[key]['value'] = shop?.availableHours ?? '';
+              break;
+            case 'delivery':
+              // Ensure delivery is a String, not a List
+              icons = shop?.deliveryApps.isNotEmpty ?? false
+                  ? {
+                      ...icons,
+                      'delivery': {
+                        'icon': 'assets/icons/delivery.svg',
+                        'value': shop?.deliveryApps,
+                      }
+                    }
+                  : {
+                      ...icons,
+                      'delivery': {
+                        'icon': 'assets/icons/delivery.svg',
+                        'value': 'Not Available',
+                      }
+                    };
+              break;
+          }
+        });
+      } else {
+        devtools.log('Invalid arguments passed to this screen.');
+      }
+    } else {
+      devtools.log('No arguments passed to this screen.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Define isDarkMode here
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
+    devtools.log('Shop: $shop');
+    devtools.log('Icons: $icons');
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -116,15 +160,16 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 243, 198, 35),
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Text(
-                          '${shop!.bayesianAverage} Stars | $reviews + Reviews',
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
+                          '${shop!.bayesianAverage.toStringAsFixed(1)} Stars | $reviews + Reviews',
+                          style: const TextStyle(
+                            color: Colors.black,
                             fontSize: 17,
                           ),
                         ),
@@ -169,23 +214,63 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                         },
                         child: Text(
                           maxLines: isExpanded == false ? 1 : null,
-                          overflow: isExpanded == true ? TextOverflow.visible : TextOverflow.ellipsis,
-                          "Yemeni food",
+                          overflow: isExpanded == true
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          shop!.description,
                           style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                         ),
                       ),
                       const SizedBox(height: 15),
-                      const Text(
+                      Text(
                         'Information',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                       Column(
-                        children: infoRows.map((row) {
-                          return buildInfoRow(row['icon']!, row['text']!, link: row['link']);
-                        }).toList(),
+                        children: [
+                          ...List.generate(
+                            icons.length,
+                            (index) {
+                              final key = icons.keys.elementAt(index);
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset(
+                                        icons[key]['icon'],
+                                        width: AspectRatios.width *
+                                            0.06153846153,
+                                        height: AspectRatios.height *
+                                            0.02843601895,
+                                        color: isDarkMode ? Colors.white : Colors.black,
+                                      ),
+                                      SizedBox(
+                                          width: AspectRatios.width * 0.025),
+                                      Expanded(
+                                        child: Transform.translate(
+                                          offset: const Offset(0, 2.5),
+                                          child: Text(
+                                            '${index != 4 ? icons[key]['value'] : ''}${index == 0 ? 'st Place' : index == 4 ? shop?.deliveryApps.isNotEmpty ?? false ? icons[key]['value'].keys.first : 'Not Available On Delivery Apps' : ''}',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: isDarkMode ? Colors.white : Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                      height: AspectRatios.height * 0.03),
+                                ],
+                              );
+                            },
+                          )
+                        ],
                       ),
                     ],
                   ),
@@ -217,16 +302,15 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                 ),
               ),
               onPressed: () {
-                Get.to(() => MenuPage(
-                      restaurantName: shop!.shopName,
-                      rating: shop!.bayesianAverage,
-                    ));
+                Get.toNamed(menuPageRoute, arguments: {
+                  'shop': shop,
+                });
               },
-              child: Text(
+              child: const Text(
                 'Menu',
                 style: TextStyle(
                   fontSize: 18,
-                  color: isDarkMode ? Colors.white : Colors.black,
+                  color: Colors.black,
                 ),
               ),
             ),

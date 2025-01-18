@@ -5,8 +5,10 @@ import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/Pages/registration/otp_verify_page.dart';
 import 'package:rates/Pages/registration/reset_pass_method_page.dart';
 import 'package:rates/Pages/registration/signup_page.dart';
+import 'package:rates/Pages/shop/menu_page.dart';
 import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/Pages/shop/shops_page.dart';
+import 'package:rates/Pages/shop/view_ratings_page.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
@@ -28,6 +30,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system, // Automatically switch theme based on device setting
       theme: ThemeData(
         brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white, // Background color in light mode
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -52,15 +55,16 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.grey[900], // Background color in dark mode
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.grey[900],
           elevation: 0,
           toolbarHeight: MediaQuery.of(context).size.height * 0.0663507109,
         ),
         colorScheme: ColorScheme.dark(
           primary: Colors.white,
           onPrimary: Colors.black,
-          secondary: Colors.grey[400]!,
+          secondary: Colors.grey[900]!,
           onSecondary: Colors.black,
         ),
         textTheme: const TextTheme(
@@ -121,7 +125,14 @@ class MyApp extends StatelessWidget {
           name: restInfoRoute,
           page: () => const RestaurantInformationPage(),
         ),
-        // Add other pages with their respective routes
+        GetPage(
+          name: menuPageRoute,
+          page: () => const MenuPage(),
+        ),
+        GetPage(
+          name: viewRatingRoute,
+          page: () => const ViewRating(),
+        ),
       ],
     );
   }

@@ -430,24 +430,37 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 20),
                           child: FutureBuilder(
-                              future:
-                                  isImageAvailable(restaurant.shopImagePath),
-                              builder: (context, snapshot) {
-                                return restaurantCard(
-                                  name: restaurant.shopName,
-                                  image: restaurant.shopImagePath,
-                                  rating: restaurant.bayesianAverage,
-                                  index: index + 1,
-                                  isFavorite: false,
-                                  onFavoriteToggle: () => toggleFavorite(index),
-                                  onDetailsPressed: () {
-                                    Get.toNamed(
-                                      restInfoRoute,
-                                      arguments: restaurant,
-                                    );
-                                  },
-                                );
-                              }),
+                            future: isImageAvailable(restaurant.shopImagePath),
+                            builder: (context, snapshot) {
+                              return Column(
+                                children: [
+                                  restaurantCard(
+                                    name: restaurant.shopName,
+                                    image: restaurant.shopImagePath,
+                                    rating: restaurant.bayesianAverage,
+                                    index: index + 1,
+                                    isFavorite: false,
+                                    onFavoriteToggle: () =>
+                                        toggleFavorite(index),
+                                    onDetailsPressed: () {
+                                      Get.toNamed(
+                                        restInfoRoute,
+                                        arguments: {
+                                          'shop': restaurant,
+                                          'rank': index + 1,
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  shops.length - 1 == index
+                                      ? const SizedBox(
+                                          height: 40,
+                                        )
+                                      : const SizedBox.shrink(),
+                                ],
+                              );
+                            },
+                          ),
                         );
                       },
                     ),

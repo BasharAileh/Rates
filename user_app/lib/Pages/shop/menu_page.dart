@@ -1,14 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
+import 'package:rates/services/cloud/cloud_instances.dart';
+import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
-import 'view_ratings_page.dart'; // Import the ViewRatingPage
+FirebaseCloudStorage cloudService = FirebaseCloudStorage();
 
 class MenuPage extends StatefulWidget {
-  const MenuPage(
-      {super.key, required this.restaurantName, required this.rating});
-  final String restaurantName;
-  final double rating;
+  const MenuPage({
+    super.key,
+  });
 
   @override
   MenuPageState createState() => MenuPageState();
@@ -17,6 +21,16 @@ class MenuPage extends StatefulWidget {
 class MenuPageState extends State<MenuPage> {
   bool isFavorite = false;
   String searchQuery = "";
+  late final Shop shop;
+
+  @override
+  void initState() {
+    super.initState();
+    var args = Get.arguments;
+    if (args != null) {
+      shop = args['shop'];
+    }
+  }
 
   void toggleFavorite() {
     setState(() {
@@ -29,7 +43,7 @@ class MenuPageState extends State<MenuPage> {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,// Explicit grey[900] color for background
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white, // Explicit grey[900] color for background
       appBar: AppBar(
         backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white, // Grey[900] for app bar
         elevation: 0,
@@ -120,7 +134,7 @@ class MenuPageState extends State<MenuPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.restaurantName,
+                        shop.shopName,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -128,7 +142,7 @@ class MenuPageState extends State<MenuPage> {
                         ),
                       ),
                       Text(
-                        'Rating of ${widget.rating}',
+                        'Rating of ${shop.bayesianAverage}',
                         style: TextStyle(
                           fontSize: 11,
                           color: isDarkMode ? Colors.white70 : Colors.black,
@@ -147,12 +161,56 @@ class MenuPageState extends State<MenuPage> {
               ],
             ),
             SizedBox(height: AspectRatios.height * 0.02),
-            Column(
-              children: restaurant.menuItems
-                  .map((menuItem) =>
-                      MealCard(menuItem: menuItem, isDarkMode: isDarkMode))
-                  .toList(),
-            ),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('product')
+                  .where('shop_id', isEqualTo: shop.shopID)
+                  .snapshots()
+                  .map(
+                (querySnapshot) {
+                  if (querySnapshot.docs.length == 1) {
+                    return querySnapshot;
+                  }
+                  return querySnapshot
+                    ..docs.sort((a, b) {
+                      return (b['bayesian_average'] ?? 0)
+                          .compareTo(a['bayesian_average'] ?? 0);
+                    });
+                },
+              ),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return Column(
+                  children:
+                      snapshot.data!.docs.map<Widget>((DocumentSnapshot shop) {
+                    final productID = shop.id;
+                    return FutureBuilder(
+                        future: cloudService
+                            .isImageAvailable(shop['product_image_path']),
+                        builder: (context, snapshot) {
+                          String imageUrl = 'assets/images/testpic/zerbyan.jpg';
+                          if (snapshot.hasData) {
+                            if (snapshot.data == true) {
+                              imageUrl = shop['product_image_path'];
+                            }
+                          }
+                          return MealCard(
+                            menuItem: {
+                              "name": shop['product_name'],
+                              "image": imageUrl,
+                              'product_id': productID,
+                            },
+                            isDarkMode: isDarkMode, // Pass isDarkMode to MealCard
+                          );
+                        });
+                  }).toList(),
+                );
+              },
+            )
           ],
         ),
       ),
@@ -167,7 +225,7 @@ class MealCard extends StatelessWidget {
     required this.isDarkMode,
   });
 
-  final Map<String, String> menuItem;
+  final Map<String, dynamic> menuItem;
   final bool isDarkMode;
 
   @override
@@ -175,113 +233,120 @@ class MealCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          height: AspectRatios.height * 0.16,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(17),
-            image: DecorationImage(
-              image: AssetImage(menuItem["image"]!),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color.fromARGB(190, 0, 0, 0),
-                        Color.fromARGB(46, 0, 0, 0),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ViewRating(
-                                restaurantName: restaurant.name,
-                                rating: restaurant.rating,
-                                mealName: menuItem["name"]!,
-                                imagePath: menuItem["image"]!,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              menuItem["name"]!,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: AspectRatios.width * 0.04,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Row(
-                              children: [
-                                Text(
-                                  'view ratings and comments',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white,
-                                  size: 14,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const VerificationDialogPage();
-                              },
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 1, horizontal: 0),
-                            backgroundColor:
-                                const Color.fromARGB(255, 243, 198, 35),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: const Text('Rate',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white)),
-                        ),
-                      ),
-                    ],
+        InkWell(
+          onTap: () async {
+            await Get.toNamed(viewRatingRoute, arguments: {
+              'product_id': menuItem['product_id'],
+            });
+          },
+          child: FutureBuilder(
+            future: cloudService.isImageAvailable(menuItem["image"]),
+            builder: (context, snapshot) {
+              return Container(
+                height: AspectRatios.height * 0.16,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(17),
+                  image: DecorationImage(
+                    image: snapshot.hasData && snapshot.data == true
+                        ? NetworkImage(menuItem["image"])
+                        : const AssetImage('assets/images/testpic/zerbyan.jpg')
+                            as ImageProvider,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-            ],
+                child: Stack(
+                  children: [
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color.fromARGB(190, 0, 0, 0),
+                              Color.fromARGB(46, 0, 0, 0),
+                            ],
+                          ), // Transparent black overlay
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 4,
+                            left: 16.0,
+                            right: 4.0,
+                            bottom: 8.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    menuItem["name"] ?? '',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: AspectRatios.width * 0.04,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Row(
+                                    children: [
+                                      Text(
+                                        'view ratings and comments',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 12),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const VerificationDialogPage(); // Show the verification dialog
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 1, horizontal: 0),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 243, 198, 35),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    // Increase elevation for a more pronounced shadow
+                                  ),
+                                  child: const Text('Rate',
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.white)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
         SizedBox(height: AspectRatios.height * 0.02),

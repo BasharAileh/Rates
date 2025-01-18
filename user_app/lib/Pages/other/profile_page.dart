@@ -151,13 +151,8 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                             Text(
-                              "${user.numberOfRatings} Total Ratings",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDarkMode
-                                    ? Colors.white70
-                                    : Colors.black87,
-                              ),
+                              " Total Ratings",
+                              style: const TextStyle(fontSize: 12),
                             ),
                           ],
                         ),

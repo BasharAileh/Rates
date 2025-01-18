@@ -11,7 +11,9 @@ import 'package:rates/services/cloud/temp_page.dart';
 int? page;
 
 class PagesWithNavBar extends StatefulWidget {
-  const PagesWithNavBar({super.key, int? page});
+  const PagesWithNavBar(
+      {super.key, int? page, this.removeVerificationMessage = false});
+  final bool removeVerificationMessage;
 
   @override
   State<PagesWithNavBar> createState() => _PagesWithNavBarState();
@@ -38,7 +40,9 @@ class _PagesWithNavBarState extends State<PagesWithNavBar> {
                 case 1:
                   return const ProfilePage();
                 case 2:
-                  return const HomePage(); // You can use a different page for this if needed
+                  return HomePage(
+                    removeVerificationMessage: widget.removeVerificationMessage,
+                  ); // You can use a different page for this if needed
                 case 3:
                   return FavoritesPage(
                     favorites: const [],

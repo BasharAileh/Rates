@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
@@ -139,34 +140,32 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<AuthUser> getUserInfo(String id) async {
+  Future<FireStoreUser> getUserInfo(String id) async {
     try {
-      // Fetch the document by its ID
       DocumentSnapshot docSnapshot =
           await FirebaseFirestore.instance.collection('user').doc(id).get();
 
-      // Check if the document exists
       if (!docSnapshot.exists) {
         throw Exception('User not found for ID: $id');
       }
 
-      AuthUser user =
-          AuthUser.fromMap(docSnapshot.data() as Map<String, dynamic>);
+      FireStoreUser user =
+          FireStoreUser.fromMap(docSnapshot.data() as Map<String, dynamic>);
 
-      // Return the email
       return user;
     } catch (e) {
       throw Exception('Failed to get user info: $e');
     }
   }
 
-  Future<Shop> getShopInfo(String shopID) async {
+  Future<Shop?> getShopInfo(String shopID) async {
     try {
       DocumentSnapshot docSnapshot =
           await FirebaseFirestore.instance.collection('shop').doc(shopID).get();
 
       if (!docSnapshot.exists) {
-        throw Exception('Shop not found for shopID: $shopID');
+        return null;
+        /* throw Exception('Shop not found for shopID: $shopID'); */
       }
       Shop shop = Shop.fromMap(docSnapshot.data() as Map<String, dynamic>);
 
@@ -199,9 +198,9 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<bool> isImageAvailable(String url) async {
+  Future<bool> isImageAvailable(String? url) async {
     try {
-      final response = await http.head(Uri.parse(url));
+      final response = await http.head(Uri.parse(url ?? ''));
 
       if (response.statusCode == 200) {
         return true;
@@ -278,6 +277,27 @@ class FirebaseCloudStorage {
       return true;
     } catch (e) {
       throw Exception('Failed to increment user category ratings: $e');
+    }
+  }
+
+  Future<FireStoreUser?> getFireStoreUser() async {
+    AuthUser? user = AuthService.firebase().currentUser;
+    if (user == null) {
+      return null;
+    }
+    return getUserInfo(
+      user.id,
+    );
+  }
+
+  Future<void> updateUserEmailVerification(String id, bool isVerified) async {
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('user').doc(id);
+
+      await docRef.update({'is_email_verified': isVerified});
+    } catch (e) {
+      throw Exception('Failed to update user email verification: $e');
     }
   }
 }
