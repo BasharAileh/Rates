@@ -15,13 +15,10 @@ class FirebaseCloudStorage {
 
   Future<String> getHttpLink(String path) async {
     try {
-      // Create a reference to the file
       Reference ref = FirebaseStorage.instance.ref(path);
 
-      // Get the download URL (HTTP link)
       String downloadUrl = await ref.getDownloadURL();
 
-      // Print the HTTP URL
       return downloadUrl;
     } catch (e) {
       throw Exception('Failed to get HTTP link: $e');
@@ -199,7 +196,6 @@ class FirebaseCloudStorage {
   }
 
   Future<bool> isImageAvailable(String? url) async {
-    print('Checking image availability for: $url');
     if (url == null || url.isEmpty) {
       return false;
     }

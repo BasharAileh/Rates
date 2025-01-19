@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -673,3 +674,5 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     ),
   ];
 }
+=======
+>>>>>>> a15e3720ffad3c4ab14f36235c99bcd7ce9bc088

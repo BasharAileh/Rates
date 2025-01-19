@@ -34,23 +34,28 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
           title: Text(
             title,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black),
-            selectionColor: Colors.black,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
           ),
           content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: content),
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: content,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
+              child: Text(
                 "Close",
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
             ),
           ],
@@ -90,20 +95,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    FirebaseCloudStorage cloudService = FirebaseCloudStorage();
     final AuthUser user = AuthService.firebase().currentUser!;
     bool isDialogOpen = false;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Profile',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         centerTitle: true,
@@ -140,15 +147,38 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        InkWell(
-                          onTap: () {},
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundImage: profileImageUrl.contains('http')
-                                ? NetworkImage(profileImageUrl)
-                                : AssetImage(profileImageUrl) as ImageProvider,
-                          ),
-                        ),
+                        user.profileImageUrl != null
+                            ? InkWell(
+                                onTap: () {},
+                                child: CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage:
+                                      NetworkImage(user.profileImageUrl!),
+                                ),
+                              )
+                            : InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => GestureDetector(
+                                      onDoubleTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 5, sigmaY: 5),
+                                        child: const OverlayImageDialog(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: AssetImage(
+                                    'assets/images/profile_images/default_profile_image_1.png',
+                                  ),
+                                ),
+                              ),
                         const SizedBox(width: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,8 +342,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Divider(
-                    color: Colors.black,
+                  Divider(
+                    color: isDarkMode ? Colors.white : Colors.black,
                     thickness: 2,
                     indent: 15,
                     endIndent: 15,
@@ -321,10 +351,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 8),
                   Container(
                     margin: const EdgeInsets.only(left: 15),
-                    child: const Text(
+                    child: Text(
                       "Your Account",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -333,37 +366,65 @@ class _ProfilePageState extends State<ProfilePage> {
                       'assets/icons/profile.svg',
                       height: 25,
                       width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
                     ),
                     title: "Personal Information",
                     subtitle: user.email,
                     onTap: () {
                       _showPopup(context, "Personal Information", [
-                        Text("Name: ${user.userName}"),
-                        Text("Email: ${user.email}"),
+                        Text(
+                          "Name: ${user.userName}",
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "Email: ${user.email}",
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
                       ]);
                     },
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/rewards.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/rewards.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Rewards and Vouchers",
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/rating.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/rating.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Rating",
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/language.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/language.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Language",
                     subtitle: selectedLanguage,
                     onTap: () {
                       _showPopup(context, "Language", [
                         RadioListTile<String>(
-                          title: const Text("Arabic"),
+                          title: Text(
+                            "Arabic",
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: "Arabic",
-                          activeColor: Colors.black,
+                          activeColor: isDarkMode ? Colors.white : Colors.black,
                           groupValue: selectedLanguage,
                           onChanged: (value) {
                             setState(() => selectedLanguage = value!);
@@ -371,9 +432,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                         ),
                         RadioListTile<String>(
-                          title: const Text("English"),
+                          title: Text(
+                            "English",
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: "English",
-                          activeColor: Colors.black,
+                          activeColor: isDarkMode ? Colors.white : Colors.black,
                           groupValue: selectedLanguage,
                           onChanged: (value) {
                             setState(() => selectedLanguage = value!);
@@ -384,16 +450,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/theme.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/theme.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Theme",
                     subtitle: selectedTheme,
                     onTap: () {
                       _showPopup(context, "Theme", [
                         RadioListTile<String>(
-                          title: const Text("Light"),
+                          title: Text(
+                            "Light",
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: "Light",
-                          activeColor: Colors.black,
+                          activeColor: isDarkMode ? Colors.white : Colors.black,
                           groupValue: selectedTheme,
                           onChanged: (value) {
                             setState(() => selectedTheme = value!);
@@ -401,9 +476,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                         ),
                         RadioListTile<String>(
-                          title: const Text("Dark"),
+                          title: Text(
+                            "Dark",
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: "Dark",
-                          activeColor: Colors.black,
+                          activeColor: isDarkMode ? Colors.white : Colors.black,
                           groupValue: selectedTheme,
                           onChanged: (value) {
                             setState(() => selectedTheme = value!);
@@ -414,13 +494,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/help.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/help.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Help",
                   ),
                   _buildCustomTile(
-                    icon: SvgPicture.asset('assets/icons/reset_password.svg',
-                        height: 25, width: 25),
+                    icon: SvgPicture.asset(
+                      'assets/icons/reset_password.svg',
+                      height: 25,
+                      width: 25,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     title: "Reset Password",
                   ),
                   const SizedBox(height: 8),
@@ -458,6 +546,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String? subtitle,
     VoidCallback? onTap,
   }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap ?? () {},
       child: Container(
@@ -473,13 +562,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                   ),
                   if (subtitle != null)
                     Text(
                       subtitle,
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDarkMode ? Colors.white70 : Colors.black87,
+                      ),
                     ),
                 ],
               ),
@@ -488,6 +583,7 @@ class _ProfilePageState extends State<ProfilePage> {
               'assets/icons/arrow.svg',
               height: 30,
               width: 30,
+              color: isDarkMode ? Colors.white : Colors.black,
             ),
           ],
         ),
