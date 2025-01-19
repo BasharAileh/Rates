@@ -26,6 +26,15 @@ class AuthUser {
         userName: user.displayName ?? user.email!.split('@').first,
       );
 
+  factory AuthUser.fromGoogle(User user) => AuthUser(
+        id: user.uid,
+        email: user.email,
+        isEmailVerified: true,
+        isAnonymous: false,
+        profileImageUrl: user.photoURL,
+        userName: user.displayName ?? user.email!.split('@').first,
+      );
+
   get emailVerified => null;
 
   Map<String, dynamic> toMap() {

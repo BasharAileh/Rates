@@ -90,6 +90,7 @@ flutter:
   - assets/images/
   - assets/icons/
   - assets/images/testpic/
+  - assets/images/profile_images/
   
   
   # An image asset can refer to one or more resolution-specific "variants", see

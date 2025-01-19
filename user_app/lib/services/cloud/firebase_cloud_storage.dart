@@ -199,20 +199,19 @@ class FirebaseCloudStorage {
   }
 
   Future<bool> isImageAvailable(String? url) async {
+    print('Checking image availability for: $url');
+    if (url == null || url.isEmpty) {
+      return false;
+    }
     try {
-      final response = await http.head(Uri.parse(url ?? ''));
-
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
-      }
+      final response = await http.head(Uri.parse(url));
+      return response.statusCode == 200;
     } catch (e) {
       return false;
     }
   }
 
-  Future<String> getProductID(String productName, String shopID) async {
+  Future<String?> getProductID(String productName, String shopID) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('product')
@@ -221,7 +220,8 @@ class FirebaseCloudStorage {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        throw Exception('Product not found for productName: $productName');
+        return null;
+        /* throw Exception('Product not found for productName: $productName'); */
       }
 
       final product = querySnapshot.docs.first;
@@ -229,7 +229,8 @@ class FirebaseCloudStorage {
 
       return productID;
     } catch (e) {
-      throw Exception('Failed to get product ID: $e');
+      return null;
+      /* throw Exception('Failed to get product ID: $e'); */
     }
   }
 
@@ -298,6 +299,59 @@ class FirebaseCloudStorage {
       await docRef.update({'is_email_verified': isVerified});
     } catch (e) {
       throw Exception('Failed to update user email verification: $e');
+    }
+  }
+
+  Future<List<ProductRating>?> getRates(String productID) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('product_rating')
+          .where('product_id', isEqualTo: productID)
+          .get()
+          .then((value) {
+        if (value.docs.isEmpty) {
+          return null;
+        }
+        return value.docs
+            .map((e) => ProductRating.fromMap(e.data()))
+            .toSet()
+            .toList();
+      });
+    } catch (e) {
+      throw Exception('Failed to get rates: $e');
+    }
+  }
+
+  Future<void> deleteAllDocuments(String collectionPath) async {
+    try {
+      final collectionRef =
+          FirebaseFirestore.instance.collection(collectionPath);
+
+      final querySnapshot = await collectionRef.get();
+
+      final batch = FirebaseFirestore.instance.batch();
+      for (var doc in querySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      // ignore: avoid_print
+      print(
+          'All documents in the collection "$collectionPath" have been deleted.');
+    } catch (e) {
+      // ignore: avoid_print
+      print('Failed to delete documents: $e');
+    }
+  }
+
+  Future<void> updateUserName(String id, String userName) async {
+    try {
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('user').doc(id);
+
+      await docRef.update({'user_name': userName});
+    } catch (e) {
+      throw Exception('Failed to update user name: $e');
     }
   }
 }

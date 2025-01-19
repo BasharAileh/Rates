@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/verification_dialog.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/auth/auth_user.dart';
@@ -33,8 +34,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final BottomNavController bottomNavController = Get.find();
   late final List<PageController> _pageController;
-
   bool _showVerificationMessage = false;
 
   @override
@@ -95,6 +96,7 @@ class _HomePageState extends State<HomePage> {
     final controller = Get.put(TemporaryWidgetController());
     AuthUser user = AuthService.firebase().currentUser!;
     devtools.log('Category IDs: $categoryIDs');
+
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -427,21 +429,8 @@ class _HomePageState extends State<HomePage> {
                                                                   verticalIndex]
                                                               .isEmpty
                                                           ? showIndicator = true
-                                                          : shops[horizontalIndex]
-                                                                          [
-                                                                          verticalIndex][index ==
-                                                                              0
-                                                                          ? 1
-                                                                          : index ==
-                                                                                  1
-                                                                              ? 0
-                                                                              : 2]
-                                                                      .imagePath ==
-                                                                  null
-                                                              ? showIndicator =
-                                                                  true
-                                                              : showIndicator =
-                                                                  false;
+                                                          : showIndicator =
+                                                              false;
                                                       double imageSize =
                                                           AspectRatios.height *
                                                               0.027;
@@ -518,29 +507,88 @@ class _HomePageState extends State<HomePage> {
                                                                       }
                                                                       if (snapShot
                                                                               .hasError ||
+                                                                          snapShot.data == false &&
+                                                                              shops[horizontalIndex][verticalIndex][index == 1
+                                                                                  ? 0
+                                                                                  : index == 0
+                                                                                      ? 1
+                                                                                      : 2] is FireStoreUser) {
+                                                                        return Column(
+                                                                          children: [
+                                                                            CircleAvatar(
+                                                                              radius: imageSize,
+                                                                              child: Image.asset(
+                                                                                width: double.infinity,
+                                                                                height: double.infinity,
+                                                                                shops[horizontalIndex][verticalIndex][index == 1
+                                                                                        ? 0
+                                                                                        : index == 0
+                                                                                            ? 1
+                                                                                            : 2]
+                                                                                    .imagePath!,
+                                                                                fit: BoxFit.cover,
+                                                                              ),
+                                                                            ),
+                                                                            Text(shops[horizontalIndex][verticalIndex][index == 1
+                                                                                    ? 0
+                                                                                    : index == 0
+                                                                                        ? 1
+                                                                                        : 2]
+                                                                                .userName),
+                                                                          ],
+                                                                        );
+                                                                      }
+
+                                                                      if (snapShot
+                                                                              .hasError ||
                                                                           snapShot.data ==
                                                                               false) {
-                                                                        return CircleAvatar(
+                                                                        return Column(
+                                                                          children: [
+                                                                            CircleAvatar(
+                                                                              radius: imageSize,
+                                                                              child: Icon(
+                                                                                Icons.error_outline,
+                                                                                size: imageSize,
+                                                                              ),
+                                                                            )
+                                                                          ],
+                                                                        );
+                                                                      }
+                                                                      return Column(
+                                                                        children: [
+                                                                          CircleAvatar(
                                                                             radius:
                                                                                 imageSize,
                                                                             backgroundColor:
                                                                                 Colors.white,
-                                                                            child: const Icon(Icons.error));
-                                                                      }
-                                                                      return CircleAvatar(
-                                                                        radius:
-                                                                            imageSize,
-                                                                        backgroundColor:
-                                                                            Colors.white,
-                                                                        backgroundImage:
-                                                                            NetworkImage(
-                                                                          shops[horizontalIndex][verticalIndex][index == 1
-                                                                                  ? 0
-                                                                                  : index == 0
-                                                                                      ? 1
-                                                                                      : 2]
-                                                                              .imagePath!,
-                                                                        ),
+                                                                            backgroundImage:
+                                                                                NetworkImage(
+                                                                              shops[horizontalIndex][verticalIndex][index == 1
+                                                                                      ? 0
+                                                                                      : index == 0
+                                                                                          ? 1
+                                                                                          : 2]
+                                                                                  .imagePath!,
+                                                                            ),
+                                                                          ),
+                                                                          if (shops[horizontalIndex]
+                                                                              [
+                                                                              verticalIndex][index ==
+                                                                                  1
+                                                                              ? 0
+                                                                              : index == 0
+                                                                                  ? 1
+                                                                                  : 2] is FireStoreUser)
+                                                                            Text(
+                                                                              shops[horizontalIndex][verticalIndex][index == 1
+                                                                                      ? 0
+                                                                                      : index == 0
+                                                                                          ? 1
+                                                                                          : 2]
+                                                                                  .userName,
+                                                                            ),
+                                                                        ],
                                                                       );
                                                                     },
                                                                   ),

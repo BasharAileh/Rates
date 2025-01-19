@@ -1,13 +1,10 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:admin_app/constants/app_colors.dart';
 import 'package:admin_app/constants/routes.dart';
 import 'package:admin_app/constants/widgets.dart';
 import 'package:admin_app/pages/registration/signup_page.dart';
-
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,18 +29,17 @@ class _LoginPageState extends State<LoginPage> {
     }
     super.dispose();
   }
- 
 
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-  final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(
-           top: screenHeight * 0.150379146919,
-           left: screenWidth * 0.07051282051,
-           right: screenWidth * 0.07051282051,
+          top: screenHeight * 0.150379146919,
+          left: screenWidth * 0.07051282051,
+          right: screenWidth * 0.07051282051,
         ),
         /* symmetric(
           vertical: AspectRatios.height * 0.19379146919,
@@ -192,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(
-                    height: screenHeight* 0.01421801,
+                    height: screenHeight * 0.01421801,
                   ),
                   SizedBox(
                     height: screenHeight * 0.02251185,
@@ -207,9 +203,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                             Navigator.push(
+                            Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const SignupPage()),
+                              MaterialPageRoute(
+                                  builder: (context) => const SignupPage()),
                             );
                           },
                           child: const Text(
@@ -252,8 +249,8 @@ class _LoginPageState extends State<LoginPage> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white.withOpacity(0),
                           shadowColor: Colors.white.withOpacity(0),
-                          fixedSize: Size(screenWidth,
-                              screenHeight * 0.05450236966),
+                          fixedSize:
+                              Size(screenWidth, screenHeight * 0.05450236966),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(37.5),
                           ),
@@ -264,7 +261,6 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () async {
                         try {
                           // await AuthService.google().logIn();
-                          Get.offNamed(homeRoute);
                         } catch (e) {
                           devtools.log(e.toString());
                         }
@@ -273,12 +269,12 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                        SvgPicture.asset(
-                                      'assets/icons/google.svg',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                  SizedBox(
+                            SvgPicture.asset(
+                              'assets/icons/google.svg',
+                              width: 20,
+                              height: 20,
+                            ),
+                            SizedBox(
                               width: screenWidth * 0.02564102564,
                             ),
                             const Text(
@@ -293,7 +289,6 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: screenHeight * 0.03406398,
                   ),
-                  
                 ],
               ),
             );

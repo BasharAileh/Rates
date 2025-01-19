@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
@@ -133,7 +134,6 @@ class _ViewRatingState extends State<ViewRating> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          print('da product $product');
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -189,14 +189,63 @@ class _ViewRatingState extends State<ViewRating> {
                 ),
                 SizedBox(height: AspectRatios.height * 0.02),
                 // Meal Image and Details
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(17),
-                  child: Image.network(
-                    product.productImagePath,
-                    height: AspectRatios.height * 0.16,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(17),
+                      child: Image.network(
+                        product.productImagePath,
+                        height: AspectRatios.height * 0.16,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      width: AspectRatios.width * 0.4,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            AppColors.primaryColor.withOpacity(0.5),
+                            Colors.white.withOpacity(0.5),
+                          ],
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            ...List.generate(
+                              product.bayesianAverage.floor(),
+                              (index) => Icon(
+                                Icons.star,
+                                color: Colors.amber.withOpacity(0.8),
+                                size: 20,
+                              ),
+                            ),
+                            if ((product.bayesianAverage -
+                                    product.bayesianAverage.floor()) >=
+                                0.5)
+                              Icon(
+                                Icons.star_half,
+                                color: Colors.amber.withOpacity(0.8),
+                                size: 20,
+                              ),
+                            ...List.generate(
+                              5 - product.bayesianAverage.ceil(),
+                              (index) => Icon(
+                                Icons
+                                    .star_border, // Empty star for the remaining
+                                color: Colors.amber.withOpacity(0.8),
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -222,8 +271,10 @@ class _ViewRatingState extends State<ViewRating> {
                             ),
                           ],
                         ),
-                        const Text(
-                          'Half chicken, rice, 2 spicy sauces',
+                        Text(
+                          product.productDescription.isEmpty
+                              ? 'No description available'
+                              : product.productDescription,
                           style: TextStyle(fontSize: 11),
                         ),
                       ],
@@ -254,48 +305,87 @@ class _ViewRatingState extends State<ViewRating> {
                 ),
                 // Reviews Section
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: reviews.length,
-                    itemBuilder: (context, index) {
-                      final review = reviews[index];
-                      return Card(
-                        color: Colors.white,
-                        elevation: 0,
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: AssetImage(review['avatar']),
-                            onBackgroundImageError: (_, __) {
-                              setState(() {
-                                review['avatar'] =
-                                    'assets/images/default_avatar.png'; // Use fallback image
-                              });
-                            },
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                review['review'],
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: List.generate(
-                                  5,
-                                  (starIndex) => SvgPicture.asset(
-                                    'assets/icons/star.svg',
-                                    color: starIndex < review['rating']
-                                        ? const Color.fromARGB(255, 255, 193, 7)
-                                        : const Color.fromARGB(200, 0, 0, 0),
-                                    width: AspectRatios.width * 0.02,
-                                    height: AspectRatios.height * 0.03,
+                  child: FutureBuilder(
+                    future: cloudService.getRates(productID),
+                    builder: (context, snapshot) {
+                      List<ProductRating>? rates = snapshot.data;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasData) {
+                        rates = snapshot.data as List<ProductRating>;
+                      }
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Failed to load rates'),
+                        );
+                      }
+
+                      print(productID);
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: rates?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final rate = rates![index];
+                          print('[rate] $rate');
+                          final review = reviews[index];
+                          return Card(
+                            color: Colors.white,
+                            elevation: 0,
+                            child: ListTile(
+                              leading: FutureBuilder(
+                                  future: cloudService.getUserInfo(rate.userID),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    print(rate.userID);
+                                    print('snapshot.data ${snapshot.data}');
+                                    return CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(review['avatar']),
+                                      onBackgroundImageError: (_, __) {
+                                        setState(() {
+                                          review['avatar'] =
+                                              'assets/images/default_avatar.png'; // Use fallback image
+                                        });
+                                      },
+                                    );
+                                  }),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    rate.ratingText,
+                                    style: const TextStyle(fontSize: 13),
                                   ),
-                                ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: List.generate(
+                                      5,
+                                      (starIndex) => SvgPicture.asset(
+                                        'assets/icons/star.svg',
+                                        colorFilter: starIndex <
+                                                rate.ratingValue
+                                            ? const ColorFilter.mode(
+                                                Color.fromARGB(
+                                                    255, 255, 193, 7),
+                                                BlendMode.srcIn)
+                                            : const ColorFilter.mode(
+                                                Color.fromARGB(200, 0, 0, 0),
+                                                BlendMode.srcIn),
+                                        width: AspectRatios.width * 0.02,
+                                        height: AspectRatios.height * 0.03,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

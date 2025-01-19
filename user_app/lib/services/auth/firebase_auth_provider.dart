@@ -26,6 +26,8 @@ class FirebaseAuthProvider implements AuthProvider {
             '${userName.split(' ').first[0].toUpperCase()}${userName.split(' ').first.substring(1)} ${userName.split(' ').last[0].toUpperCase()}${userName.split(' ').last.substring(1)}';
         await FirebaseAuth.instance.currentUser!
             .updateProfile(displayName: userName);
+        await FirebaseAuth.instance.currentUser!.updatePhotoURL(
+            'assets/images/profile_images/default_profile_image_1.png');
         user = currentUser!;
         Map<String, dynamic> userMap = user.toMap();
         userMap.remove('id');
@@ -143,6 +145,18 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.updateProfile(displayName: displayName);
+    } else {
+      throw UserNotLoggedInException();
+    }
+  }
+
+  @override
+  Future<void> updateUserName({required String displayName}) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final cloudService = FirebaseCloudStorage();
+    if (user != null) {
+      await user.updateProfile(displayName: displayName);
+      await cloudService.updateUserName(user.uid, displayName);
     } else {
       throw UserNotLoggedInException();
     }

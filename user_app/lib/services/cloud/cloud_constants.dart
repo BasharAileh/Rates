@@ -53,3 +53,4 @@ String cloudAddress = 'address';
 String cloudAvailableHours = 'available_hours';
 String cloudDeliveryApps = 'delivery_apps';
 String cloudGoogleMapLink = 'address';
+String cloudproductAverageRating = 'product_average_rating';

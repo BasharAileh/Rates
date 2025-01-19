@@ -219,42 +219,60 @@ class RateMealPageState extends State<RateMealPage> {
                       ElevatedButton(
                         onPressed: () async {
                           try {
-                            controller.ratings.forEach((key, value) async {
-                              for (int number = 0;
-                                  number <
-                                      receiptInfo['products'][key]
-                                          ['product_quantity'];
-                                  number++) {
+                            for (var key in controller.ratings.keys) {
+                              for (int productNumber = 0;
+                                  productNumber <
+                                      receiptInfo['products'].length;
+                                  productNumber++) {
+                                final Product product;
+                                Shop? shop;
                                 final productID =
                                     await cloudService.getProductID(
                                   key,
                                   receiptInfo['shop_id'],
                                 );
 
-                                final Product product = await cloudService
-                                    .getProductInfo(productID);
-                                Shop? shop = await cloudService
-                                    .getShopInfo(receiptInfo['shop_id']);
+                                if (productID != null) {
+                                  product = await cloudService
+                                      .getProductInfo(productID);
+                                  shop = await cloudService
+                                      .getShopInfo(receiptInfo['shop_id']);
 
-                                cloudService.insertDocument(
-                                  'product_rating',
-                                  {
-                                    'product_id': productID,
-                                    'product_category_id': product.categoryID,
-                                    'rating_value': value,
-                                  },
-                                );
+                                  for (int number = 0;
+                                      number <
+                                          receiptInfo['products'][key]
+                                              ['product_quantity'];
+                                      number++) {
+                                    await cloudService.insertDocument(
+                                      'product_rating',
+                                      {
+                                        'rating_text':
+                                            _opinionController[productNumber]
+                                                .text,
+                                        'user_id': AuthService.firebase()
+                                            .currentUser!
+                                            .id,
+                                        'product_id': productID,
+                                        'product_category_id':
+                                            product.categoryID,
+                                        'rating_value': controller.ratings[key],
+                                      },
+                                    );
 
-                                if (shop != null) {
-                                  await cloudService
-                                      .incrementUserCategoryRatings(
-                                    AuthService.firebase().currentUser!.id,
-                                    shop.categoryID,
-                                  );
+                                    if (shop != null) {
+                                      await cloudService
+                                          .incrementUserCategoryRatings(
+                                        AuthService.firebase().currentUser!.id,
+                                        shop.categoryID,
+                                      );
+                                    }
+                                  }
                                 }
                               }
-                            });
-                          } catch (_) {}
+                            }
+                          } catch (e) {
+                            print('Error: $e');
+                          }
 
                           /* showDialog(
                 context: context,
@@ -411,7 +429,7 @@ Widget buildRestaurantHeader(String shopID) {
 }
 
 // Reusable footer buttons for submission and problem
-Widget buildFooterButtons(BuildContext context) {
+/* Widget buildFooterButtons(BuildContext context) {
   final ProductRatingController controller = Get.put(ProductRatingController());
   return Center(
     child: Column(
@@ -498,9 +516,9 @@ Widget buildFooterButtons(BuildContext context) {
       ],
     ),
   );
-}
+} */
 
-// Reusable Rating Slider Widget
+/* // Reusable Rating Slider Widget
 class RatingSlider extends StatelessWidget {
   final String? label;
   final double currentRating;
@@ -551,7 +569,7 @@ class RatingSlider extends StatelessWidget {
       ],
     );
   }
-}
+} */
 
 /* 
 // Restaurant Rating Card using RatingSlider
@@ -650,6 +668,8 @@ class RestaurantRatingCardState extends State<RestaurantRatingCard> {
   }
 }
  */
+
+/* 
 
 // Meal Rating Card using RatingSlider
 class MealRatingCard extends StatefulWidget {
@@ -775,6 +795,7 @@ class MealRatingCardState extends State<MealRatingCard>
     );
   }
 }
+ */
 
 class OpinionTextBox extends StatelessWidget {
   final String hintText;
@@ -794,6 +815,7 @@ class OpinionTextBox extends StatelessWidget {
         border: Border.all(color: Colors.grey, width: 1),
       ),
       child: TextField(
+        controller: controller,
         maxLength: 200,
         cursorColor: const Color.fromARGB(255, 255, 196, 45),
         maxLines: 2, // Allow multi-line input

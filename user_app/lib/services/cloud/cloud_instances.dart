@@ -136,6 +136,8 @@ class Product {
   final String productImagePath;
   final String categoryID;
   final double bayesianAverage;
+  final double numberOfRatings;
+  final double productAverageRating;
   final String shopID;
   final String addedAt;
 
@@ -146,6 +148,8 @@ class Product {
     required this.productPrice,
     required this.productImagePath,
     required this.bayesianAverage,
+    required this.numberOfRatings,
+    required this.productAverageRating,
     required this.categoryID,
     required this.shopID,
     required this.addedAt,
@@ -153,15 +157,27 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      productID: map[cloudProductID] ?? '',
+      productID: map[cloudProductID] as String?,
       productName: map[cloudProductName] ?? '',
       productDescription: map[cloudProductDescription] ?? '',
-      productPrice: map[cloudProductPrice] ?? '',
+      productPrice: map[cloudProductPrice]?.toString() ?? '0',
       productImagePath: map[cloudProductImagePath] ?? '',
-      bayesianAverage: map[cloudBayesianAverage] ?? '',
+      bayesianAverage: (map[cloudBayesianAverage] is num)
+          ? (map[cloudBayesianAverage] as num).toDouble()
+          : double.tryParse(map[cloudBayesianAverage]?.toString() ?? '0') ??
+              0.0,
+      numberOfRatings: (map[cloudNumberOfRatings] is num)
+          ? (map[cloudNumberOfRatings] as num).toDouble()
+          : double.tryParse(map[cloudNumberOfRatings]?.toString() ?? '0') ??
+              0.0,
+      productAverageRating: (map[cloudproductAverageRating] is num)
+          ? (map[cloudproductAverageRating] as num).toDouble()
+          : double.tryParse(
+                  map[cloudproductAverageRating]?.toString() ?? '0') ??
+              0.0,
       categoryID: map[cloudCategoryID] ?? '',
       shopID: map[cloudShopID] ?? '',
-      addedAt: map[cloudProductAddedAt] ?? '',
+      addedAt: map[cloudAddedAt] ?? '',
     );
   }
 
@@ -173,6 +189,7 @@ class Product {
       cloudProductPrice: productPrice,
       cloudProductImagePath: productImagePath,
       cloudProductImagePath: bayesianAverage,
+      cloudNumberOfRatings: numberOfRatings,
       cloudShopID: shopID,
       cloudProductAddedAt: addedAt,
     };
@@ -180,7 +197,7 @@ class Product {
 
   @override
   String toString() {
-    return 'Product{productID: $productID, productName: $productName, productDescription: $productDescription, productPrice: $productPrice, productImagePath: $productImagePath, bayesianAverage: $bayesianAverage,shopID: $shopID, addedAt: $addedAt}';
+    return 'Product{productID: $productID, productName: $productName, productDescription: $productDescription, productPrice: $productPrice, productImagePath: $productImagePath, bayesianAverage: $bayesianAverage,numberOfRatings: $numberOfRatings, shopID: $shopID, addedAt: $addedAt}';
   }
 }
 
@@ -242,7 +259,7 @@ class ProductRating {
   final String userID;
   final String shopID;
   final String productID;
-  final String ratingValue;
+  final double ratingValue;
   final String ratingText;
   final String addedAt;
   final String updatedAt;
@@ -264,7 +281,7 @@ class ProductRating {
       userID: map[cloudUserID] ?? '',
       shopID: map[cloudShopID] ?? '',
       productID: map[cloudProductID] ?? '',
-      ratingValue: map[cloudRatingValue] ?? '',
+      ratingValue: (map[cloudRatingValue] as num).toDouble(),
       ratingText: map[cloudRatingText] ?? '',
       addedAt: map[cloudAddedAt] ?? '',
       updatedAt: map[cloudAddedAt] ?? '',
@@ -283,6 +300,23 @@ class ProductRating {
       cloudAddedAt: updatedAt,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ProductRating &&
+        other.ratingValue == ratingValue &&
+        other.userID == userID &&
+        other.shopID == shopID &&
+        other.productID == productID;
+  }
+
+  @override
+  int get hashCode =>
+      ratingValue.hashCode ^
+      userID.hashCode ^
+      shopID.hashCode ^
+      productID.hashCode;
 
   @override
   String toString() {

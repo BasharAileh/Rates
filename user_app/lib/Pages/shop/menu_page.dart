@@ -99,17 +99,42 @@ class MenuPageState extends State<MenuPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: AspectRatios.width * 0.12,
-                  height: AspectRatios.height * 0.055,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/testpic/babalyamen.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                FutureBuilder(
+                    future: cloudService.isImageAvailable(shop.shopImagePath),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        if (snapshot.data == true) {
+                          return Container(
+                            width: AspectRatios.width * 0.12,
+                            height: AspectRatios.height * 0.055,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: NetworkImage(shop.shopImagePath),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                      return Container(
+                        width: AspectRatios.width * 0.12,
+                        height: AspectRatios.height * 0.055,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: const DecorationImage(
+                            image: AssetImage(
+                                'assets/images/testpic/babalyamen.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    }),
                 SizedBox(
                     width: AspectRatios.width *
                         0.02), // Add some spacing between the columns
@@ -146,42 +171,60 @@ class MenuPageState extends State<MenuPage> {
               stream: FirebaseFirestore.instance
                   .collection('product')
                   .where('shop_id', isEqualTo: shop.shopID)
-                  .snapshots()
-                  .map(
-                (querySnapshot) {
-                  if (querySnapshot.docs.length == 1) {
-                    return querySnapshot;
-                  }
-                  return querySnapshot
-                    ..docs.sort((a, b) {
-                      return (b['bayesian_average'] ?? 0)
-                          .compareTo(a['bayesian_average'] ?? 0);
-                    });
-                },
-              ),
+                  .orderBy('bayesian_average', descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
-                final productID = snapshot.data!.docs.first.id;
+                final String productID;
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
                 if (!snapshot.hasData) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
+                if (snapshot.hasData && snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text('No products found'),
+                  );
+                }
+                if (snapshot.hasData) {
+                  productID = snapshot.data!.docs.first.id;
+                } else {
+                  productID = '';
+                }
                 return Column(
-                  children:
-                      snapshot.data!.docs.map<Widget>((DocumentSnapshot shop) {
+                  children: snapshot.data!.docs
+                      .map<Widget>((DocumentSnapshot product) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    Product? productData;
+
+                    if (snapshot.hasData) {
+                      productData = Product.fromMap(
+                          product.data() as Map<String, dynamic>);
+                    }
+
                     return FutureBuilder(
-                        future: cloudService
-                            .isImageAvailable(shop['product_image_path']),
+                        future: cloudService.isImageAvailable(
+                            productData?.productImagePath ?? ''),
                         builder: (context, snapshot) {
-                          String imageUrl = 'assets/images/testpic/zerbyan.jpg';
+                          print(snapshot.connectionState);
+                          String? imageUrl;
+
                           if (snapshot.hasData) {
                             if (snapshot.data == true) {
-                              imageUrl = shop['product_image_path'];
+                              imageUrl = productData?.productImagePath;
                             }
                           }
                           return MealCard(
                             menuItem: {
-                              "name": shop['product_name'],
+                              "name": product['product_name'],
                               "image": imageUrl,
                               'product_id': productID,
                             },
@@ -207,7 +250,7 @@ class MealCard extends StatelessWidget {
   final Map<String, dynamic> menuItem;
   @override
   Widget build(BuildContext context) {
-    print(menuItem['product_id']);
+    print('menuItem: $menuItem');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -220,12 +263,23 @@ class MealCard extends StatelessWidget {
           child: FutureBuilder(
             future: cloudService.isImageAvailable(menuItem["image"]),
             builder: (context, snapshot) {
+              bool isImageAvailable = false;
+              print(menuItem);
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasData) {
+                isImageAvailable = snapshot.data!;
+              }
+
               return Container(
                 height: AspectRatios.height * 0.16,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(17),
                   image: DecorationImage(
-                    image: snapshot.hasData && snapshot.data == true
+                    image: isImageAvailable == true
                         ? NetworkImage(menuItem["image"])
                         : const AssetImage('assets/images/testpic/zerbyan.jpg'),
                     fit: BoxFit.cover,

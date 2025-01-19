@@ -1,11 +1,13 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
 import 'package:rates/Pages/other/splash_screen.dart';
 import 'package:rates/Pages/registration/login_page.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
@@ -20,8 +22,14 @@ final Future<void> _initializeFirebase = Future.delayed(
   await AuthService.firebase().initialize();
 });
 
-class InitPage extends StatelessWidget {
+class InitPage extends StatefulWidget {
   const InitPage({super.key});
+
+  @override
+  State<InitPage> createState() => _InitPageState();
+}
+
+class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     AspectRatios.init(
@@ -62,7 +70,11 @@ class InitPage extends StatelessWidget {
                         removeVerificationMessage: true,
                       );
                     }
-                    return const PagesWithNavBar();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        Get.offAllNamed(homeRoute);
+                      }
+                    });
                   }
                   return const Center(
                     child: Text('No user data found'),
@@ -73,7 +85,6 @@ class InitPage extends StatelessWidget {
               return const LoginPage();
             }
           default:
-            devtools.log('2');
             return const CircularProgressIndicator();
         }
       },

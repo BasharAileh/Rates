@@ -53,4 +53,9 @@ class AuthService implements AuthProvider {
 
   Future<AuthUser> logInAnonymously() =>
       (provider as FirebaseAuthProvider).logInAnonymously();
+
+  @override
+  Future<void> updateUserName({required String displayName}) async {
+    provider.updateUserName(displayName: displayName);
+  }
 }
