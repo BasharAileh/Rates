@@ -22,8 +22,18 @@ class FirebaseAuthProvider implements AuthProvider {
       );
       var user = currentUser;
       if (user != null) {
-        userName =
-            '${userName.split(' ').first[0].toUpperCase()}${userName.split(' ').first.substring(1)} ${userName.split(' ').last[0].toUpperCase()}${userName.split(' ').last.substring(1)}';
+        userName = userName.trim();
+        if (userName.contains(' ')) {
+          // If the username has more than one word
+          userName =
+              '${userName.split(' ').first[0].toUpperCase()}${userName.split(' ').first.substring(1)} '
+              '${userName.split(' ').last[0].toUpperCase()}${userName.split(' ').last.substring(1)}';
+        } else {
+          // If the username is a single word
+          userName =
+              '${userName[0].toUpperCase()}${userName.substring(1).toLowerCase()}';
+        }
+
         await FirebaseAuth.instance.currentUser!
             .updateProfile(displayName: userName);
         await FirebaseAuth.instance.currentUser!.updatePhotoURL(
@@ -114,6 +124,9 @@ class FirebaseAuthProvider implements AuthProvider {
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      if (user.isAnonymous) {
+        return AuthUser.fromAnonymous(user);
+      }
       return AuthUser.fromFirebase(user);
     } else {
       return null;
@@ -127,7 +140,7 @@ class FirebaseAuthProvider implements AuthProvider {
     );
   }
 
-  Future<AuthUser> logInAnonymously() async {
+  Future<AuthUser?> logInAnonymously() async {
     try {
       await FirebaseAuth.instance.signInAnonymously();
       final user = currentUser;
@@ -136,7 +149,8 @@ class FirebaseAuthProvider implements AuthProvider {
       } else {
         throw UserNotLoggedInException();
       }
-    } catch (_) {
+    } catch (e) {
+      print(e);
       throw GenericAuthException();
     }
   }

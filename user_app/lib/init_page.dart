@@ -60,6 +60,11 @@ class _InitPageState extends State<InitPage> {
                     );
                   } else if (snapshot.hasData) {
                     final cloudUser = snapshot.data as FireStoreUser;
+                    if (cloudUser.isAnonymous) {
+                      return const PagesWithNavBar();
+                    }
+                    print('Cloud user: $cloudUser');
+                    print('User: $user');
                     if (cloudUser.isEmailVerified != user.isEmailVerified &&
                         user.isEmailVerified) {
                       cloudService.updateUserEmailVerification(
@@ -76,9 +81,7 @@ class _InitPageState extends State<InitPage> {
                       }
                     });
                   }
-                  return const Center(
-                    child: Text('No user data found'),
-                  );
+                  return const SizedBox.shrink();
                 },
               );
             } else {

@@ -51,7 +51,7 @@ class AuthService implements AuthProvider {
   @override
   Future<void> initialize() => provider.initialize();
 
-  Future<AuthUser> logInAnonymously() =>
+  Future<AuthUser?> logInAnonymously() =>
       (provider as FirebaseAuthProvider).logInAnonymously();
 
   @override

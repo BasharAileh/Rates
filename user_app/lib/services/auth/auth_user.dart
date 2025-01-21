@@ -35,6 +35,15 @@ class AuthUser {
         userName: user.displayName ?? user.email!.split('@').first,
       );
 
+  factory AuthUser.fromAnonymous(User user) => AuthUser(
+        id: user.uid,
+        email: '',
+        isEmailVerified: false,
+        isAnonymous: true,
+        profileImageUrl: '',
+        userName: 'Anonymous',
+      );
+
   get emailVerified => null;
 
   Map<String, dynamic> toMap() {

@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
@@ -14,8 +16,9 @@ import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/init_page.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -27,7 +30,8 @@ class MyApp extends StatelessWidget {
     Get.put(BottomNavController());
     return GetMaterialApp(
       title: 'Flutter Demo',
-      themeMode: ThemeMode.system, // Automatically switch theme based on device setting
+      themeMode: ThemeMode
+          .system, // Automatically switch theme based on device setting
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white, // Background color in light mode
@@ -48,14 +52,16 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: Colors.black, // Button text color
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black, // Button text color
           ),
         ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.grey[900], // Background color in dark mode
+        scaffoldBackgroundColor:
+            Colors.grey[900], // Background color in dark mode
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900],
           elevation: 0,
@@ -73,7 +79,8 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black, backgroundColor: Colors.white, // Button text color
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white, // Button text color
           ),
         ),
         useMaterial3: true,

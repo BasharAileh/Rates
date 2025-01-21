@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import 'package:admin_app/constants/aspect_ratio.dart';
 import 'package:admin_app/pages/registration/signup_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,6 +43,3 @@ class RatesAdminApp extends StatelessWidget {
     );
   }
 }
-=======
-
->>>>>>> a15e3720ffad3c4ab14f36235c99bcd7ce9bc088

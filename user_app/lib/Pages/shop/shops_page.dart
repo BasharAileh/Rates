@@ -163,7 +163,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         image,
                       )
                     : CircleAvatar(
-                        backgroundColor: Colors.grey[900],
+                        backgroundColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white12
+                                : Colors.grey[900],
                         child: SvgPicture.asset(
                           'assets/logos/yallow_logo.svg',
                           height: 50,
@@ -187,9 +190,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                           ),
                         ),
                       ),
@@ -197,9 +201,10 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         child: Text(
                           "#${index}st Place",
                           style: TextStyle(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.yellow
-                                : Colors.blue,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.yellow
+                                    : Colors.blue,
                             fontSize: 12,
                           ),
                         ),
@@ -315,7 +320,6 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           ),
         ],
       ),
-      
       body: Container(
         color: Theme.of(context).brightness == Brightness.dark
             ? Colors.grey[900]
@@ -347,16 +351,18 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                           hintText: 'Search for restaurants',
                           prefixIcon: Icon(
                             Icons.search,
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white54
-                                : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white54
+                                    : Colors.black,
                           ),
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.white54
                                   : Colors.grey,
                             ),
@@ -385,7 +391,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                                 child: Text(
                                   choice,
                                   style: TextStyle(
-                                    color: Theme.of(context).brightness == Brightness.dark
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
                                         ? Colors.white
                                         : Colors.black,
                                   ),
@@ -571,8 +578,7 @@ class ScrollControllerWithGetX extends GetxController {
     super.onInit();
 
     scrollController.addListener(() {
-      showScrollToTopButton.value =
-          scrollController.position.pixels > 500;
+      showScrollToTopButton.value = scrollController.position.pixels > 500;
     });
   }
 

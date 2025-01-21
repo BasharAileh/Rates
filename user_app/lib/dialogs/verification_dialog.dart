@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_exception.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
@@ -12,13 +14,14 @@ Future<void> showVerificationDialog(BuildContext context) async {
         content: const Text('Please verify your email to continue.'),
         actions: [
           TextButton(
-              onPressed: () async {
-                await AuthService.firebase().logOut();
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Log out')),
+            onPressed: () async {
+              await AuthService.firebase().logOut();
+              if (context.mounted) {
+                Get.offAllNamed(loginRoute);
+              }
+            },
+            child: const Text('Log out'),
+          ),
           TextButton(
             onPressed: () async {
               try {

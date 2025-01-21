@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? previousUserData;
     FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
     final controller = Get.put(TemporaryWidgetController());
     AuthUser user = AuthService.firebase().currentUser!;
@@ -136,8 +137,12 @@ class _HomePageState extends State<HomePage> {
                             return const Text('An error occurred');
                           }
                           if (!snapshot.hasData || !snapshot.data!.exists) {
+                            _showVerificationMessage =
+                                userData['is_email_verified'];
                             return const SizedBox();
                           }
+
+                          previousUserData = userData;
 
                           if (userData['is_email_verified'] == true &&
                               _showVerificationMessage) {
@@ -483,6 +488,26 @@ class _HomePageState extends State<HomePage> {
                                                                     builder:
                                                                         (context,
                                                                             snapShot) {
+                                                                      String
+                                                                          userName =
+                                                                          '';
+                                                                      if (shops[
+                                                                              horizontalIndex]
+                                                                          [
+                                                                          verticalIndex][index ==
+                                                                              1
+                                                                          ? 0
+                                                                          : index == 0
+                                                                              ? 1
+                                                                              : 2] is FireStoreUser) {
+                                                                        userName = shops[horizontalIndex][verticalIndex][index == 1
+                                                                                ? 0
+                                                                                : index == 0
+                                                                                    ? 1
+                                                                                    : 2]
+                                                                            .userName
+                                                                            .toString();
+                                                                      }
                                                                       if (snapShot
                                                                               .connectionState ==
                                                                           ConnectionState
@@ -503,36 +528,43 @@ class _HomePageState extends State<HomePage> {
                                                                           ),
                                                                         );
                                                                       }
-                                                                      if (snapShot
-                                                                              .hasError ||
-                                                                          snapShot.data == false &&
-                                                                              shops[horizontalIndex][verticalIndex][index == 1
-                                                                                  ? 0
-                                                                                  : index == 0
-                                                                                      ? 1
-                                                                                      : 2] is FireStoreUser) {
+                                                                      if (shops[
+                                                                              horizontalIndex]
+                                                                          [
+                                                                          verticalIndex][index ==
+                                                                              1
+                                                                          ? 0
+                                                                          : index == 0
+                                                                              ? 1
+                                                                              : 2] is FireStoreUser) {
                                                                         return Column(
                                                                           children: [
                                                                             CircleAvatar(
                                                                               radius: imageSize,
-                                                                              child: Image.asset(
-                                                                                width: double.infinity,
-                                                                                height: double.infinity,
-                                                                                shops[horizontalIndex][verticalIndex][index == 1
-                                                                                        ? 0
-                                                                                        : index == 0
-                                                                                            ? 1
-                                                                                            : 2]
-                                                                                    .imagePath!,
-                                                                                fit: BoxFit.cover,
+                                                                              backgroundImage: snapShot.hasError || snapShot.data == false
+                                                                                  ? AssetImage(
+                                                                                      shops[horizontalIndex][verticalIndex][index == 1
+                                                                                              ? 0
+                                                                                              : index == 0
+                                                                                                  ? 1
+                                                                                                  : 2]
+                                                                                          .imagePath!,
+                                                                                    )
+                                                                                  : NetworkImage(
+                                                                                      shops[horizontalIndex][verticalIndex][index == 1
+                                                                                              ? 0
+                                                                                              : index == 0
+                                                                                                  ? 1
+                                                                                                  : 2]
+                                                                                          .imagePath!,
+                                                                                    ),
+                                                                            ),
+                                                                            Text(
+                                                                              userName.substring(
+                                                                                0,
+                                                                                userName.length > 7 ? 7 : userName.length,
                                                                               ),
                                                                             ),
-                                                                            Text(shops[horizontalIndex][verticalIndex][index == 1
-                                                                                    ? 0
-                                                                                    : index == 0
-                                                                                        ? 1
-                                                                                        : 2]
-                                                                                .userName),
                                                                           ],
                                                                         );
                                                                       }

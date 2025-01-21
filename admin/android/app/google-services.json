@@ -1,0 +1,126 @@
+{
+  "project_info": {
+    "project_number": "792438731850",
+    "project_id": "rates-12dcc",
+    "storage_bucket": "rates-12dcc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792438731850:android:a28d26a47781ef37e0e2b3",
+        "android_client_info": {
+          "package_name": "com.bev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZbaFCFiSL_takXkXSyx4njsZNwPWynU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bev.rates"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792438731850:android:52d3fb20f4158377e0e2b3",
+        "android_client_info": {
+          "package_name": "com.bev.rates"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792438731850-a3f40dd34gvmrn5or0nedlfc5ricdge2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bev.rates",
+            "certificate_hash": "fe1370492b7b6f93e6026e90e86fa3693b6e6b7e"
+          }
+        },
+        {
+          "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZbaFCFiSL_takXkXSyx4njsZNwPWynU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bev.rates"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792438731850:android:e8ca28a61aff7cc4e0e2b3",
+        "android_client_info": {
+          "package_name": "com.bev.rates.admin.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZbaFCFiSL_takXkXSyx4njsZNwPWynU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792438731850-ajeim1tvejldlkvjoq1p7cnc4o233ggu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "792438731850-paksqgcjk9lj3m3vqipuiit739h9a4f7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bev.rates"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

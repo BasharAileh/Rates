@@ -147,7 +147,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        user.profileImageUrl != null
+                        user.profileImageUrl != null &&
+                                user.profileImageUrl!.contains('http')
                             ? InkWell(
                                 onTap: () {},
                                 child: CircleAvatar(
@@ -172,10 +173,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   );
                                 },
-                                child: const CircleAvatar(
+                                child: CircleAvatar(
                                   radius: 30,
                                   backgroundImage: AssetImage(
-                                    'assets/images/profile_images/default_profile_image_1.png',
+                                    profileImageUrl,
                                   ),
                                 ),
                               ),

@@ -15,10 +15,13 @@ class FirebaseCloudStorage {
 
   Future<String> getHttpLink(String path) async {
     try {
+      // Create a reference to the file
       Reference ref = FirebaseStorage.instance.ref(path);
 
+      // Get the download URL (HTTP link)
       String downloadUrl = await ref.getDownloadURL();
 
+      // Print the HTTP URL
       return downloadUrl;
     } catch (e) {
       throw Exception('Failed to get HTTP link: $e');
@@ -139,11 +142,22 @@ class FirebaseCloudStorage {
 
   Future<FireStoreUser> getUserInfo(String id) async {
     try {
+      print('Getting user info for userID: $id');
       DocumentSnapshot docSnapshot =
           await FirebaseFirestore.instance.collection('user').doc(id).get();
 
       if (!docSnapshot.exists) {
-        throw Exception('User not found for ID: $id');
+        print('User not found for userID: $id');
+        return FireStoreUser(
+          id: id,
+          email: '',
+          userName: '',
+          ratings: {},
+          isEmailVerified: false,
+          isAnonymous: true,
+          numberOfRatings: '',
+          profileImageURL: '',
+        );
       }
 
       FireStoreUser user =
@@ -196,6 +210,7 @@ class FirebaseCloudStorage {
   }
 
   Future<bool> isImageAvailable(String? url) async {
+    print('Checking image availability for: $url');
     if (url == null || url.isEmpty) {
       return false;
     }
