@@ -1,3 +1,4 @@
+import 'package:admin/admins_pages/pending.dart';
 import 'package:admin/constants/aspect_ratio.dart';
 import 'package:admin/pages/registration/login_page.dart';
 import 'package:admin/pages/registration/signup_page.dart';
@@ -28,7 +29,7 @@ class RatesAdminApp extends StatelessWidget {
             selectionHandleColor:
                 Color.fromARGB(255, 243, 198, 35), // Caret handle color
           )),
-      home: const SignupPage(),
+      home:  AdminRestaurantsPage(),
     );
   }
 }
