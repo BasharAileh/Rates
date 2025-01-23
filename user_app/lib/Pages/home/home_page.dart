@@ -15,6 +15,7 @@ import 'package:rates/services/cloud/cloud_storage_exception.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:developer' as devtools show log;
+import 'dart:async'; // Added for Timer
 
 FirebaseCloudStorage cloudStorage = FirebaseCloudStorage();
 late String path;
@@ -37,6 +38,11 @@ class _HomePageState extends State<HomePage> {
   final BottomNavController bottomNavController = Get.find();
   late final List<PageController> _pageController;
   bool _showVerificationMessage = false;
+  late Timer _timer; // Added for automatic sliding
+  int _currentPage = 0; // Added to track current page
+  bool _isManualSelection = false; // Added to handle manual selection
+  int _selectedCategoryIndex = -1; // Added to track selected category
+  String _selectedCategoryName = 'Food'; // Added to track selected category name
 
   @override
   void initState() {
@@ -50,12 +56,53 @@ class _HomePageState extends State<HomePage> {
       _showVerificationMessage = false;
     }
 
-    //TODO open DateBase and check if the user is verified
-    //unless we used the ensureDbIsOpen() function in all the functions
-    //then we don't need to open the database here
-    /* 
-    you'll be able to open, close and do every other functions using the rates seraice class
-    */
+    // Start the timer for automatic sliding
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      if (!_isManualSelection) {
+        setState(() {
+          _currentPage = (_currentPage + 1) % categories.length;
+          _selectedCategoryName = categories[_currentPage]; // Update category name
+        });
+        for (var controller in _pageController) {
+          controller.animateToPage(
+            _currentPage,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _timer.cancel();
+  }
+
+  void _onCategoryIconTap(int index) {
+    setState(() {
+      if (_selectedCategoryIndex == index) {
+        _selectedCategoryIndex = -1;
+        _isManualSelection = false;
+        _startTimer();
+      } else {
+        _selectedCategoryIndex = index;
+        _isManualSelection = true;
+        _stopTimer();
+        _currentPage = index;
+        _selectedCategoryName = categories[index]; // Update selected category name
+        for (var controller in _pageController) {
+          controller.animateToPage(
+            index,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
   }
 
   @override
@@ -63,6 +110,7 @@ class _HomePageState extends State<HomePage> {
     for (var controller in _pageController) {
       controller.dispose();
     }
+    _timer.cancel(); // Cancel the timer when the widget is disposed
     super.dispose();
   }
 
@@ -186,6 +234,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: categories.map(
                     (category) {
+                      int index = categories.indexOf(category);
                       return Padding(
                         padding: EdgeInsets.only(
                           right: AspectRatios.width * 0.03607692307,
@@ -196,19 +245,23 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  devtools.log(FirebaseAuth.instance.currentUser
-                                      .toString());
+                                  _onCategoryIconTap(index); // Added this line
                                 },
                                 child: SizedBox(
                                   width: AspectRatios.width * 0.10256410256,
                                   height:
-                                      AspectRatios.heightWithoutAppBar * 0.044,
+                                      AspectRatios.heightWithoutAppBar * 0.054,
                                   child: Stack(
                                     children: [
-                                      Container(
-                                        height: AspectRatios.height * 0.044,
-                                        width:
-                                            AspectRatios.width * 0.10256410256,
+                                      Center(
+                                        child: Container(
+                                          color: _selectedCategoryIndex == index
+                                              ? null
+                                              : Colors.grey[800], // Added color change
+                                          height: AspectRatios.height * 0.054,
+                                          width:
+                                              AspectRatios.width * 0.10256410256,
+                                        ),
                                       ),
                                       Center(
                                         child: SvgPicture.asset(
@@ -278,9 +331,9 @@ class _HomePageState extends State<HomePage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Text(
-                                'Food',
-                                style: TextStyle(
+                              Text(
+                                _selectedCategoryName, // Updated to use _selectedCategoryName
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 158, 158, 158),
