@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:admin/services/cloud_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,7 +33,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   bool _bottomEnabled = false;
   String? _passwordsMatch;
   bool _isPasswordVisible = false;
-  XFile? _logoImage;
+  File? _logoImage;
 
   String selectedCountryCode = '00962';
   String username = '';
@@ -92,12 +95,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   Future<void> _pickLogoImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
     setState(() {
-      _logoImage = image;
-      if (image != null) {
-        pictureUrl = image.path;
-        pictureName = image.name;
-      }
+      _logoImage = File(image!.path);
+      pictureName = image.name;
     });
   }
 
@@ -427,9 +428,14 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             )
                           : const Text('No logo selected'),
                       ElevatedButton(
-                        onPressed: () {
-                          _pickLogoImage();
-                          print(_logoImage);
+                        onPressed: () async {
+                          try {
+                            // Pick the image first
+                            await _pickLogoImage();
+                          } catch (e) {
+                            // Handle any errors during the process
+                            print('Error during image upload: $e');
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -506,9 +512,32 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: () async {
-                  try {} on Exception catch (e) {}
-                },
+                onPressed: _bottomEnabled
+                    ? () async {
+                        try {
+                          if (_logoImage != null) {
+                            String shopName = 'unDefined';
+                            CloudService cloudService = CloudService();
+                            for (var field in _textFields) {
+                              if (field == 'Shop Name') {
+                                shopName =
+                                    _controllers[_textFields.indexOf(field)]
+                                        .text;
+                              }
+                            }
+                            String downloadUrl = await cloudService.uploadImage(
+                              File(_logoImage!.path),
+                              pictureName,
+                              shopName,
+                            );
+                          } else {
+                            print('No image selected.');
+                          }
+                        } on Exception catch (e) {
+                          print('Error during image upload: $e');
+                        }
+                      }
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   fixedSize: Size(

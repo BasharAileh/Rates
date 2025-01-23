@@ -198,28 +198,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                             hintText: 'Enter your name',
                                           ),
                                           onEditingComplete: () async {
-                                            _focusNode
-                                                .unfocus(); // Hide the keyboard
+                                            _focusNode.unfocus();
 
                                             if (_controller.text !=
                                                     userInfo.userName &&
                                                 !isDialogOpen) {
                                               isDialogOpen = true;
-                                              // Text has changed, show confirmation dialog
                                               final bool? result =
                                                   await _showConfirmationDialog();
-
                                               if (result == true) {
                                                 await AuthService.firebase()
                                                     .updateUserName(
                                                   displayName: _controller.text,
-                                                )
-                                                    .then((value) {
-                                                  setState(() {});
-                                                });
+                                                );
                                               } else if (result == false) {
-                                                print('User pressed Cancel');
-                                                // Revert local changes
                                                 _controller.text =
                                                     userInfo.userName;
                                               }
@@ -242,18 +234,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
                                               if (result == true) {
                                                 isDialogOpen = true;
-                                                print('User pressed Save');
-                                                // Update the cloud username
                                                 await AuthService.firebase()
                                                     .updateUserName(
                                                   displayName: _controller.text,
-                                                )
-                                                    .then((value) {
-                                                  setState(() {});
-                                                });
-                                                setState(() {});
+                                                );
                                               } else if (result == false) {
-                                                print('User pressed Cancel');
                                                 _controller.text =
                                                     userInfo.userName;
                                               }
@@ -278,12 +263,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                             });
                                           });
                                         },
-                                        child: Text(
-                                          userInfo.userName,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
+                                        child: StreamBuilder(
+                                          stream: cloudService
+                                              .getUserStream(user.id),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              String userName =
+                                                  snapshot.data?['user_name'];
+                                              _controller.text = userName;
+                                              return Text(
+                                                _controller.text,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              );
+                                            }
+                                            return const SizedBox();
+                                          },
                                         ),
                                       ),
                                 const SizedBox(width: 8),
@@ -304,23 +301,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                             await _showConfirmationDialog();
 
                                         if (result == true) {
-                                          print('User pressed Save');
-                                          // Update the cloud username
                                           await AuthService.firebase()
                                               .updateUserName(
                                             displayName: _controller.text,
-                                          )
-                                              .then((value) {
-                                            setState(() {});
-                                          });
+                                          );
                                         } else if (result == false) {
-                                          print('User pressed Cancel');
                                           _controller.text = userInfo.userName;
                                         }
                                       }
 
                                       setState(() {
-                                        isEditing = false; // Exit editing mode
+                                        isEditing = false;
                                       });
                                     } else {
                                       setState(() {

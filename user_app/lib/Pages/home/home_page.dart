@@ -106,12 +106,17 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Column(
             children: [
-              Center(
-                child: SvgPicture.asset(
-                  'assets/logos/black_logo.svg',
-                  height: AspectRatios.height * 0.04333333333,
-                  width: AspectRatios.width * 0.14871794871,
-                  color: isDarkMode ? Colors.white : Colors.black,
+              Padding(
+                padding: EdgeInsets.only(
+                  top: AspectRatios.height * 0.02,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/logos/black_logo.svg',
+                    height: AspectRatios.height * 0.04333333333,
+                    width: AspectRatios.width * 0.14871794871,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
               Padding(
@@ -155,7 +160,9 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                       gotVerified: _showVerificationMessage,
                                     )
-                                  : const SizedBox(),
+                                  : SizedBox(
+                                      height: AspectRatios.height * 0.03,
+                                    ),
                             );
                           }
                           if (userData['is_email_verified'] == false) {

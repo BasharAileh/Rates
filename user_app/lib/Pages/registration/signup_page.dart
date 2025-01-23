@@ -98,6 +98,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
