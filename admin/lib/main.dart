@@ -1,3 +1,4 @@
+import 'package:admin/admins_pages/pending.dart';
 import 'package:admin/constants/aspect_ratio.dart';
 import 'package:admin/pages/registration/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';

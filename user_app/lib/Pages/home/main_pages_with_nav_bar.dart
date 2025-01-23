@@ -49,7 +49,7 @@ class _PagesWithNavBarState extends State<PagesWithNavBar> {
                     onRemoveFavorite: (_) {},
                   ); // Or any other page
                 case 4:
-                  return const RatingsPage(); // Or another page
+                  return  AboutPage(); // Or another page
                 default:
                   return const HomePage(); // Default page
               }
