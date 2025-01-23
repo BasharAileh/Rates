@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class CloudService {
@@ -7,10 +8,9 @@ class CloudService {
     try {
       print('Starting file upload...');
 
-      // Check if the file exists
       if (!await imageFile.exists()) {
         print('File does not exist!');
-        return ''; // Return early if the file doesn't exist
+        return '';
       }
 
       Reference storageRef =
@@ -18,24 +18,55 @@ class CloudService {
 
       print('Uploading file: ${imageFile.path}');
 
-      // Try to upload the file
       await storageRef.putFile(imageFile);
 
-      // If upload succeeds, print success message
       print('File uploaded successfully.');
 
-      // Retrieve the download URL
       String downloadUrl = await storageRef.getDownloadURL();
 
-      // Print the download URL
       print('File uploaded successfully. URL: $downloadUrl');
 
-      // Return the download URL
       return downloadUrl;
     } catch (e) {
-      // If an error occurs, print the error message
       print('Failed to upload image: $e');
-      rethrow; // Rethrow to propagate error up the stack
+      rethrow;
+    }
+  }
+
+  Future<void> uploadUserDetails(String uid, Map<String, dynamic> data) async {
+    try {
+      print('Starting user details upload...');
+
+      await FirebaseFirestore.instance.collection('pending').doc(uid).set(data);
+
+      print('User details uploaded successfully.');
+    } catch (e) {
+      print('Failed to upload user details: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> getUserType(String uid) async {
+    try {
+      print('Getting user type...');
+
+      DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (snapshot.exists) {
+        String userType =
+            (snapshot.data() as Map<String, dynamic>)['user_type'] ?? '';
+
+        print('User type: $userType');
+
+        return userType;
+      } else {
+        print('User type not found.');
+        return '';
+      }
+    } catch (e) {
+      print('Failed to get user type: $e');
+      rethrow;
     }
   }
 }

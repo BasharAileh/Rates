@@ -176,20 +176,22 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                       phoneNumberTextField(
                                         onTextfieldChanged: (value) {
                                           phoneNumber = value;
-
-                                          if (_controllers.every((controller) =>
-                                                  controller.text.isNotEmpty) &&
-                                              _controllers[3].text ==
-                                                  _controllers[4].text &&
-                                              _isSelected[0]) {
-                                            setState(() {
-                                              _bottomEnabled = true;
-                                            });
+                                          /* if (_controllers.every((controller) =>
+                                              controller.text.isNotEmpty)) {
+                                            if (_textFields[index] ==
+                                                    'password' &&
+                                                _controllers[index].text ==
+                                                    _controllers[index + 1]
+                                                        .text) {
+                                              setState(() {
+                                                _bottomEnabled = true;
+                                              });
+                                            }
                                           } else {
                                             setState(() {
                                               _bottomEnabled = false;
                                             });
-                                          }
+                                          } */
                                         },
                                         hintText: _textFields[index],
                                         phoneController: _controllers[index],
@@ -338,19 +340,22 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                     customTextField(
                                       onChanged: (value) {
                                         _controllers[index].text = value;
-                                        if (_controllers.every((controller) =>
-                                                controller.text.isNotEmpty) &&
-                                            _controllers[3].text ==
-                                                _controllers[4].text &&
-                                            _isSelected[0]) {
-                                          setState(() {
-                                            _bottomEnabled = true;
-                                          });
+                                        /* if (_controllers.every((controller) =>
+                                            controller.text.isNotEmpty)) {
+                                          if (_textFields[index] ==
+                                                  'password' &&
+                                              _controllers[index].text ==
+                                                  _controllers[index + 1]
+                                                      .text) {
+                                            setState(() {
+                                              _bottomEnabled = true;
+                                            });
+                                          }
                                         } else {
                                           setState(() {
                                             _bottomEnabled = false;
                                           });
-                                        }
+                                        } */
                                         if (_controllers[3].text !=
                                             _controllers[4].text) {
                                           setState(() {
@@ -461,7 +466,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           setState(() {
                             _isSelected[0] = !_isSelected[0];
                           });
-                          if (_controllers.every(
+                          /* if (_controllers.every(
                                   (controller) => controller.text.isNotEmpty) &&
                               _controllers[3].text == _controllers[4].text &&
                               _isSelected[0]) {
@@ -472,7 +477,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             setState(() {
                               _bottomEnabled = false;
                             });
-                          }
+                          } */
                         },
                       ),
                       const Flexible(
@@ -512,32 +517,47 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: _bottomEnabled
-                    ? () async {
-                        try {
-                          if (_logoImage != null) {
-                            String shopName = 'unDefined';
-                            CloudService cloudService = CloudService();
-                            for (var field in _textFields) {
-                              if (field == 'Shop Name') {
-                                shopName =
-                                    _controllers[_textFields.indexOf(field)]
-                                        .text;
-                              }
-                            }
-                            String downloadUrl = await cloudService.uploadImage(
-                              File(_logoImage!.path),
-                              pictureName,
-                              shopName,
-                            );
-                          } else {
-                            print('No image selected.');
-                          }
-                        } on Exception catch (e) {
-                          print('Error during image upload: $e');
+                onPressed: () async {
+                  try {
+                    Map<String, dynamic> shopData = {};
+                    _controllers.forEach((controller) {
+                      if (controller.text.isNotEmpty) {
+                        if (_textFields[_controllers.indexOf(controller)] ==
+                            'Phone Number') {
+                          shopData['Phone Number'] =
+                              selectedCountryCode + controller.text;
+                        } else {
+                          shopData[
+                                  '${_textFields[_controllers.indexOf(controller)]}'] =
+                              controller.text;
                         }
                       }
-                    : null,
+                    });
+
+                    if (_logoImage != null && shopData.isNotEmpty) {
+                      String shopName = 'unDefined';
+                      CloudService cloudService = CloudService();
+
+                      cloudService.uploadUserDetails(
+                          shopData['Shop Name'], shopData);
+                      for (var field in _textFields) {
+                        if (field == 'Shop Name') {
+                          shopName =
+                              _controllers[_textFields.indexOf(field)].text;
+                        }
+                      }
+                      String downloadUrl = await cloudService.uploadImage(
+                        File(_logoImage!.path),
+                        pictureName,
+                        shopName,
+                      );
+                    } else {
+                      print('No image selected.');
+                    }
+                  } on Exception catch (e) {
+                    print('Error during image upload: $e');
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   fixedSize: Size(
