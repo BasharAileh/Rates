@@ -157,20 +157,7 @@ class MenuPageState extends State<MenuPage> {
                         ),
                       );
                     }),
-                SizedBox(
-                    width: AspectRatios.width *
-                        0.02), // Add some spacing between the columns
-                Container(
-                  width: AspectRatios.width * 0.12,
-                  height: AspectRatios.height * 0.055,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/testpic/babalyamen.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+               
                 SizedBox(width: AspectRatios.width * 0.02),
                 Expanded(
                   child: Column(

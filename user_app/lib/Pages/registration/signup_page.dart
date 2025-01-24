@@ -1,10 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/theme_controller.dart';
 import 'package:rates/constants/widgets.dart';
-
 import 'package:rates/services/auth/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
@@ -32,6 +33,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   bool _justInit = true;
   String? _passwordsMatch;
   bool _isPasswordVisible = false;
+
+  // Access the theme mode from the ThemeController
+  final ThemeController _themeController = Get.find<ThemeController>();
+  ThemeMode get themeMode => _themeController.themeMode.value;
 
   List<DropdownMenuItem<String>> countryItems = [
     const DropdownMenuItem(
@@ -95,10 +100,57 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void _showTermsAndConditionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Terms and Conditions'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Welcome to the Rates App! By creating an account, you agree to the following terms and conditions. Please read them carefully before proceeding.'),
+                SizedBox(height: 10),
+                Text('1.Acceptance of Terms',style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(height: 5),
+                Text('● By signing up for and using the Rates App, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree, please refrain from using the app.'),
+                SizedBox(height: 10),
+                Text('2.Authenticity and Content Submission',style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(height: 5),
+                Text('● The app is committed to maintaining genuine ratings and reviews. You agree not to submit content that is false, misleading, offensive, or violates any laws.'),
+                SizedBox(height: 10),
+                Text('3.Privacy and Data Usage',style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(height: 5),
+                Text('● Your reviews and ratings may be visible to other users but will not be shared with third parties without your consent.'),
+                SizedBox(height: 10),
+                Text('4.Updates to Terms and Conditions',style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(height: 5),
+                Text('● These terms may be updated periodically to reflect changes in the app or legal requirements. You will be notified of major updates.\nContinued use of the app after updates signifies your acceptance of the revised terms.'),              
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Determine if the theme is dark or light based on themeMode
+    final bool isDarkTheme = themeMode == ThemeMode.dark;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: isDarkTheme ? Colors.grey[900] : Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
@@ -117,14 +169,15 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                   style: TextStyle(
                     fontSize: width * 0.06,
                     fontWeight: FontWeight.bold,
+                    color: isDarkTheme ? Colors.white : Colors.black,
                   ),
                 ),
                 SizedBox(height: height * 0.03),
-                const Text(
+                Text(
                   'Choose your sign-up method',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.primaryColor,
+                    color: isDarkTheme ? Colors.white : Colors.black,
                   ),
                 ),
                 SizedBox(height: height * 0.02),
@@ -172,7 +225,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   color: _isEmailSelected
                                       ? Colors.white
-                                      : Colors.black,
+                                      : isDarkTheme ? Colors.white : Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 duration: const Duration(milliseconds: 300),
@@ -202,7 +255,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                 style: TextStyle(
                                   color: !_isEmailSelected
                                       ? Colors.white
-                                      : Colors.black,
+                                      : isDarkTheme ? Colors.white : Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 duration: const Duration(milliseconds: 300),
@@ -399,11 +452,26 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           }
                         },
                       ),
-                      const Flexible(
-                        child: Text(
-                          'By creating an account, you are agreeing with Rates terms and conditions',
-                          style: TextStyle(
-                            fontSize: 11,
+                      Flexible(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDarkTheme ? Colors.white : Colors.black,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'By creating an account, you are agreeing with Rates ',
+                              ),
+                              TextSpan(
+                                text: 'terms and conditions',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = _showTermsAndConditionsDialog,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -425,9 +493,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           });
                         },
                       ),
-                      const Text(
+                      Text(
                         'Email me new updates',
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDarkTheme ? Colors.white : Colors.black,
+                        ),
                       ),
                     ],
                   ),
@@ -487,9 +558,12 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Already have an account?",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDarkTheme ? Colors.white : Colors.black,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
