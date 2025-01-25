@@ -1,5 +1,7 @@
 import 'package:admin/constants/app_colors.dart';
 import 'package:admin/constants/aspect_ratio.dart';
+import 'package:admin/services/auth/auth_service.dart';
+import 'package:admin/services/cloud/cloud_service.dart';
 import 'package:flutter/material.dart';
 
 class AdminRestaurantsPage extends StatefulWidget {
@@ -20,15 +22,18 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
       'name': 'Bab el-Yamen2',
       'image': 'asstes/babalyamen.jpg',
       'status': 'Pending'
-    },{
+    },
+    {
       'name': 'Bab el-Yamen1',
       'image': 'asstes/babalyamen.jpg',
       'status': 'Pending'
-    },{
+    },
+    {
       'name': 'Bab el-Yamen1',
       'image': 'asstes/babalyamen.jpg',
       'status': 'Pending'
-    },{
+    },
+    {
       'name': 'Bab el-Yamen1',
       'image': 'asstes/babalyamen.jpg',
       'status': 'Pending'
@@ -42,7 +47,8 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Action Required'),
-          content: Text('Do you want to accept or decline ${restaurant['name']}?'),
+          content:
+              Text('Do you want to accept or decline ${restaurant['name']}?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -51,7 +57,9 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${restaurant['name']} has been accepted.')),
+                  SnackBar(
+                      content:
+                          Text('${restaurant['name']} has been accepted.')),
                 );
               },
               child: Text('Accept'),
@@ -63,7 +71,9 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${restaurant['name']} has been declined.')),
+                  SnackBar(
+                      content:
+                          Text('${restaurant['name']} has been declined.')),
                 );
               },
               child: Text('Decline'),
@@ -73,6 +83,8 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
       },
     );
   }
+
+  CloudService cloudService = CloudService();
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +98,20 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await AuthService.firebase().logOut();
+
+              if (!context.mounted) return;
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/login/',
+                (route) => false,
+              );
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: restaurants.isEmpty
           ? Center(
@@ -95,78 +121,116 @@ class _AdminRestaurantsPageState extends State<AdminRestaurantsPage> {
               ),
             )
           : ListView.builder(
-              itemCount: restaurants.length,
+              itemCount: 1,
               itemBuilder: (context, index) {
                 final restaurant = restaurants[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(15),
-                            ),
-                            child: Image.asset(
-                              restaurant['image']!,
-                              height: AspectRatios.height*0.17,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                return StreamBuilder<List<Map<String, dynamic>>>(
+                    stream: cloudService.getPendingRestaurants(),
+                    builder: (context, snapshot) {
+                      List<Map<String, dynamic>>? shopData;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Error: ${snapshot.error}'),
+                        );
+                      }
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Text('No Pending Restaurants'),
+                          );
+                        } else {
+                          shopData = snapshot.data;
+                          print('Pending Restaurants: ${snapshot.data}');
+                        }
+                      }
+
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                            '/details/',
+                            arguments: shopData?[index],
+                          );
+                        },
+                        child: Card(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  restaurant['name']!,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(15),
+                                    ),
+                                    child: Image.network(
+                                      shopData?[index]['image_path'],
+                                      height: AspectRatios.height * 0.14,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Status: ${restaurant['status']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          shopData?[index]['Shop Name'],
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Status: ${restaurant['status']}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primaryColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        _showDecisionDialog(context, index);
+                                      },
+                                      child: Text(
+                                        'Pending',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              onPressed: () {
-                                _showDecisionDialog(context, index);
-                              },
-                              child: Text(
-                                'Pending',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
+                      );
+                    });
               },
             ),
     );

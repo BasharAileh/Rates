@@ -1,19 +1,16 @@
 import 'dart:io';
 import 'package:admin/constants/app_colors.dart';
 import 'package:admin/constants/aspect_ratio.dart';
+import 'package:admin/init_page.dart';
+import 'package:admin/services/cloud/cloud_instances.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage(
-      {super.key,
-      required this.restaurantName,
-      required this.rating,
-      required this.restaurantImage});
-
-  final String restaurantName;
-  final String restaurantImage;
-  final double rating;
+  const ProductPage({
+    super.key,
+  });
 
   @override
   ProductPageState createState() => ProductPageState();
@@ -23,14 +20,16 @@ class ProductPageState extends State<ProductPage> {
   String searchQuery = "";
   List<Map<String, dynamic>> meals = [];
   final ImagePicker _picker = ImagePicker();
+  late String categoryType;
 
-  Future<void> addMeal({Map<String, dynamic>? existingMeal}) async {
+  Future<Map<String, dynamic>?> addMeal(
+      {Map<String, dynamic>? existingMeal, Shop? shop}) async {
     String? mealName = existingMeal?["name"];
     String? mealDesc = existingMeal?["desc"];
     String? mealPrice = existingMeal?["price"];
     XFile? image = existingMeal != null ? XFile(existingMeal["image"]) : null;
 
-    await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -99,6 +98,15 @@ class ProductPageState extends State<ProductPage> {
                     mealPrice = value;
                   },
                 ),
+                DropdownButtonFormField(
+                  items: categoryTypeList,
+                  hint: const Text('Select Category'),
+                  onChanged: (value) {
+                    setState(() {
+                      categoryType = value.toString();
+                    });
+                  },
+                ),
                 SizedBox(height: AspectRatios.height * 0.01),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -132,24 +140,33 @@ class ProductPageState extends State<ProductPage> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (mealName != null && image != null) {
-                          if (existingMeal != null) {
-                            // Update existing meal
-                            existingMeal["name"] = mealName;
-                            existingMeal["desc"] = mealDesc;
-                            existingMeal["price"] = mealPrice;
-                            existingMeal["image"] = image!.path;
-                          } else {
-                            // Add new meal
-                            meals.add({
-                              "name": mealName!,
-                              "desc": mealDesc,
-                              "price": mealPrice,
-                              "image": image!.path
-                            });
+                          await cloudService
+                              .getProductCategoryId(categoryType)
+                              .then((value) {
+                            categoryType = value;
+                          });
+                          if (shop?.shopID != null) {
+                            final productID = await cloudService
+                                .createProductId(shop!.shopID!, categoryType);
+
+                            Product product = Product(
+                              productID: productID,
+                              addedAt: DateTime.now().toIso8601String(),
+                              bayesianAverage: 2.5,
+                              productName: mealName!,
+                              productDescription: mealDesc!,
+                              productPrice: mealPrice!,
+                              shopID: shop.shopID!,
+                              productImagePath: '',
+                              numberOfRatings: 0,
+                              productAverageRating: 2.5,
+                              categoryID: categoryType,
+                            );
+
+                            print(product.toMap());
                           }
-                          Navigator.of(context).pop();
                         }
                       },
                       child: const Text(
@@ -166,11 +183,18 @@ class ProductPageState extends State<ProductPage> {
       },
     );
 
-    setState(() {});
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
+    if (ModalRoute.of(context)!.settings.arguments == null) {
+      Navigator.pop(context);
+    }
+    Shop shop = ModalRoute.of(context)!.settings.arguments as Shop;
+    final String restaurantName = shop.shopName;
+    final String restaurantImage = shop.shopImagePath;
+    final double rating = shop.bayesianAverage;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -230,7 +254,9 @@ class ProductPageState extends State<ProductPage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: AssetImage(widget.restaurantImage),
+                      image: NetworkImage(
+                        shop.imagePath,
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -241,14 +267,14 @@ class ProductPageState extends State<ProductPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.restaurantName,
+                        restaurantName,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        'Rating of ${widget.rating}',
+                        'Rating of $rating',
                         style:
                             const TextStyle(fontSize: 11, color: Colors.black),
                       ),
@@ -261,7 +287,15 @@ class ProductPageState extends State<ProductPage> {
             Column(
               children: [
                 GestureDetector(
-                  onTap: addMeal,
+                  onTap: () async {
+                    Map<String, dynamic>? result = await addMeal(shop: shop);
+
+                    if (result != null) {
+                      print("Meal Added: $result");
+                    } else {
+                      print("Dialog canceled");
+                    }
+                  },
                   child: Container(
                     height: AspectRatios.height * 0.16,
                     decoration: BoxDecoration(
@@ -283,20 +317,67 @@ class ProductPageState extends State<ProductPage> {
                   ),
                 ),
                 SizedBox(height: AspectRatios.height * 0.02),
-                ...meals.map((meal) {
-                  return MealCard(
-                    mealName: meal["name"],
-                    mealImage: meal["image"],
-                    onDelete: () {
-                      setState(() {
-                        meals.remove(meal);
-                      });
-                    },
-                    onEdit: () {
-                      addMeal(existingMeal: meal);
-                    },
-                  );
-                }),
+                StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('product')
+                      .where('shop_id', isEqualTo: 'ML1FSC3RN0YZJ')
+                      .orderBy('bayesian_average', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('An error occurred'),
+                      );
+                    }
+                    return Column(
+                      children:
+                          snapshot.data!.docs.map((DocumentSnapshot product) {
+                        Product data = Product.fromMap(
+                            product.data() as Map<String, dynamic>);
+                        return MealCard(
+                          mealName: data.productName,
+                          mealImage: data.productImagePath,
+                          onDelete: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Delete Meal'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this meal?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        FirebaseFirestore.instance
+                                            .collection('product')
+                                            .doc(product.id)
+                                            .delete();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          onEdit: () {},
+                        );
+                      }).toList(),
+                    );
+                  },
+                )
               ],
             ),
           ],
@@ -304,6 +385,41 @@ class ProductPageState extends State<ProductPage> {
       ),
     );
   }
+
+  final List<DropdownMenuItem<String>> categoryTypeList = [
+    const DropdownMenuItem(
+      value: 'shawarma',
+      child: Text('shawarmashawarma'),
+    ),
+    const DropdownMenuItem(
+      value: 'zinger',
+      child: Text('zinger'),
+    ),
+    const DropdownMenuItem(
+      value: 'burger',
+      child: Text('burger'),
+    ),
+    const DropdownMenuItem(
+      value: 'pizza',
+      child: Text('pizza'),
+    ),
+    const DropdownMenuItem(
+      value: 'pasta',
+      child: Text('pasta'),
+    ),
+    const DropdownMenuItem(
+      value: 'sandwich',
+      child: Text('sandwich'),
+    ),
+    const DropdownMenuItem(
+      value: 'fries',
+      child: Text('fries'),
+    ),
+    const DropdownMenuItem(
+      value: 'drinks',
+      child: Text('drinks'),
+    ),
+  ];
 }
 
 class MealCard extends StatelessWidget {
@@ -330,7 +446,7 @@ class MealCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(17),
             image: DecorationImage(
-              image: FileImage(File(mealImage)),
+              image: NetworkImage(mealImage),
               fit: BoxFit.cover,
             ),
           ),

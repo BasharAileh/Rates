@@ -16,4 +16,5 @@ abstract class AuthProvider {
   Future<void> initialize();
 
   Future<void> updateUserName({required String displayName});
+  Future<void> logInAnonymously();
 }

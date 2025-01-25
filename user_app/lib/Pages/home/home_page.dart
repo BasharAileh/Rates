@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -42,7 +41,8 @@ class _HomePageState extends State<HomePage> {
   int _currentPage = 0; // Added to track current page
   bool _isManualSelection = false; // Added to handle manual selection
   int _selectedCategoryIndex = -1; // Added to track selected category
-  String _selectedCategoryName = 'Food'; // Added to track selected category name
+  String _selectedCategoryName =
+      'Food'; // Added to track selected category name
 
   @override
   void initState() {
@@ -61,16 +61,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (!_isManualSelection) {
         setState(() {
           _currentPage = (_currentPage + 1) % categories.length;
-          _selectedCategoryName = categories[_currentPage]; // Update category name
+          _selectedCategoryName =
+              categories[_currentPage]; // Update category name
         });
         for (var controller in _pageController) {
           controller.animateToPage(
             _currentPage,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
         }
@@ -93,11 +94,12 @@ class _HomePageState extends State<HomePage> {
         _isManualSelection = true;
         _stopTimer();
         _currentPage = index;
-        _selectedCategoryName = categories[index]; // Update selected category name
+        _selectedCategoryName =
+            categories[index]; // Update selected category name
         for (var controller in _pageController) {
           controller.animateToPage(
             index,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
         }
@@ -257,10 +259,11 @@ class _HomePageState extends State<HomePage> {
                                         child: Container(
                                           color: _selectedCategoryIndex == index
                                               ? null
-                                              : Colors.grey[800], // Added color change
+                                              : Colors.grey[
+                                                  800], // Added color change
                                           height: AspectRatios.height * 0.054,
-                                          width:
-                                              AspectRatios.width * 0.10256410256,
+                                          width: AspectRatios.width *
+                                              0.10256410256,
                                         ),
                                       ),
                                       Center(
@@ -446,17 +449,22 @@ class _HomePageState extends State<HomePage> {
                                     devtools.log(shops.toString());
                                     devtools.log(shops.length.toString());
                                     return InkWell(
-                                      onTap: () {
-                                        Get.toNamed(
-                                          topRatedRoute,
-                                          arguments: {
-                                            'category':
-                                                categories[horizontalIndex],
-                                            'category_id':
-                                                categoryIDs[horizontalIndex],
-                                          },
-                                        );
-                                      },
+                                      onTap: shops[horizontalIndex]
+                                                  [verticalIndex]
+                                              .isNotEmpty
+                                          ? () {
+                                              Get.toNamed(
+                                                topRatedRoute,
+                                                arguments: {
+                                                  'category': categories[
+                                                      horizontalIndex],
+                                                  'category_id': categoryIDs[
+                                                      horizontalIndex],
+                                                  'order_by': verticalIndex,
+                                                },
+                                              );
+                                            }
+                                          : null,
                                       child: LayoutBuilder(
                                         builder: (context, constraints) {
                                           try {
@@ -873,7 +881,7 @@ Stream<QuerySnapshot> getQueryStream(int verticalIndex, int horizontalIndex) {
       return const Stream.empty(); // No valid query, return empty stream
     }
   } catch (e) {
-    devtools.log("hehe" + e.toString());
+    devtools.log("hehe$e");
     return const Stream.empty(); // Return empty stream on error
   }
 }

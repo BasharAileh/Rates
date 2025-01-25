@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: SvgPicture.asset(
                       'assets/logos/black_logo.svg',
                       width: 80,
-                      color: isDarkMode ? AppColors.primaryColor : Colors.white,
+                      color: isDarkMode ? AppColors.primaryColor : Colors.black,
                     ),
                   ),
                   SizedBox(
@@ -100,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         customTextField(
                           controller: _controllers[index],
+                          obscureText: index == 1, // Set obscureText to true for the password field
                           onChanged: (_) {
                             if (_controllers
                                 .every((element) => element.text.isNotEmpty)) {
@@ -268,7 +269,6 @@ class _LoginPageState extends State<LoginPage> {
                               'assets/icons/google.svg',
                               width: 20,
                               height: 20,
-                            
                             ),
                             SizedBox(
                               width: AspectRatios.width * 0.02564102564,

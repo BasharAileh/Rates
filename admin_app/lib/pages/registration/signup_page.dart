@@ -505,7 +505,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  try {} on Exception catch (e) {}
+                  try {} on Exception {}
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,

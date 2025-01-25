@@ -1,4 +1,6 @@
 import 'dart:developer' as devtools show log;
+import 'package:admin/services/auth/auth_service.dart';
+import 'package:admin/services/cloud/cloud_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:admin/constants/app_colors.dart';
@@ -40,15 +42,8 @@ class _LoginPageState extends State<LoginPage> {
           left: screenWidth * 0.07051282051,
           right: screenWidth * 0.07051282051,
         ),
-        /* symmetric(
-          vertical: AspectRatios.height * 0.19379146919,
-          horizontal: AspectRatios.width * 0.07051282051,
-        ), */
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            /*  final width = constraints.maxWidth;
-            final height = constraints.maxHeight; */
-
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,20 +60,12 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: [
                       Text(
-                        'Login to Rates',
+                        'Rates Admin',
                         style: TextStyle(
                           fontSize: screenWidth * 0.05641025641,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      /*
-                    Transform.translate(
-                      offset: Offset(0, -10),
-                      child: SvgPicture.asset(
-                        height: AspectRatios.height * 0.04909953,
-                        'assets/logos/black_logo.svg',
-                      ),
-                    ), */
                     ],
                   ),
                   SizedBox(height: screenHeight * 0.03554502369),
@@ -116,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           height: screenHeight * 0.054,
+                          obscureText: index == 1, // Add this line
                         ),
                         if (index == 0)
                           SizedBox(
@@ -139,6 +127,36 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       onPressed: _bottomEnabled
                           ? () async {
+                              AuthService firebase = AuthService.firebase();
+                              try {
+                                AuthService firebase = AuthService.firebase();
+                                await firebase.logIn(
+                                  email: _controllers[0].text,
+                                  password: _controllers[1].text,
+                                );
+                                final user = firebase.currentUser;
+                                print(user);
+                                CloudService cloudService = CloudService();
+                                String userType = await cloudService
+                                    .getUserType(user?.id ?? '');
+                                if (userType == 'admin') {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    mounted ? context : context,
+                                    '/pending/',
+                                    (route) => false,
+                                  );
+                                } else if (userType == 'shop_owner') {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/shop/', (route) => false);
+                                } else {
+                                  throw Exception('User type not found');
+                                }
+                              } catch (e) {
+                                await firebase.logOut();
+                                devtools.log(e.toString());
+                                print(firebase.currentUser);
+                              }
+
                               // final email = _controllers[0].text;
                               // final password = _controllers[1].text;
                               // try {
@@ -194,9 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                            /* width: constraints.maxWidth * 0.02, */
-                            ),
+                        const SizedBox(),
                         const Text(
                           'Don\'t have an account?',
                         ),
@@ -259,6 +275,8 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                       onPressed: () async {
                         try {
+                          AuthService firebase = AuthService.firebase();
+                          print(firebase.currentUser);
                           // await AuthService.google().logIn();
                         } catch (e) {
                           devtools.log(e.toString());

@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -118,7 +119,7 @@ class _ViewRatingState extends State<ViewRating> {
           style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
         elevation: 0,
       ),
       body: FutureBuilder(
@@ -262,7 +263,7 @@ class _ViewRatingState extends State<ViewRating> {
                         Row(
                           children: [
                             Text(
-                              mealName,
+                              product.productName,
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -283,7 +284,7 @@ class _ViewRatingState extends State<ViewRating> {
                           product.productDescription.isEmpty
                               ? 'No description available'
                               : product.productDescription,
-                          style: TextStyle(fontSize: 11),
+                          style: const TextStyle(fontSize: 11),
                         ),
                       ],
                     ),

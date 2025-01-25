@@ -1189,6 +1189,9 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
+  - Firebase/Auth (11.6.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 11.6.0)
   - Firebase/CoreOnly (11.6.0):
     - FirebaseCore (~> 11.6.0)
   - Firebase/Firestore (11.6.0):
@@ -1197,6 +1200,10 @@ PODS:
   - Firebase/Storage (11.6.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 11.6.0)
+  - firebase_auth (5.4.1):
+    - Firebase/Auth (= 11.6.0)
+    - firebase_core
+    - Flutter
   - firebase_core (3.10.1):
     - Firebase/CoreOnly (= 11.6.0)
     - Flutter
@@ -1205,6 +1212,15 @@ PODS:
     - firebase_core
     - Flutter
   - FirebaseAppCheckInterop (11.7.0)
+  - FirebaseAuth (11.6.0):
+    - FirebaseAppCheckInterop (~> 11.0)
+    - FirebaseAuthInterop (~> 11.0)
+    - FirebaseCore (~> 11.6.0)
+    - FirebaseCoreExtension (~> 11.6.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GTMSessionFetcher/Core (< 5.0, >= 3.4)
+    - RecaptchaInterop (~> 100.0)
   - FirebaseAuthInterop (11.7.0)
   - FirebaseCore (11.6.0):
     - FirebaseCoreInternal (~> 11.6.0)
@@ -1243,14 +1259,27 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GTMSessionFetcher/Core (< 5.0, >= 3.4)
   - Flutter (1.0.0)
+  - GoogleUtilities/AppDelegateSwizzler (8.0.2):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+    - GoogleUtilities/Privacy
   - GoogleUtilities/Environment (8.0.2):
     - GoogleUtilities/Privacy
   - GoogleUtilities/Logger (8.0.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
+  - GoogleUtilities/Network (8.0.2):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Privacy
+    - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (8.0.2)":
     - GoogleUtilities/Privacy
   - GoogleUtilities/Privacy (8.0.2)
+  - GoogleUtilities/Reachability (8.0.2):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
   - "gRPC-C++ (1.65.5)":
     - "gRPC-C++/Implementation (= 1.65.5)"
     - "gRPC-C++/Interface (= 1.65.5)"
@@ -1350,6 +1379,7 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
+  - RecaptchaInterop (100.0.0)
   - SDWebImage (5.20.0):
     - SDWebImage/Core (= 5.20.0)
   - SDWebImage/Core (5.20.0)
@@ -1358,6 +1388,7 @@ PODS:
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
@@ -1371,6 +1402,7 @@ SPEC REPOS:
     - DKPhotoGallery
     - Firebase
     - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseCoreExtension
@@ -1385,6 +1417,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
+    - RecaptchaInterop
     - SDWebImage
     - SwiftyGif
 
@@ -1393,6 +1426,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
+  firebase_auth:
+    :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_storage:
@@ -1410,9 +1445,11 @@ SPEC CHECKSUMS:
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: 09aa5ec1ab24135ccd7a1621c46c84134bfd6655
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
+  firebase_auth: 9927cecefe4daaf92b0fbe5d1d283e9329445177
   firebase_core: e2aa06dbd854d961f8ce46c2e20933bee1bf2d2b
   firebase_storage: 5f8f929f2b1a4f3d37d32ef6b8c474db40bfbe13
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
+  FirebaseAuth: 0304982cfe00df8d49bf533bc4becd3de36c7122
   FirebaseAuthInterop: a6973d72aa242ea88ffb6be9c9b06c65455071da
   FirebaseCore: 48b0dd707581cf9c1a1220da68223fb0a562afaa
   FirebaseCoreExtension: 2d77d6430c16cf43ca2b04608302ed02b3598361
@@ -1429,6 +1466,7 @@ SPEC CHECKSUMS:
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
+  RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
 
