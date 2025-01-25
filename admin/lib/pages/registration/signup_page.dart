@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:admin/services/cloud/cloud_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +21,7 @@ List<String> _textFields = [
   'Phone Number',
   'Shop Category',
   'Available On',
-  'Address link',
+  'Google Maps Link',
   'Available Hours',
   'Password',
   'Confirm Password',
@@ -30,7 +33,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   bool _bottomEnabled = false;
   String? _passwordsMatch;
   bool _isPasswordVisible = false;
-  XFile? _logoImage;
+  File? _logoImage;
 
   String selectedCountryCode = '00962';
   String username = '';
@@ -92,12 +95,10 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   Future<void> _pickLogoImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
     setState(() {
-      _logoImage = image;
-      if (image != null) {
-        pictureUrl = image.path;
-        pictureName = image.name;
-      }
+      _logoImage = File(image!.path);
+      pictureName = image.name;
     });
   }
 
@@ -175,20 +176,22 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                       phoneNumberTextField(
                                         onTextfieldChanged: (value) {
                                           phoneNumber = value;
-
-                                          if (_controllers.every((controller) =>
-                                                  controller.text.isNotEmpty) &&
-                                              _controllers[3].text ==
-                                                  _controllers[4].text &&
-                                              _isSelected[0]) {
-                                            setState(() {
-                                              _bottomEnabled = true;
-                                            });
+                                          /* if (_controllers.every((controller) =>
+                                              controller.text.isNotEmpty)) {
+                                            if (_textFields[index] ==
+                                                    'password' &&
+                                                _controllers[index].text ==
+                                                    _controllers[index + 1]
+                                                        .text) {
+                                              setState(() {
+                                                _bottomEnabled = true;
+                                              });
+                                            }
                                           } else {
                                             setState(() {
                                               _bottomEnabled = false;
                                             });
-                                          }
+                                          } */
                                         },
                                         hintText: _textFields[index],
                                         phoneController: _controllers[index],
@@ -249,7 +252,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                         height: screenHeight * 0.05,
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             const Text(
                                               'From',
@@ -259,16 +262,25 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             const SizedBox(width: 20),
-                                            DropdownButton(
+                                            DropdownButton<String>(
                                               iconEnabledColor: Colors.black,
                                               value: value1,
                                               dropdownColor: Colors.white,
-                                              items: _availableHours,
-                                              onChanged: (value) {
+                                              items: _availableHours
+                                                  .map<
+                                                      DropdownMenuItem<
+                                                          String>>((hour) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: hour.value,
+                                                        child: Text(hour.value
+                                                            as String),
+                                                      ))
+                                                  .toList(),
+                                              onChanged: (String? value) {
                                                 setState(() {
+                                                  value1 = value!;
                                                   _controllers[index].text =
-                                                      value as String;
-                                                  value1 = value;
+                                                      '$value1 - $value2';
                                                 });
                                               },
                                             ),
@@ -281,16 +293,25 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             const SizedBox(width: 20),
-                                            DropdownButton(
+                                            DropdownButton<String>(
                                               iconEnabledColor: Colors.black,
                                               value: value2,
                                               dropdownColor: Colors.white,
-                                              items: _availableHours,
-                                              onChanged: (value) {
+                                              items: _availableHours
+                                                  .map<
+                                                      DropdownMenuItem<
+                                                          String>>((hour) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: hour.value,
+                                                        child: Text(hour.value
+                                                            as String),
+                                                      ))
+                                                  .toList(),
+                                              onChanged: (String? value) {
                                                 setState(() {
+                                                  value2 = value!;
                                                   _controllers[index].text =
-                                                      '$value1 - ${value!}';
-                                                  value2 = value;
+                                                      '$value1 - $value2';
                                                 });
                                               },
                                             ),
@@ -337,19 +358,22 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                     customTextField(
                                       onChanged: (value) {
                                         _controllers[index].text = value;
-                                        if (_controllers.every((controller) =>
-                                                controller.text.isNotEmpty) &&
-                                            _controllers[3].text ==
-                                                _controllers[4].text &&
-                                            _isSelected[0]) {
-                                          setState(() {
-                                            _bottomEnabled = true;
-                                          });
+                                        /* if (_controllers.every((controller) =>
+                                            controller.text.isNotEmpty)) {
+                                          if (_textFields[index] ==
+                                                  'password' &&
+                                              _controllers[index].text ==
+                                                  _controllers[index + 1]
+                                                      .text) {
+                                            setState(() {
+                                              _bottomEnabled = true;
+                                            });
+                                          }
                                         } else {
                                           setState(() {
                                             _bottomEnabled = false;
                                           });
-                                        }
+                                        } */
                                         if (_controllers[3].text !=
                                             _controllers[4].text) {
                                           setState(() {
@@ -427,9 +451,14 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             )
                           : const Text('No logo selected'),
                       ElevatedButton(
-                        onPressed: () {
-                          _pickLogoImage();
-                          print(_logoImage);
+                        onPressed: () async {
+                          try {
+                            // Pick the image first
+                            await _pickLogoImage();
+                          } catch (e) {
+                            // Handle any errors during the process
+                            print('Error during image upload: $e');
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -455,7 +484,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           setState(() {
                             _isSelected[0] = !_isSelected[0];
                           });
-                          if (_controllers.every(
+                          /* if (_controllers.every(
                                   (controller) => controller.text.isNotEmpty) &&
                               _controllers[3].text == _controllers[4].text &&
                               _isSelected[0]) {
@@ -466,7 +495,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                             setState(() {
                               _bottomEnabled = false;
                             });
-                          }
+                          } */
                         },
                       ),
                       const Flexible(
@@ -507,7 +536,46 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  try {} on Exception catch (e) {}
+                  try {
+                    Map<String, dynamic> shopData = {};
+                    _controllers.forEach((controller) {
+                      if (controller.text.isNotEmpty) {
+                        if (_textFields[_controllers.indexOf(controller)] ==
+                            'Phone Number') {
+                          shopData['Phone Number'] =
+                              '$selectedCountryCode ${controller.text}';
+                        } else {
+                          shopData[
+                                  '${_textFields[_controllers.indexOf(controller)]}'] =
+                              controller.text;
+                        }
+                      }
+                    });
+
+                    if (_logoImage != null && shopData.isNotEmpty) {
+                      String shopName = 'unDefined';
+                      CloudService cloudService = CloudService();
+
+                      for (var field in _textFields) {
+                        if (field == 'Shop Name') {
+                          shopName =
+                              _controllers[_textFields.indexOf(field)].text;
+                        }
+                      }
+
+                      String imagePath = await cloudService.uploadImage(
+                        File(_logoImage!.path),
+                        shopName,
+                      );
+                      shopData['image_path'] = imagePath;
+                      cloudService.uploadUserDetails(
+                          shopData['Shop Name'], shopData);
+                    } else {
+                      print('No image selected.');
+                    }
+                  } on Exception catch (e) {
+                    print('Error during image upload: $e');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,

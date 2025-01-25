@@ -15,5 +15,5 @@ abstract class AuthProvider {
   Future<void> sendEmailVerification();
   Future<void> initialize();
 
-  void updateUserName({required String displayName});
+  Future<void> updateUserName({required String displayName});
 }

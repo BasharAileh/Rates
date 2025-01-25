@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/theme_controller.dart';
 import 'package:rates/dialogs/overlay_image_dialog.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/auth/auth_user.dart';
@@ -18,11 +19,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String selectedLanguage = "English";
-  String selectedTheme = "Light";
   bool isEditing = false;
   late Future<FireStoreUser> _userFuture;
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
+  final ThemeController _themeController = Get.find<ThemeController>(); // Get the ThemeController instance
+
   @override
   void initState() {
     super.initState();
@@ -198,28 +200,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                             hintText: 'Enter your name',
                                           ),
                                           onEditingComplete: () async {
-                                            _focusNode
-                                                .unfocus(); // Hide the keyboard
+                                            _focusNode.unfocus();
 
                                             if (_controller.text !=
                                                     userInfo.userName &&
                                                 !isDialogOpen) {
                                               isDialogOpen = true;
-                                              // Text has changed, show confirmation dialog
                                               final bool? result =
                                                   await _showConfirmationDialog();
-
                                               if (result == true) {
                                                 await AuthService.firebase()
                                                     .updateUserName(
                                                   displayName: _controller.text,
-                                                )
-                                                    .then((value) {
-                                                  setState(() {});
-                                                });
+                                                );
                                               } else if (result == false) {
-                                                print('User pressed Cancel');
-                                                // Revert local changes
                                                 _controller.text =
                                                     userInfo.userName;
                                               }
@@ -242,18 +236,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
                                               if (result == true) {
                                                 isDialogOpen = true;
-                                                print('User pressed Save');
-                                                // Update the cloud username
                                                 await AuthService.firebase()
                                                     .updateUserName(
                                                   displayName: _controller.text,
-                                                )
-                                                    .then((value) {
-                                                  setState(() {});
-                                                });
-                                                setState(() {});
+                                                );
                                               } else if (result == false) {
-                                                print('User pressed Cancel');
                                                 _controller.text =
                                                     userInfo.userName;
                                               }
@@ -278,19 +265,31 @@ class _ProfilePageState extends State<ProfilePage> {
                                             });
                                           });
                                         },
-                                        child: Text(
-                                          userInfo.userName,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
+                                        child: StreamBuilder(
+                                          stream: cloudService
+                                              .getUserStream(user.id),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              String userName =
+                                                  snapshot.data?['user_name'];
+                                              _controller.text = userName;
+                                              return Text(
+                                                _controller.text,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              );
+                                            }
+                                            return const SizedBox();
+                                          },
                                         ),
                                       ),
                                 const SizedBox(width: 8),
                                 IconButton(
                                   icon: Icon(
                                     isEditing ? Icons.check : Icons.edit,
-                                    color: Colors.black,
+                                    color: isDarkMode ? Colors.white : Colors.black,
                                   ),
                                   onPressed: () async {
                                     if (isEditing) {
@@ -304,23 +303,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                             await _showConfirmationDialog();
 
                                         if (result == true) {
-                                          print('User pressed Save');
-                                          // Update the cloud username
                                           await AuthService.firebase()
                                               .updateUserName(
                                             displayName: _controller.text,
-                                          )
-                                              .then((value) {
-                                            setState(() {});
-                                          });
+                                          );
                                         } else if (result == false) {
-                                          print('User pressed Cancel');
                                           _controller.text = userInfo.userName;
                                         }
                                       }
 
                                       setState(() {
-                                        isEditing = false; // Exit editing mode
+                                        isEditing = false;
                                       });
                                     } else {
                                       setState(() {
@@ -458,7 +451,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: isDarkMode ? Colors.white : Colors.black,
                     ),
                     title: "Theme",
-                    subtitle: selectedTheme,
+                    subtitle: _themeController.themeMode == ThemeMode.light
+                        ? "Light"
+                        : _themeController.themeMode == ThemeMode.dark
+                            ? "Dark"
+                            : "System", // Show current theme
                     onTap: () {
                       _showPopup(context, "Theme", [
                         RadioListTile<String>(
@@ -470,9 +467,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           value: "Light",
                           activeColor: isDarkMode ? Colors.white : Colors.black,
-                          groupValue: selectedTheme,
+                          groupValue: _themeController.themeMode == ThemeMode.light
+                              ? "Light"
+                              : _themeController.themeMode == ThemeMode.dark
+                                  ? "Dark"
+                                  : "System",
                           onChanged: (value) {
-                            setState(() => selectedTheme = value!);
+                            _themeController.toggleTheme("Light"); // Switch to light theme
                             Navigator.of(context).pop();
                           },
                         ),
@@ -485,9 +486,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           value: "Dark",
                           activeColor: isDarkMode ? Colors.white : Colors.black,
-                          groupValue: selectedTheme,
+                          groupValue: _themeController.themeMode == ThemeMode.light
+                              ? "Light"
+                              : _themeController.themeMode == ThemeMode.dark
+                                  ? "Dark"
+                                  : "System",
                           onChanged: (value) {
-                            setState(() => selectedTheme = value!);
+                            _themeController.toggleTheme("Dark"); // Switch to dark theme
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        RadioListTile<String>(
+                          title: Text(
+                            "System",
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          value: "System",
+                          activeColor: isDarkMode ? Colors.white : Colors.black,
+                          groupValue: _themeController.themeMode == ThemeMode.light
+                              ? "Light"
+                              : _themeController.themeMode == ThemeMode.dark
+                                  ? "Dark"
+                                  : "System",
+                          onChanged: (value) {
+                            _themeController.toggleTheme("System"); // Switch to system theme
                             Navigator.of(context).pop();
                           },
                         ),

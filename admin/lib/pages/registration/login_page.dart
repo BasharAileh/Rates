@@ -1,4 +1,8 @@
 import 'dart:developer' as devtools show log;
+import 'package:admin/services/auth/auth_service.dart';
+import 'package:admin/services/auth/auth_user.dart';
+import 'package:admin/services/cloud/cloud_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:admin/constants/app_colors.dart';
@@ -65,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: [
                       Text(
-                        'Login to Rates',
+                        'Rates Admin',
                         style: TextStyle(
                           fontSize: screenWidth * 0.05641025641,
                           fontWeight: FontWeight.bold,
@@ -139,6 +143,36 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       onPressed: _bottomEnabled
                           ? () async {
+                              AuthService firebase = AuthService.firebase();
+                              try {
+                                AuthService firebase = AuthService.firebase();
+                                await firebase.logIn(
+                                  email: _controllers[0].text,
+                                  password: _controllers[1].text,
+                                );
+                                final user = firebase.currentUser;
+                                print(user);
+                                CloudService cloudService = CloudService();
+                                String userType = await cloudService
+                                    .getUserType(user?.id ?? '');
+                                if (userType == 'admin') {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    mounted ? context : context,
+                                    '/pending/',
+                                    (route) => false,
+                                  );
+                                } else if (userType == 'shop_owner') {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/shop/', (route) => false);
+                                } else {
+                                  throw Exception('User type not found');
+                                }
+                              } catch (e) {
+                                await firebase.logOut();
+                                devtools.log(e.toString());
+                                print(firebase.currentUser);
+                              }
+
                               // final email = _controllers[0].text;
                               // final password = _controllers[1].text;
                               // try {
@@ -259,6 +293,8 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                       onPressed: () async {
                         try {
+                          AuthService firebase = AuthService.firebase();
+                          print(firebase.currentUser);
                           // await AuthService.google().logIn();
                         } catch (e) {
                           devtools.log(e.toString());

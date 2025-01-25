@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
@@ -12,13 +10,13 @@ import 'package:rates/Pages/shop/rest_info_page.dart';
 import 'package:rates/Pages/shop/shops_page.dart';
 import 'package:rates/Pages/shop/view_ratings_page.dart';
 import 'package:rates/constants/routes.dart';
+import 'package:rates/constants/theme_controller.dart';
 import 'package:rates/dialogs/nav_bar.dart';
 import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/init_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   runApp(const MyApp());
 }
 
@@ -27,11 +25,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(BottomNavController());
+    Get.put(BottomNavController()); // Initialize BottomNavController
+    Get.put(ThemeController()); // Initialize ThemeController
+
     return GetMaterialApp(
       title: 'Flutter Demo',
-      themeMode: ThemeMode
-          .system, // Automatically switch theme based on device setting
+      themeMode: Get.find<ThemeController>().themeMode.value, // Use ThemeController's theme mode
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white, // Background color in light mode
@@ -60,8 +59,7 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor:
-            Colors.grey[900], // Background color in dark mode
+        scaffoldBackgroundColor: Colors.grey[900], // Background color in dark mode
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.grey[900],
           elevation: 0,
@@ -109,8 +107,7 @@ class MyApp extends StatelessWidget {
         ),
         GetPage(
           name: verifySuccessRoute,
-          page: () =>
-              const Placeholder(), // Replace with SvgTopToBottomFade if defined
+          page: () => const Placeholder(), // Replace with SvgTopToBottomFade if defined
         ),
         GetPage(
           name: verCodeDialogRoute,

@@ -46,9 +46,9 @@ class Shop {
       contactInfo: map[cloudContactInfo] is Map<String, dynamic>
           ? map[cloudContactInfo]
           : {},
-      bayesianAverage: (map[cloudBayesianAverage] as num).toDouble(),
+      bayesianAverage: (map[cloudBayesianAverage] ?? 0.0 as num).toDouble(),
       annualBayesianAverage:
-          (map[cloudAnnualBayesianAverage] as num).toDouble(),
+          (map[cloudAnnualBayesianAverage] ?? 0.0 as num).toDouble(),
       description: map[cloudShopDescription] ?? '',
       addedAt: map[cloudAddedAt] ?? '',
       availableHours: map[cloudAvailableHours] ?? '',

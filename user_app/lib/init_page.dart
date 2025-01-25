@@ -1,11 +1,9 @@
 import 'dart:developer' as devtools show log;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/Pages/home/main_pages_with_nav_bar.dart';
 import 'package:rates/Pages/other/splash_screen.dart';
 import 'package:rates/Pages/registration/login_page.dart';
-import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/constants/routes.dart';
 import 'package:rates/services/auth/auth_service.dart';

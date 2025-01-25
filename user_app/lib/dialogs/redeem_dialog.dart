@@ -1,9 +1,11 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rates/constants/aspect_ratio.dart';
 import 'package:rates/Pages/rating/rate_res_page.dart';
+import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
@@ -12,39 +14,19 @@ class VerificationDialogPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Map of valid codes to restaurants and meals
-    final Map<String, Map<String, dynamic>> validCodes = {
-      "CODE123": {
-        "restaurant": "BurgarMaker",
-        "meals": [
-          "2X Shewarma with extra sauce",
-          "Honey mustard boneless wings",
-          "Kenwa salad"
-        ],
-        "rating": "4.5",
-        "logo": "assets/images/BurgarMaker_Logo.jpeg"
-      },
-      "CODE456": {
-        "restaurant": "Another Restaurant",
-        "meals": ["Meal A", "Meal B", "Meal C"],
-        "rating": "3.5",
-        "logo": "assets/images/BurgarMaker_Logo.jpeg"
-      },
-    };
-
     final TextEditingController codeController = TextEditingController();
     final FirebaseCloudStorage cloudService = FirebaseCloudStorage();
 
     // Get the current theme
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    final userInfo = AuthService.firebase().currentUser;
     return Dialog(
-      backgroundColor: const Color.fromARGB(0, 0, 0, 0), // Transparent background
+      backgroundColor: const Color.fromARGB(0, 0, 0, 0), 
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // Blur effect
+        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
         child: Container(
           decoration: BoxDecoration(
-            color: isDarkMode ? Color(0xFF212121) : Colors.white, // Set background to grey[900] in dark mode and white in light mode
+            color: isDarkMode ? const Color.fromARGB(255, 33, 33, 33) : Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.all(20),
@@ -55,15 +37,21 @@ class VerificationDialogPage extends StatelessWidget {
               SvgPicture.asset(
                 'assets/logos/black_logo.svg',
                 height: AspectRatios.height * 0.06,
-                color: isDarkMode ? Colors.white : Colors.black, // Change color of SVG icons
+                colorFilter: ColorFilter.mode(
+  isDarkMode ? Colors.white : Colors.black,
+  BlendMode.srcIn,
+),
+
               ),
               SizedBox(height: AspectRatios.height * 0.02),
               Text(
+                userInfo!.isAnonymous?
+                "You are a guest":
                 "Redeem Your Meal Code",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDarkMode ? Colors.white : Colors.black, // Adjust text color based on theme
+                  color: isDarkMode ? Colors.white : Colors.black, 
                 ),
               ),
               SizedBox(height: AspectRatios.height * 0.02),
@@ -83,22 +71,22 @@ class VerificationDialogPage extends StatelessWidget {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(17),
                         borderSide: BorderSide(
-                          color: isDarkMode ? Colors.white : Colors.black, // Adjust border color based on theme
+                          color: isDarkMode ? Colors.white : Colors.black, 
                         ),
                       ),
                       labelText: "Enter Code",
                       labelStyle: TextStyle(
-                        color: isDarkMode ? Colors.white70 : Colors.black54, // Adjust label text color
+                        color: isDarkMode ? Colors.white70 : Colors.black54, 
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(17),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color.fromARGB(255, 255, 196, 45),
                         ),
                       ),
                     ),
                     style: TextStyle(
-                      color: isDarkMode ? Colors.white : Colors.black, // Adjust text field text color
+                      color: isDarkMode ? Colors.white : Colors.black, 
                     ),
                   ),
                 ),
@@ -123,8 +111,8 @@ class VerificationDialogPage extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDarkMode
-                          ? Color(0xFF616161) // Darker color in dark mode
-                          : Colors.grey[300], // Lighter color in light mode
+                          ? const Color(0xFF616161) 
+                          : Colors.grey[300], 
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
@@ -133,13 +121,17 @@ class VerificationDialogPage extends StatelessWidget {
                       "Cancel",
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDarkMode ? Colors.white : Colors.black, // Adjust text color
+                        color: isDarkMode ? Colors.white : Colors.black, 
                       ),
                     ),
                   ),
                   // Redeem Button
                   ElevatedButton(
-                    onPressed: () async {
+                     onPressed: userInfo.isAnonymous
+                        ? () {
+                            
+                          }
+                        : () async {
                       String enteredCode = codeController.text;
                       try {
                         await cloudService.getReceiptInfo(enteredCode);
@@ -223,7 +215,7 @@ class VerificationDialogPage extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "Redeem",
+                      userInfo.isAnonymous ? "Login" : "Redeem",
                       style: TextStyle(
                         fontSize: 14,
                         color: isDarkMode ? Colors.black : Colors.white, // Adjust button text color

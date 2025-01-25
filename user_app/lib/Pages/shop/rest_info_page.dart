@@ -68,9 +68,9 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
 
     if (Get.arguments != null && Get.arguments is Map<String, dynamic>) {
       final args = Get.arguments as Map<String, dynamic>;
-
       if (args.containsKey('shop')) {
         shop = args['shop'] as Shop;
+        imgList.add(shop!.shopImagePath);
 
         if (args.containsKey('rank')) {
           final rankValue = args['rank'];
@@ -121,7 +121,6 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Define isDarkMode here
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     devtools.log('Shop: $shop');
@@ -159,7 +158,13 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               child: Stack(
                 children: [
                   PageView(
-                    children: [],
+                    children: [
+                      if (imgList.isNotEmpty)
+                        Image.network(
+                          imgList.first,
+                          fit: BoxFit.contain,
+                        ),
+                    ],
                   ),
 
                   // Rating Badge

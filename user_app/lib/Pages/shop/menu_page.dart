@@ -110,7 +110,7 @@ class MenuPageState extends State<MenuPage> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        searchQuery = value;
+                        searchQuery = value.trim().toLowerCase();
                       });
                     },
                   ),
@@ -157,20 +157,7 @@ class MenuPageState extends State<MenuPage> {
                         ),
                       );
                     }),
-                SizedBox(
-                    width: AspectRatios.width *
-                        0.02), // Add some spacing between the columns
-                Container(
-                  width: AspectRatios.width * 0.12,
-                  height: AspectRatios.height * 0.055,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/testpic/babalyamen.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+               
                 SizedBox(width: AspectRatios.width * 0.02),
                 Expanded(
                   child: Column(
@@ -211,6 +198,7 @@ class MenuPageState extends State<MenuPage> {
                   .orderBy('bayesian_average', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
+                // ignore: unused_local_variable
                 final String productID;
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -232,9 +220,12 @@ class MenuPageState extends State<MenuPage> {
                 } else {
                   productID = '';
                 }
+                final filteredMeals = snapshot.data!.docs.where((doc) {
+                final mealName = doc['product_name'].toString().toLowerCase();
+                return mealName.contains(searchQuery); // Filter meals
+              }).toList();
                 return Column(
-                  children: snapshot.data!.docs
-                      .map<Widget>((DocumentSnapshot product) {
+                  children:filteredMeals.map<Widget>((DocumentSnapshot product) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -345,8 +336,8 @@ class MealCard extends StatelessWidget {
                             ],
                           ), // Transparent black overlay
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(17),
+                            bottomRight: Radius.circular(17),
                           ),
                         ),
                         child: Padding(

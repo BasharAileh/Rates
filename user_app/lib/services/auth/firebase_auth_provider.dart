@@ -41,6 +41,9 @@ class FirebaseAuthProvider implements AuthProvider {
         user = currentUser!;
         Map<String, dynamic> userMap = user.toMap();
         userMap.remove('id');
+        userMap['ratings'] = {
+          'a01': 0,
+        };
         await cloudService.insertDocument('user', userMap, id: user.id);
         return user;
       } else {
