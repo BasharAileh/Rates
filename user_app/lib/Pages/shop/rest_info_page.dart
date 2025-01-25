@@ -4,7 +4,6 @@ import 'package:rates/constants/routes.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'menu_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'dart:developer' as devtools show log;
