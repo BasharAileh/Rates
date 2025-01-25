@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:admin/constants/aspect_ratio.dart';
 import 'package:admin/services/cloud_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ List<String> _textFields = [
   'Shop Category',
   'Available On',
   'Address link',
+  'Location',
   'Available Hours',
   'Password',
   'Confirm Password',
@@ -42,19 +44,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   String password = '';
   String confirmPassword = '';
   String address = '';
+  String location = '';
   String pictureUrl = '';
   String pictureName = '';
-
-  final List<DropdownMenuItem<String>> _availableOn = [
-    const DropdownMenuItem(
-      value: 'Talabat',
-      child: Text('Talabat'),
-    ),
-    const DropdownMenuItem(
-      value: 'Careem',
-      child: Text('Careem'),
-    ),
-  ];
 
   List<DropdownMenuItem<String>> countryItems = [
     const DropdownMenuItem(
@@ -109,7 +101,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -138,6 +129,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           'password': password,
                           'confirmPassword': confirmPassword,
                           'address': address,
+                          'location': location,
                           'pictureUrl': pictureUrl,
                           'pictureName': pictureName,
                           'selectedCountryCode': selectedCountryCode,
@@ -259,7 +251,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(width: 20),
+                                             SizedBox(width: AspectRatios.width*0.06),
                                             DropdownButton(
                                               iconEnabledColor: Colors.black,
                                               value: value1,
@@ -273,7 +265,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 });
                                               },
                                             ),
-                                            const SizedBox(width: 20),
+                                             SizedBox(width: AspectRatios.width*0.06),
                                             const Text(
                                               'To',
                                               style: TextStyle(
@@ -281,7 +273,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(width: 20),
+                                             SizedBox(width: AspectRatios.width*0.06),
                                             DropdownButton(
                                               iconEnabledColor: Colors.black,
                                               value: value2,
@@ -305,34 +297,44 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                 if (_textFields[index] == 'Available On') {
                                   return Column(
                                     children: [
-                                      DropdownButtonFormField(
-                                        dropdownColor: Colors.white,
-                                        decoration: InputDecoration(
-                                          hintText: _textFields[index],
-                                          hintStyle: const TextStyle(
-                                            fontSize: 14,
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                            vertical: 10,
-                                          ),
-                                          border: OutlineInputBorder(
+                                      GestureDetector(
+                                        onTap: () =>
+                                            _editDeliveryPlatforms(index),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
                                             borderRadius:
                                                 BorderRadius.circular(37.5),
                                           ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  selectedPlatforms.isNotEmpty
+                                                      ? selectedPlatforms
+                                                          .join(", ")
+                                                      : _textFields[index],
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              const Icon(Icons.arrow_drop_down),
+                                            ],
+                                          ),
                                         ),
-                                        items: _availableOn,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _controllers[index].text = value!;
-                                          });
-                                        },
                                       ),
                                       SizedBox(height: screenHeight * 0.01),
                                     ],
                                   );
                                 }
+
                                 return Column(
                                   children: [
                                     customTextField(
@@ -574,8 +576,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            Text(
-                '  fghjadkfhgkfjdflshgjfkdflsjgkhdflsjdkjfhgjkfdslfldhjgfkdklfdlhgjfk')
           ],
         ),
       ),
@@ -605,102 +605,70 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     ),
   ];
 
-  final List<DropdownMenuItem<String>> _availableHours = [
-    const DropdownMenuItem(
-      value: '00:00',
-      child: Text('00:00'),
-    ),
-    const DropdownMenuItem(
-      value: '01:00',
-      child: Text('01:00'),
-    ),
-    const DropdownMenuItem(
-      value: '02:00',
-      child: Text('02:00'),
-    ),
-    const DropdownMenuItem(
-      value: '03:00',
-      child: Text('03:00'),
-    ),
-    const DropdownMenuItem(
-      value: '04:00',
-      child: Text('04:00'),
-    ),
-    const DropdownMenuItem(
-      value: '05:00',
-      child: Text('05:00'),
-    ),
-    const DropdownMenuItem(
-      value: '06:00',
-      child: Text('06:00'),
-    ),
-    const DropdownMenuItem(
-      value: '07:00',
-      child: Text('07:00'),
-    ),
-    const DropdownMenuItem(
-      value: '08:00',
-      child: Text('08:00'),
-    ),
-    const DropdownMenuItem(
-      value: '09:00',
-      child: Text('09:00'),
-    ),
-    const DropdownMenuItem(
-      value: '10:00',
-      child: Text('10:00'),
-    ),
-    const DropdownMenuItem(
-      value: '11:00',
-      child: Text('11:00'),
-    ),
-    const DropdownMenuItem(
-      value: '12:00',
-      child: Text('12:00'),
-    ),
-    const DropdownMenuItem(
-      value: '13:00',
-      child: Text('13:00'),
-    ),
-    const DropdownMenuItem(
-      value: '14:00',
-      child: Text('14:00'),
-    ),
-    const DropdownMenuItem(
-      value: '15:00',
-      child: Text('15:00'),
-    ),
-    const DropdownMenuItem(
-      value: '16:00',
-      child: Text('16:00'),
-    ),
-    const DropdownMenuItem(
-      value: '17:00',
-      child: Text('17:00'),
-    ),
-    const DropdownMenuItem(
-      value: '18:00',
-      child: Text('18:00'),
-    ),
-    const DropdownMenuItem(
-      value: '19:00',
-      child: Text('19:00'),
-    ),
-    const DropdownMenuItem(
-      value: '20:00',
-      child: Text('20:00'),
-    ),
-    const DropdownMenuItem(
-      value: '21:00',
-      child: Text('21:00'),
-    ),
-    const DropdownMenuItem(
-      value: '22:00',
-      child: Text('22:00'),
-    ),
-    const DropdownMenuItem(
-      value: '23:00',
-      child: Text('23:00'),
-    ),
+  final List<DropdownMenuItem<String>> _availableHours = List.generate(
+  24,
+  (index) {
+    final hour = '${index.toString().padLeft(2, '0')}:00';
+    return DropdownMenuItem(
+      value: hour,
+      child: Text(hour),
+    );
+  },
+);
+
+  List<String> selectedPlatforms = [];
+  List<String> deliveryPlatforms = [
+    'Offerat',
+    'Careem food',
+    'Mythings',
+    'Talabat'
   ];
+  void _editDeliveryPlatforms(int index) {
+    List<String> tempSelectedPlatforms = List.from(selectedPlatforms);
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Center(child: Text("Select Delivery Platforms")),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: deliveryPlatforms.map((platform) {
+              return CheckboxListTile(
+                activeColor: AppColors.primaryColor,
+                value: tempSelectedPlatforms.contains(platform),
+                title: Text(platform),
+                onChanged: (isChecked) {
+                  setDialogState(() {
+                    if (isChecked!) {
+                      tempSelectedPlatforms.add(platform);
+                    } else {
+                      tempSelectedPlatforms.remove(platform);
+                    }
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  selectedPlatforms = tempSelectedPlatforms;
+                  _controllers[index].text = selectedPlatforms.join(", ");
+                });
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Save",
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

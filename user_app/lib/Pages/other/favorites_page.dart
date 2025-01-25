@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rates/Pages/shop/rest_info_page.dart';
+import 'package:rates/Pages/shop/shop_info_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   final List<Map<String, dynamic>> favorites;
@@ -259,7 +259,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const RestaurantInformationPage(),
+                    builder: (context) => const ShopInformationPage(),
                   ),
                 );
               },
