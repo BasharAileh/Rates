@@ -1,7 +1,10 @@
+import 'package:admin/init_page.dart';
+import 'package:admin/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import "package:admin/constants/aspect_ratio.dart";
 import 'package:flutter_svg/svg.dart';
 import 'package:admin/constants/app_colors.dart';
+
 class CheckRes extends StatefulWidget {
   const CheckRes({
     super.key,
@@ -9,6 +12,7 @@ class CheckRes extends StatefulWidget {
   @override
   State<CheckRes> createState() => CheckResState();
 }
+
 class CheckResState extends State<CheckRes> {
   int openingHour = 9;
   int closingHour = 21;
@@ -28,24 +32,22 @@ class CheckResState extends State<CheckRes> {
     'instagram': '',
   };
   List<Map<String, String?>> infoRows = [
-    {'icon': 'assets/icons/location.svg', 'text': 'shop location', 'link': ''},
-    {
-      'icon': 'assets/icons/phone.svg',
-      'text': '07(contact number)',
-      'link': ''
-    },
-    {
-      'icon': 'assets/icons/watch.svg',
-      'text': 'Opening Hours:\n 9:00  - 1:00 '
-    },
-    {'icon': 'assets/icons/delivery.svg', 'text': 'Delivery Apps: '},
+    {'icon': 'assets/icons/phone.svg', 'text': 'Phone Number', 'link': ''},
+    {'icon': 'assets/icons/location.svg', 'text': 'Shop location', 'link': ''},
+    {'icon': 'assets/icons/email.svg', 'text': 'Email', 'link': ''},
+    {'icon': 'assets/icons/watch.svg', 'text': 'Available Hours'},
+    {'icon': 'assets/icons/delivery.svg', 'text': 'Available On'},
   ];
   final String rank = "#1st Place";
   String reviews = "300";
   double rating = 3.5;
   bool isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
+    final shopData = ModalRoute.of(context)!.settings.arguments as Map;
+    shopData.remove('Password');
+    shopData.remove('Confirm Password');
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -63,119 +65,92 @@ class CheckResState extends State<CheckRes> {
             children: [
               SizedBox(
                 height: AspectRatios.height * 0.2014218009478672985781990521327,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: GestureDetector(
-                        child: SvgPicture.asset(
-                          imagePath,
-                          height: AspectRatios.height *
-                              0.2014218009478672985781990521327,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                width: double.infinity,
+                child: Image.network(
+                  shopData['image_path']!,
+                  width: double.infinity,
+                  height: AspectRatios.height * 0.2,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: AspectRatios.height * 0.02,
+                      ),
+                      child: Text(
+                        shopData['Shop Name'],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    Transform.translate(
-                      offset: const Offset(0, 20),
-                    ),
-                  ],
-                ),
-              ),
-              // Details Section
-              Column(
-                children: [
+                  ),
+                  SizedBox(height: AspectRatios.height * 0.02),
                   Padding(
                     padding: EdgeInsets.only(
                       left: AspectRatios.width * 0.05769230,
-                      right: AspectRatios.width * 0.0276923,
-                      top: AspectRatios.height * 0.03332938,
                     ),
-                    child: Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    shopName,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: socialLinks.keys.map((platform) {
-                                        return SizedBox(
-                                          height: AspectRatios.height * 0.05,
-                                          width: AspectRatios.width * 0.1,
-                                          child: IconButton(
-                                            padding: const EdgeInsets.all(0),
-                                            icon: SvgPicture.asset(
-                                                "assets/icons/$platform.svg"),
-                                            onPressed: () {},
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    description,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: AspectRatios.height * 0.02),
-                            const Text(
-                              'Information',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: const Text(
+                      'Information',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Column(
                     children: List.generate(
                       infoRows.length,
-                      (index) => ListTile(
-                        leading: SvgPicture.asset(
-                          infoRows[index]['icon']!,
-                          width: AspectRatios.width * 0.06853846153,
-                          height: AspectRatios.height * 0.02893601895,
-                        ),
-                        title: Text(infoRows[index]['text']!),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: AspectRatios.width * 0.0276923,
-                        ),
-                        horizontalTitleGap: 5,
-                      ),
+                      (index) {
+                        if (shopData[infoRows[index]['text']] is List) {
+                          return ListTile(
+                            leading: SvgPicture.asset(
+                              infoRows[index]['icon']!,
+                              width: AspectRatios.width * 0.06853846153,
+                              height: AspectRatios.height * 0.02893601895,
+                            ),
+                            title: Row(
+                              children: List.generate(
+                                shopData[infoRows[index]['text']]!.length,
+                                (i) => Padding(
+                                  padding: const EdgeInsets.only(right: 5),
+                                  child: Text(
+                                      shopData[infoRows[index]['text']]![i]),
+                                ),
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: AspectRatios.width * 0.0276923,
+                            ),
+                            horizontalTitleGap: 5,
+                          );
+                        } else {
+                          return ListTile(
+                            leading: SvgPicture.asset(
+                              infoRows[index]['icon']!,
+                              width: AspectRatios.width * 0.06853846153,
+                              height: AspectRatios.height * 0.02893601895,
+                            ),
+                            title:
+                                Text(shopData[infoRows[index]['text']] ?? ''),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: AspectRatios.width * 0.0276923,
+                            ),
+                            horizontalTitleGap: 5,
+                          );
+                        }
+                      },
                     ),
                   ),
                   SizedBox(
                     height: AspectRatios.height * 0.02,
                   ),
                 ],
-              
               ),
-              
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +162,10 @@ class CheckResState extends State<CheckRes> {
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        /* await cloudService.deletePendingRestaurant(
+                            shopData['documentID']); */
+                      },
                       child: const Text(
                         'Reject',
                         style: TextStyle(
@@ -195,9 +173,8 @@ class CheckResState extends State<CheckRes> {
                           color: Colors.black,
                         ),
                       ),
-                      
                     ),
-                     const SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -205,7 +182,64 @@ class CheckResState extends State<CheckRes> {
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Accept Restaurant'),
+                              content: const Text(
+                                  'Are you sure you want to accept this restaurant?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    /*  AuthService.firebase().createUser(
+                                      email: shopData['email'],
+                                      password: shopData['Password'],
+                                      userName: shopData['Shop Name'],
+                                    ); */
+                                    try {
+                                      cloudService.uploadShopData(
+                                        shopData as Map<String, dynamic>,
+                                        shopData['Shop Category']
+                                            .toString()
+                                            .toLowerCase(),
+                                      );
+                                    } catch (e) {
+                                      print(e);
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Accept',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                       child: const Text(
                         'Accept',
                         style: TextStyle(
@@ -214,8 +248,6 @@ class CheckResState extends State<CheckRes> {
                         ),
                       ),
                     ),
-                   
-                    
                   ],
                 ),
               ),

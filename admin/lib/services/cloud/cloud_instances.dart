@@ -1,4 +1,4 @@
-import 'package:rates/services/cloud/cloud_constants.dart';
+import 'package:admin/services/cloud/cloud_constants.dart';
 
 class Shop {
   final String? shopID;

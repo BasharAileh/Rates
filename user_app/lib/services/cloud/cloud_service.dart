@@ -1,10 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class CloudService {
-  Future<String> uploadImage(
-      File imageFile, String fileName, String shopName) async {
+  Future<String> uploadImage(File imageFile, String shopName) async {
     try {
       print('Starting file upload...');
 
@@ -13,8 +15,13 @@ class CloudService {
         return '';
       }
 
-      Reference storageRef =
-          FirebaseStorage.instance.ref().child('pending/$shopName/$fileName');
+      // Generate a unique file name using a combination of shop name and timestamp.
+      String uniqueFileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${Uuid().v4()}.jpg';
+
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('pending/$shopName/$uniqueFileName');
 
       print('Uploading file: ${imageFile.path}');
 
@@ -51,7 +58,7 @@ class CloudService {
       print('Getting user type...');
 
       DocumentSnapshot snapshot =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+          await FirebaseFirestore.instance.collection('user').doc(uid).get();
 
       if (snapshot.exists) {
         String userType =
@@ -66,6 +73,36 @@ class CloudService {
       }
     } catch (e) {
       print('Failed to get user type: $e');
+      rethrow;
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> getPendingRestaurants() {
+    try {
+      print('Getting pending restaurants...');
+
+      return FirebaseFirestore.instance
+          .collection('pending')
+          .snapshots()
+          .map((snapshot) {
+        List<Map<String, dynamic>> restaurants = [];
+
+        for (QueryDocumentSnapshot doc in snapshot.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+          restaurants.add({
+            'name': doc.id,
+            'image': data['image_path'],
+            'status': data['status'],
+          });
+        }
+
+        print('Pending restaurants: $restaurants');
+
+        return restaurants;
+      });
+    } catch (e) {
+      print('Failed to get pending restaurants: $e');
       rethrow;
     }
   }
