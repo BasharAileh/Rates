@@ -110,7 +110,7 @@ class MenuPageState extends State<MenuPage> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        searchQuery = value;
+                        searchQuery = value.trim().toLowerCase();
                       });
                     },
                   ),
@@ -199,6 +199,7 @@ class MenuPageState extends State<MenuPage> {
                   .orderBy('bayesian_average', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
+                // ignore: unused_local_variable
                 final String productID;
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -220,9 +221,13 @@ class MenuPageState extends State<MenuPage> {
                 } else {
                   productID = '';
                 }
+                final filteredMeals = snapshot.data!.docs.where((doc) {
+                  final mealName = doc['product_name'].toString().toLowerCase();
+                  return mealName.contains(searchQuery); // Filter meals
+                }).toList();
                 return Column(
-                  children: snapshot.data!.docs
-                      .map<Widget>((DocumentSnapshot product) {
+                  children:
+                      filteredMeals.map<Widget>((DocumentSnapshot product) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),

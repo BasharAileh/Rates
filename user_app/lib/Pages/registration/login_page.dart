@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: SvgPicture.asset(
                       'assets/logos/black_logo.svg',
                       width: 80,
-                      color: isDarkMode ? AppColors.primaryColor : Colors.white,
+                      color: isDarkMode ? AppColors.primaryColor : Colors.black,
                     ),
                   ),
                   SizedBox(
