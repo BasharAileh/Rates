@@ -296,7 +296,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.favorite,
               color: Colors.red,
             ),
