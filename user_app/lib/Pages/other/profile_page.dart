@@ -23,7 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<FireStoreUser> _userFuture;
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
-  final ThemeController _themeController = Get.find<ThemeController>(); // Get the ThemeController instance
+  final ThemeController _themeController =
+      Get.find<ThemeController>(); // Get the ThemeController instance
 
   @override
   void initState() {
@@ -289,7 +290,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 IconButton(
                                   icon: Icon(
                                     isEditing ? Icons.check : Icons.edit,
-                                    color: isDarkMode ? Colors.white : Colors.black,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                   onPressed: () async {
                                     if (isEditing) {
@@ -467,13 +470,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           value: "Light",
                           activeColor: isDarkMode ? Colors.white : Colors.black,
-                          groupValue: _themeController.themeMode == ThemeMode.light
-                              ? "Light"
-                              : _themeController.themeMode == ThemeMode.dark
-                                  ? "Dark"
-                                  : "System",
+                          groupValue:
+                              _themeController.themeMode == ThemeMode.light
+                                  ? "Light"
+                                  : _themeController.themeMode == ThemeMode.dark
+                                      ? "Dark"
+                                      : "System",
                           onChanged: (value) {
-                            _themeController.toggleTheme("Light"); // Switch to light theme
+                            _themeController
+                                .toggleTheme("Light"); // Switch to light theme
                             Navigator.of(context).pop();
                           },
                         ),
@@ -486,13 +491,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           value: "Dark",
                           activeColor: isDarkMode ? Colors.white : Colors.black,
-                          groupValue: _themeController.themeMode == ThemeMode.light
-                              ? "Light"
-                              : _themeController.themeMode == ThemeMode.dark
-                                  ? "Dark"
-                                  : "System",
+                          groupValue:
+                              _themeController.themeMode == ThemeMode.light
+                                  ? "Light"
+                                  : _themeController.themeMode == ThemeMode.dark
+                                      ? "Dark"
+                                      : "System",
                           onChanged: (value) {
-                            _themeController.toggleTheme("Dark"); // Switch to dark theme
+                            _themeController
+                                .toggleTheme("Dark"); // Switch to dark theme
                             Navigator.of(context).pop();
                           },
                         ),
@@ -505,13 +512,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           value: "System",
                           activeColor: isDarkMode ? Colors.white : Colors.black,
-                          groupValue: _themeController.themeMode == ThemeMode.light
-                              ? "Light"
-                              : _themeController.themeMode == ThemeMode.dark
-                                  ? "Dark"
-                                  : "System",
+                          groupValue:
+                              _themeController.themeMode == ThemeMode.light
+                                  ? "Light"
+                                  : _themeController.themeMode == ThemeMode.dark
+                                      ? "Dark"
+                                      : "System",
                           onChanged: (value) {
-                            _themeController.toggleTheme("System"); // Switch to system theme
+                            _themeController.toggleTheme(
+                                "System"); // Switch to system theme
                             Navigator.of(context).pop();
                           },
                         ),
