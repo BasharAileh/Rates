@@ -1,13 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+import 'package:admin/services/auth/auth_service.dart';
 import 'package:admin/services/cloud/cloud_instances.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
 class CloudService {
-  Future<String> uploadImage(File imageFile, String shopName) async {
+  Future<String> uploadPendingImage(File imageFile, String shopName) async {
     try {
       print('Starting file upload...');
 
@@ -22,7 +23,96 @@ class CloudService {
 
       Reference storageRef = FirebaseStorage.instance
           .ref()
-          .child('pending/$shopName/$uniqueFileName');
+          .child('pending/$shopName/shop_images/$shopName.jpg');
+
+      print('Uploading file: ${imageFile.path}');
+
+      await storageRef.putFile(imageFile);
+
+      print('File uploaded successfully.');
+
+      String downloadUrl = await storageRef.getDownloadURL();
+
+      print('File uploaded successfully. URL: $downloadUrl');
+
+      return downloadUrl;
+    } catch (e) {
+      print('Failed to upload image: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> moveFolder(String sourceFolder, String destinationFolder) async {
+    try {
+      print('Moving folder...');
+
+      final sourceRef = FirebaseStorage.instance.ref(sourceFolder);
+
+      final ListResult result = await sourceRef.listAll();
+
+      for (final fileRef in result.items) {
+        final fullPath = fileRef.fullPath;
+
+        final fileName = fullPath.split('/').last;
+
+        final destinationPath = '$destinationFolder/$fileName';
+
+        final fileBytes = await fileRef.getData();
+        if (fileBytes != null) {
+          await FirebaseStorage.instance
+              .ref(destinationPath)
+              .putData(fileBytes);
+          print('Copied: $fullPath to $destinationPath');
+        }
+
+        await fileRef.delete();
+        print('Deleted: $fullPath');
+      }
+
+      // Optionally: Delete the source folder (Firebase Storage does not have actual folders)
+      print('Folder moved successfully!');
+    } catch (e) {
+      print('Failed to move folder: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> moveFile(String oldPath, String newPath) async {
+    try {
+      final oldFileRef = FirebaseStorage.instance.ref(oldPath);
+
+      final fileData = await oldFileRef.getData();
+
+      if (fileData == null) {
+        throw Exception('File not found at $oldPath');
+      }
+
+      final newFileRef = FirebaseStorage.instance.ref(newPath);
+
+      await newFileRef.putData(fileData);
+
+      await oldFileRef.delete();
+
+      print('File moved successfully from $oldPath to $newPath');
+    } catch (e) {
+      print('Failed to move file: $e');
+    }
+  }
+
+  Future<String> uploadShopImage(File imageFile, Shop shopData) async {
+    try {
+      print('Starting file upload...');
+
+      if (!await imageFile.exists()) {
+        print('File does not exist!');
+        return '';
+      }
+
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('shops/${getCategoryId(
+            shopData.categoryID,
+          )}/${shopData.shopName}/shop_images/${shopData.shopName}_logo.jpg');
 
       print('Uploading file: ${imageFile.path}');
 
@@ -90,7 +180,7 @@ class CloudService {
 
         for (QueryDocumentSnapshot doc in snapshot.docs) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          data['docID'] = doc.id;
+          data['doc_id'] = doc.id;
           restaurants.add(data);
         }
 
@@ -123,6 +213,46 @@ class CloudService {
 
       // Return the category ID
       return categoryID;
+    } catch (e) {
+      throw Exception('Failed to get category ID: $e');
+    }
+  }
+
+  Future<String> getCategoryName(String? catName) async {
+    try {
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('category')
+          .doc(catName)
+          .get();
+
+      if (!documentSnapshot.exists) {
+        throw Exception('Category not found with ID $catName');
+      }
+
+      final category = documentSnapshot.data();
+      final categoryName = (category as Map<String, dynamic>?)?['name'] ?? '';
+
+      return categoryName;
+    } catch (e) {
+      throw Exception('Failed to get category ID: $e');
+    }
+  }
+
+  Future<String> getProductCategoryName(String productCategoryID) async {
+    try {
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('product_category')
+          .doc(productCategoryID)
+          .get();
+
+      if (!documentSnapshot.exists) {
+        throw Exception('Category not found with ID $productCategoryID');
+      }
+
+      final category = documentSnapshot.data();
+      final categoryName = (category as Map<String, dynamic>?)?['name'] ?? '';
+
+      return categoryName;
     } catch (e) {
       throw Exception('Failed to get category ID: $e');
     }
@@ -179,13 +309,15 @@ class CloudService {
   }
 
   Future<void> uploadShopData(
-      Map<String, dynamic> shopData, String category) async {
+      {required Map<String, dynamic> shopData,
+      required String category}) async {
     try {
       print('Starting shop data upload...');
 
       String? documentID;
       await getCategoryId(category).then(
         (categoryID) {
+          shopData['category_id'] = categoryID;
           getShopsByCategory(categoryID).then(
             (shops) {
               String shop = shops.last['id'];
@@ -195,7 +327,7 @@ class CloudService {
 
               documentID =
                   '$categoryID${shopNumber.toString().padLeft(6, '0')}';
-
+              shopData.remove('shop_id');
               return FirebaseFirestore.instance
                   .collection('shop')
                   .doc(documentID)
@@ -306,31 +438,56 @@ class CloudService {
     }
   }
 
-  Future<String?> createProductId(String shopID, String categoryID) {
+  Future<String?> createProductId(String shopID, String categoryID) async {
     try {
       print('Creating product ID...');
 
-      return FirebaseFirestore.instance
+      final querySnapshot = await FirebaseFirestore.instance
           .collection('products')
           .where('shop_id', isEqualTo: shopID)
           .where('category', isEqualTo: categoryID)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return '$shopID-$categoryID-1';
+      }
+
+      final products = querySnapshot.docs;
+
+      final lastProduct = products.last;
+      final lastProductID = lastProduct.id;
+
+      final lastProductNumber = int.parse(lastProductID.split('-').last);
+      final newProductNumber = lastProductNumber + 1;
+
+      return '$shopID-$categoryID-$newProductNumber';
+    } catch (e) {
+      throw Exception('Failed to create product ID: $e');
+    }
+  }
+
+  Future<String> getOwnerIdByEmail(email) {
+    try {
+      print('Getting shop info by owner email...');
+
+      return FirebaseFirestore.instance
+          .collection('shop')
+          .where('contact_info.email', isEqualTo: email)
           .get()
           .then((querySnapshot) {
         if (querySnapshot.docs.isEmpty) {
-          throw Exception('No products found');
+          throw Exception('Shop not found');
         }
 
-        final products = querySnapshot.docs;
-        final lastProduct = products.last;
+        final shop = querySnapshot.docs.first.data();
+        final ownerID = shop['owner_id'];
 
-        final lastProductID = lastProduct.id;
-        final lastProductNumber = int.parse(lastProductID.split(shopID).last);
-        final newProductNumber = lastProductNumber + 1;
-
-        return '$shopID-$categoryID-$newProductNumber';
+        return ownerID;
       });
-    } catch (e) {
-      throw Exception('Failed to create product ID: $e');
+    } catch (e, stackTrace) {
+      print('Failed to get shop info by owner email: $e');
+      print('Stack trace: $stackTrace');
+      throw Exception('Failed to get shop info by owner email: $e');
     }
   }
 }

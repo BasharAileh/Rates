@@ -119,7 +119,7 @@ class _ViewRatingState extends State<ViewRating> {
           style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor:isDarkMode ? Colors.grey[900] : Colors.white,
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
         elevation: 0,
       ),
       body: FutureBuilder(
@@ -263,7 +263,7 @@ class _ViewRatingState extends State<ViewRating> {
                         Row(
                           children: [
                             Text(
-                              mealName,
+                              product.productName,
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,

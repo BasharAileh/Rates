@@ -144,20 +144,21 @@ class MenuPageState extends State<MenuPage> {
                           );
                         }
                       }
+                      //default shop image
                       return Container(
                         width: AspectRatios.width * 0.12,
                         height: AspectRatios.height * 0.055,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           image: const DecorationImage(
-                            image: AssetImage(
-                                'assets/images/testpic/babalyamen.jpg'),
+                            //TODO: Add default shop image
+                            image: AssetImage(''),
                             fit: BoxFit.cover,
                           ),
                         ),
                       );
                     }),
-               
+                SizedBox(width: AspectRatios.width * 0.02),
                 SizedBox(width: AspectRatios.width * 0.02),
                 Expanded(
                   child: Column(
@@ -221,11 +222,12 @@ class MenuPageState extends State<MenuPage> {
                   productID = '';
                 }
                 final filteredMeals = snapshot.data!.docs.where((doc) {
-                final mealName = doc['product_name'].toString().toLowerCase();
-                return mealName.contains(searchQuery); // Filter meals
-              }).toList();
+                  final mealName = doc['product_name'].toString().toLowerCase();
+                  return mealName.contains(searchQuery); // Filter meals
+                }).toList();
                 return Column(
-                  children:filteredMeals.map<Widget>((DocumentSnapshot product) {
+                  children:
+                      filteredMeals.map<Widget>((DocumentSnapshot product) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -297,120 +299,116 @@ class MealCard extends StatelessWidget {
             future: cloudService.isImageAvailable(menuItem["image"]),
             builder: (context, snapshot) {
               bool isImageAvailable = false;
-              print(menuItem);
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
               if (snapshot.hasData) {
                 isImageAvailable = snapshot.data!;
-              }
 
-              return Container(
-                height: AspectRatios.height * 0.16,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(17),
-                  image: DecorationImage(
-                    image: isImageAvailable == true
-                        ? NetworkImage(menuItem["image"])
-                        : const AssetImage('assets/images/testpic/zerbyan.jpg')
-                            as ImageProvider,
-                    fit: BoxFit.cover,
+                return Container(
+                  height: AspectRatios.height * 0.16,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(17),
+                    image: DecorationImage(
+                      image: isImageAvailable
+                          ? NetworkImage(menuItem["image"])
+                          : const AssetImage(
+                              'assets/images/meals/defult_meal_image.jpg'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color.fromARGB(190, 0, 0, 0),
-                              Color.fromARGB(46, 0, 0, 0),
-                            ],
-                          ), // Transparent black overlay
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(17),
-                            bottomRight: Radius.circular(17),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Color.fromARGB(190, 0, 0, 0),
+                                Color.fromARGB(46, 0, 0, 0),
+                              ],
+                            ), // Transparent black overlay
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 4,
-                            left: 16.0,
-                            right: 4.0,
-                            bottom: 8.0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    menuItem["name"] ?? '',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: AspectRatios.width * 0.04,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'view ratings and comments',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 12),
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const VerificationDialogPage(); // Show the verification dialog
-                                      },
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 1, horizontal: 0),
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 243, 198, 35),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    // Increase elevation for a more pronounced shadow
-                                  ),
-                                  child: const Text('Rate',
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 4,
+                              left: 16.0,
+                              right: 4.0,
+                              bottom: 8.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      menuItem["name"] ?? '',
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.white)),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: AspectRatios.width * 0.04,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const Row(
+                                      children: [
+                                        Text(
+                                          'view ratings and comments',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const VerificationDialogPage(); // Show the verification dialog
+                                        },
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 1, horizontal: 0),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 243, 198, 35),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      // Increase elevation for a more pronounced shadow
+                                    ),
+                                    child: const Text('Rate',
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.white)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    ],
+                  ),
+                );
+              }
+              return SizedBox.shrink();
             },
           ),
         ),
@@ -419,27 +417,3 @@ class MealCard extends StatelessWidget {
     );
   }
 }
-
-class Restaurant {
-  final String name;
-  final double rating;
-  final List<Map<String, String>> menuItems;
-
-  Restaurant({
-    required this.name,
-    required this.rating,
-    required this.menuItems,
-  });
-}
-
-final Restaurant restaurant = Restaurant(
-  name: "Bab el-yamen",
-  rating: 3.5,
-  menuItems: [
-    {"name": "Mandi Meal", "image": "assets/images/testpic/raizmalee.jpg"},
-    {"name": "Mansaf Meal", "image": "assets/images/testpic/zerbyan.jpg"},
-    {"name": "Zerbyan Meal", "image": "assets/images/testpic/raizmalee.jpg"},
-    {"name": "Kabseh Meal", "image": "assets/images/testpic/zerbyan.jpg"},
-    {"name": "Ozii Meal", "image": "assets/images/testpic/raizmalee.jpg"},
-  ],
-);

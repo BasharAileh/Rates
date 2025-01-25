@@ -42,15 +42,8 @@ class _LoginPageState extends State<LoginPage> {
           left: screenWidth * 0.07051282051,
           right: screenWidth * 0.07051282051,
         ),
-        /* symmetric(
-          vertical: AspectRatios.height * 0.19379146919,
-          horizontal: AspectRatios.width * 0.07051282051,
-        ), */
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            /*  final width = constraints.maxWidth;
-            final height = constraints.maxHeight; */
-
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,14 +66,6 @@ class _LoginPageState extends State<LoginPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      /*
-                    Transform.translate(
-                      offset: Offset(0, -10),
-                      child: SvgPicture.asset(
-                        height: AspectRatios.height * 0.04909953,
-                        'assets/logos/black_logo.svg',
-                      ),
-                    ), */
                     ],
                   ),
                   SizedBox(height: screenHeight * 0.03554502369),
@@ -118,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           height: screenHeight * 0.054,
+                          obscureText: index == 1, // Add this line
                         ),
                         if (index == 0)
                           SizedBox(
@@ -226,9 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                            /* width: constraints.maxWidth * 0.02, */
-                            ),
+                        const SizedBox(),
                         const Text(
                           'Don\'t have an account?',
                         ),

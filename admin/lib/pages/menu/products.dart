@@ -147,10 +147,10 @@ class ProductPageState extends State<ProductPage> {
                               .then((value) {
                             categoryType = value;
                           });
-
                           if (shop?.shopID != null) {
                             final productID = await cloudService
                                 .createProductId(shop!.shopID!, categoryType);
+
                             Product product = Product(
                               productID: productID,
                               addedAt: DateTime.now().toIso8601String(),

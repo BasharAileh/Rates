@@ -214,24 +214,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? Colors.grey[900]
-            : Colors.white,
+          ? Colors.grey[900]
+          : Colors.white,
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? Colors.grey[900]
             : Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
         title: Text(
           'Favorites',
           style: TextStyle(

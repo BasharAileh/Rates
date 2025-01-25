@@ -41,7 +41,8 @@ class _HomePageState extends State<HomePage> {
   int _currentPage = 0; // Added to track current page
   bool _isManualSelection = false; // Added to handle manual selection
   int _selectedCategoryIndex = -1; // Added to track selected category
-  String _selectedCategoryName = 'Food'; // Added to track selected category name
+  String _selectedCategoryName =
+      'Food'; // Added to track selected category name
 
   @override
   void initState() {
@@ -64,7 +65,8 @@ class _HomePageState extends State<HomePage> {
       if (!_isManualSelection) {
         setState(() {
           _currentPage = (_currentPage + 1) % categories.length;
-          _selectedCategoryName = categories[_currentPage]; // Update category name
+          _selectedCategoryName =
+              categories[_currentPage]; // Update category name
         });
         for (var controller in _pageController) {
           controller.animateToPage(
@@ -92,7 +94,8 @@ class _HomePageState extends State<HomePage> {
         _isManualSelection = true;
         _stopTimer();
         _currentPage = index;
-        _selectedCategoryName = categories[index]; // Update selected category name
+        _selectedCategoryName =
+            categories[index]; // Update selected category name
         for (var controller in _pageController) {
           controller.animateToPage(
             index,
@@ -256,10 +259,11 @@ class _HomePageState extends State<HomePage> {
                                         child: Container(
                                           color: _selectedCategoryIndex == index
                                               ? null
-                                              : Colors.grey[800], // Added color change
+                                              : Colors.grey[
+                                                  800], // Added color change
                                           height: AspectRatios.height * 0.054,
-                                          width:
-                                              AspectRatios.width * 0.10256410256,
+                                          width: AspectRatios.width *
+                                              0.10256410256,
                                         ),
                                       ),
                                       Center(
@@ -445,17 +449,22 @@ class _HomePageState extends State<HomePage> {
                                     devtools.log(shops.toString());
                                     devtools.log(shops.length.toString());
                                     return InkWell(
-                                      onTap: () {
-                                        Get.toNamed(
-                                          topRatedRoute,
-                                          arguments: {
-                                            'category':
-                                                categories[horizontalIndex],
-                                            'category_id':
-                                                categoryIDs[horizontalIndex],
-                                          },
-                                        );
-                                      },
+                                      onTap: shops[horizontalIndex]
+                                                  [verticalIndex]
+                                              .isNotEmpty
+                                          ? () {
+                                              Get.toNamed(
+                                                topRatedRoute,
+                                                arguments: {
+                                                  'category': categories[
+                                                      horizontalIndex],
+                                                  'category_id': categoryIDs[
+                                                      horizontalIndex],
+                                                  'order_by': verticalIndex,
+                                                },
+                                              );
+                                            }
+                                          : null,
                                       child: LayoutBuilder(
                                         builder: (context, constraints) {
                                           try {
