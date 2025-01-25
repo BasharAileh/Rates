@@ -306,29 +306,29 @@ class CloudService {
     }
   }
 
-  Future<String?> createProductId(String shopID, String categoryID) {
+  Future<String?> createProductId(String shopID, String categoryID) async {
     try {
       print('Creating product ID...');
 
-      return FirebaseFirestore.instance
+      final querySnapshot = await FirebaseFirestore.instance
           .collection('products')
           .where('shop_id', isEqualTo: shopID)
           .where('category', isEqualTo: categoryID)
-          .get()
-          .then((querySnapshot) {
-        if (querySnapshot.docs.isEmpty) {
-          throw Exception('No products found');
-        }
+          .get();
 
-        final products = querySnapshot.docs;
-        final lastProduct = products.last;
+      if (querySnapshot.docs.isEmpty) {
+        return '$shopID-$categoryID-1';
+      }
 
-        final lastProductID = lastProduct.id;
-        final lastProductNumber = int.parse(lastProductID.split(shopID).last);
-        final newProductNumber = lastProductNumber + 1;
+      final products = querySnapshot.docs;
 
-        return '$shopID-$categoryID-$newProductNumber';
-      });
+      final lastProduct = products.last;
+      final lastProductID = lastProduct.id;
+
+      final lastProductNumber = int.parse(lastProductID.split('-').last);
+      final newProductNumber = lastProductNumber + 1;
+
+      return '$shopID-$categoryID-$newProductNumber';
     } catch (e) {
       throw Exception('Failed to create product ID: $e');
     }

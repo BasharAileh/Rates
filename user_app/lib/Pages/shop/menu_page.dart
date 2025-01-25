@@ -299,11 +299,6 @@ class MealCard extends StatelessWidget {
             future: cloudService.isImageAvailable(menuItem["image"]),
             builder: (context, snapshot) {
               bool isImageAvailable = false;
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
               if (snapshot.hasData) {
                 isImageAvailable = snapshot.data!;
 
@@ -311,13 +306,13 @@ class MealCard extends StatelessWidget {
                   height: AspectRatios.height * 0.16,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(17),
-                    image: snapshot.hasData
-                        ? DecorationImage(
-                            image: NetworkImage(
-                                isImageAvailable ? menuItem["image"] : ''),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
+                    image: DecorationImage(
+                      image: isImageAvailable
+                          ? NetworkImage(menuItem["image"])
+                          : const AssetImage(
+                              'assets/images/meals/defult_meal_image.jpg'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   child: Stack(
                     children: [

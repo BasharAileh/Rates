@@ -224,7 +224,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                         ),
                       ),
                       Text(
-                        "$rating stars",
+                        "${rating.toStringAsPrecision(2)} stars",
                         style: TextStyle(
                           color: ratingColor,
                           fontSize: 11,
@@ -259,6 +259,8 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     );
   }
 
+  final orderByList = ['bayesian_average', 'annual_bayesian_average', 'user'];
+
   @override
   Widget build(BuildContext context) {
     final ScrollControllerWithGetX controller =
@@ -266,6 +268,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     devtools.log('Arguments: $args');
     final category = args['category'];
     final categoryID = args['category_id'];
+    final orderBy = orderByList[args['order_by'] ?? 0];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -407,7 +410,7 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('shop')
-                    .orderBy('bayesian_average', descending: true)
+                    .orderBy(orderBy, descending: true)
                     .where('category_id', isEqualTo: categoryID)
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -444,7 +447,11 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
                                   restaurantCard(
                                     name: restaurant.shopName,
                                     image: restaurant.shopImagePath,
-                                    rating: restaurant.bayesianAverage,
+                                    rating: orderBy == 'bayesian_average'
+                                        ? restaurant.bayesianAverage
+                                        : orderBy == 'annual_bayesian_average'
+                                            ? restaurant.annualBayesianAverage
+                                            : 2.5,
                                     index: index + 1,
                                     isFavorite: false,
                                     onFavoriteToggle: () =>

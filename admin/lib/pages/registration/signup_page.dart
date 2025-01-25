@@ -568,6 +568,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         shopName,
                       );
                       shopData['image_path'] = imagePath;
+
                       cloudService.uploadUserDetails(
                           shopData['Shop Name'], shopData);
                     } else {
@@ -613,8 +614,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            Text(
-                '  fghjadkfhgkfjdflshgjfkdflsjgkhdflsjdkjfhgjkfdslfldhjgfkdklfdlhgjfk')
           ],
         ),
       ),

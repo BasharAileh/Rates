@@ -217,12 +217,20 @@ class CheckResState extends State<CheckRes> {
                                       userName: shopData['Shop Name'],
                                     ); */
                                     try {
-                                      cloudService.uploadShopData(
+                                      final editedShopData =
+                                          shopData as Map<String, dynamic>;
+                                      editedShopData['phone_number'] = {
+                                        'phone_number': shopData['Phone Number']
+                                      };
+                                      editedShopData['email'] = {
+                                        'phone_number': shopData['Email']
+                                      };
+                                      print(editedShopData);
+
+                                      /* cloudService.uploadShopData(
                                         shopData as Map<String, dynamic>,
-                                        shopData['Shop Category']
-                                            .toString()
-                                            .toLowerCase(),
-                                      );
+                                        shopData['Shop Category'].toString(),
+                                      ); */
                                     } catch (e) {
                                       print(e);
                                     }

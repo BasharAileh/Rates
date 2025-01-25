@@ -405,11 +405,12 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              if (modified) {
-                /* cloudService.updateShopInfo(
+          modified
+              ? IconButton(
+                  icon: const Icon(Icons.check),
+                  onPressed: () {
+                    if (modified) {
+                      /* cloudService.updateShopInfo(
                   availableHours: infoRows[2]['text'] ?? '',
                   contactInfo: {
                     'phone_number': infoRows[1]['text'] ?? '',
@@ -423,11 +424,27 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                   shopName: shopName,
                   socialLinks: socialLinks,
                 ); */
+                      print('''
+  Updating shop info:
+  availableHours: ${infoRows[2]['text'] ?? ''}
+  contactInfo: {
+    'phone_number': ${infoRows[1]['text'] ?? ''}
+  }
+  deliveryApps: ${deliveryPlatforms.asMap().map((index, value) {
+                        return MapEntry(value, value);
+                      })}
+  description: $description
+  imagePath: $imagePath
+  shopLocation: ${infoRows[0]['text'] ?? ''}
+  shopName: $shopName
+  socialLinks: $socialLinks
+  ''');
 
-                modified = false;
-              }
-            },
-          ),
+                      modified = false;
+                    }
+                  },
+                )
+              : SizedBox.shrink(),
         ],
       ),
       body: FutureBuilder(
