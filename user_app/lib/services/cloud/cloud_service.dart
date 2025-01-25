@@ -17,7 +17,7 @@ class CloudService {
 
       // Generate a unique file name using a combination of shop name and timestamp.
       String uniqueFileName =
-          '${DateTime.now().millisecondsSinceEpoch}_${Uuid().v4()}.jpg';
+          '${DateTime.now().millisecondsSinceEpoch}_${const Uuid().v4()}.jpg';
 
       Reference storageRef = FirebaseStorage.instance
           .ref()

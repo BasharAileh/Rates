@@ -102,11 +102,11 @@ Together, we are committed to creating a platform that empowers users to make co
                   const SnackBar(content: Text('Thank you for your support!')),
                 );
               },
-              child: const Text('Join Us Today'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDarkTheme ? const Color(0xFFF3C623) : Colors.blueAccent,
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               ),
+              child: const Text('Join Us Today'),
             ),
           ],
         ),

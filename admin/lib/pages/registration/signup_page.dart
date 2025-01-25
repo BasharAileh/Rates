@@ -30,7 +30,7 @@ List<String> _textFields = [
 class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   late final List<TextEditingController> _controllers;
   late List<bool> _isSelected;
-  bool _bottomEnabled = false;
+  final bool _bottomEnabled = false;
   String? _passwordsMatch;
   bool _isPasswordVisible = false;
   File? _logoImage;
@@ -538,7 +538,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                 onPressed: () async {
                   try {
                     Map<String, dynamic> shopData = {};
-                    _controllers.forEach((controller) {
+                    for (var controller in _controllers) {
                       if (controller.text.isNotEmpty) {
                         if (_textFields[_controllers.indexOf(controller)] ==
                             'Phone Number') {
@@ -546,11 +546,11 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                               '$selectedCountryCode ${controller.text}';
                         } else {
                           shopData[
-                                  '${_textFields[_controllers.indexOf(controller)]}'] =
+                                  _textFields[_controllers.indexOf(controller)]] =
                               controller.text;
                         }
                       }
-                    });
+                    }
 
                     if (_logoImage != null && shopData.isNotEmpty) {
                       String shopName = 'unDefined';

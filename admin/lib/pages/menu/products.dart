@@ -274,7 +274,7 @@ class ProductPageState extends State<ProductPage> {
                         ),
                       ),
                       Text(
-                        'Rating of ${rating}',
+                        'Rating of $rating',
                         style:
                             const TextStyle(fontSize: 11, color: Colors.black),
                       ),

@@ -140,6 +140,7 @@ class FirebaseAuthProvider implements AuthProvider {
     await Firebase.initializeApp();
   }
 
+  @override
   Future<AuthUser?> logInAnonymously() async {
     try {
       await FirebaseAuth.instance.signInAnonymously();

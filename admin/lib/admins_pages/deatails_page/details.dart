@@ -1,5 +1,4 @@
 import 'package:admin/init_page.dart';
-import 'package:admin/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import "package:admin/constants/aspect_ratio.dart";
 import 'package:flutter_svg/svg.dart';

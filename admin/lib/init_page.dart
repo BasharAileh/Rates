@@ -1,15 +1,10 @@
-import 'dart:developer' as devtools show log;
 import 'package:admin/admins_pages/pending.dart';
 import 'package:admin/pages/home/home_page.dart';
 import 'package:admin/pages/registration/login_page.dart';
 import 'package:admin/services/auth/auth_service.dart';
 import 'package:admin/services/auth/auth_user.dart';
-import 'package:admin/services/cloud/cloud_instances.dart';
 import 'package:admin/services/cloud/cloud_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
 String? userType;
 CloudService cloudService = CloudService();

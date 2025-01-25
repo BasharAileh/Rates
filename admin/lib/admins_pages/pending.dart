@@ -2,7 +2,6 @@ import 'package:admin/constants/app_colors.dart';
 import 'package:admin/constants/aspect_ratio.dart';
 import 'package:admin/services/auth/auth_service.dart';
 import 'package:admin/services/cloud/cloud_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AdminRestaurantsPage extends StatefulWidget {

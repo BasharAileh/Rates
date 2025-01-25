@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -61,7 +60,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (!_isManualSelection) {
         setState(() {
           _currentPage = (_currentPage + 1) % categories.length;
@@ -70,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         for (var controller in _pageController) {
           controller.animateToPage(
             _currentPage,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
         }
@@ -97,7 +96,7 @@ class _HomePageState extends State<HomePage> {
         for (var controller in _pageController) {
           controller.animateToPage(
             index,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
         }
@@ -873,7 +872,7 @@ Stream<QuerySnapshot> getQueryStream(int verticalIndex, int horizontalIndex) {
       return const Stream.empty(); // No valid query, return empty stream
     }
   } catch (e) {
-    devtools.log("hehe" + e.toString());
+    devtools.log("hehe$e");
     return const Stream.empty(); // Return empty stream on error
   }
 }
