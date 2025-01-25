@@ -1,5 +1,7 @@
 import 'package:admin/init_page.dart';
 import 'package:admin/services/auth/auth_service.dart';
+import 'package:admin/services/cloud/cloud_instances.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "package:admin/constants/aspect_ratio.dart";
 import 'package:flutter_svg/svg.dart';
@@ -210,26 +212,58 @@ class CheckResState extends State<CheckRes> {
                                       borderRadius: BorderRadius.circular(50),
                                     ),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     /*  AuthService.firebase().createUser(
                                       email: shopData['email'],
                                       password: shopData['Password'],
                                       userName: shopData['Shop Name'],
                                     ); */
-                                    try {
-                                      final editedShopData =
-                                          shopData as Map<String, dynamic>;
-                                      editedShopData['phone_number'] = {
-                                        'phone_number': shopData['Phone Number']
-                                      };
-                                      editedShopData['email'] = {
-                                        'phone_number': shopData['Email']
-                                      };
-                                      print(editedShopData);
 
-                                      /* cloudService.uploadShopData(
-                                        shopData as Map<String, dynamic>,
-                                        shopData['Shop Category'].toString(),
+                                    shopData['shop_owner_id'] =
+                                        await cloudService.getOwnerIdByEmail(
+                                            'braashaban3@gmail.com');
+
+                                    try {
+                                      Shop shop = Shop(
+                                        shopID: shopData['doc_id'],
+                                        addedAt: '',
+                                        shopName: shopData['Shop Name'],
+                                        shopLocation: shopData['Shop location'],
+                                        categoryID: shopData['Shop Category'] ??
+                                            'Shop Category',
+                                        shopOwnerID:
+                                            shopData['shop_owner_id'] ?? '',
+                                        shopImagePath:
+                                            shopData['image_path'] ?? '',
+                                        googleMapLink:
+                                            shopData['Google Maps Link'] ??
+                                                'Google Maps Link',
+                                        contactInfo: {
+                                          'phone_number':
+                                              shopData['Phone Number'],
+                                          'email': shopData['Email'],
+                                          'whatsapp': '',
+                                          'facebook': '',
+                                          'instagram': '',
+                                        },
+                                        availableHours:
+                                            shopData['Available Hours'],
+                                        deliveryApps: {
+                                          shopData['Available On']: ''
+                                        },
+                                        bayesianAverage: 2.5,
+                                        annualBayesianAverage: 2.5,
+                                        description:
+                                            shopData['description'] ?? '',
+                                      );
+
+                                      cloudService.moveFolder(
+                                          'pending/${shop.shopName}',
+                                          'shops/${shop.categoryID.toLowerCase()}/${shop.shopName}');
+
+                                      /* await cloudService.uploadShopData(
+                                        shopData: shop.toMap(),
+                                        category: shopData['Shop Category'],
                                       ); */
                                     } catch (e) {
                                       print(e);

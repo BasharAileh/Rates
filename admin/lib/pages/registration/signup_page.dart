@@ -167,6 +167,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.only(right: 16),
                         child: Column(
                           children: [
+                            //TODO : Add shop location field
                             ...List.generate(
                               _textFields.length,
                               (index) {
@@ -563,7 +564,7 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                         }
                       }
 
-                      String imagePath = await cloudService.uploadImage(
+                      String imagePath = await cloudService.uploadPendingImage(
                         File(_logoImage!.path),
                         shopName,
                       );
