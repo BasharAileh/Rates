@@ -12,9 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
 class RestaurantInformationPage extends StatefulWidget {
-  const RestaurantInformationPage({
-    super.key,
-  });
+  const RestaurantInformationPage({super.key});
 
   @override
   State<RestaurantInformationPage> createState() =>
@@ -22,41 +20,29 @@ class RestaurantInformationPage extends StatefulWidget {
 }
 
 class RestaurantInformationPageState extends State<RestaurantInformationPage> {
-  int openingHour = 9;
-  int closingHour = 21;
+  int? openingHour;
+  int? closingHour;
   bool modified = false;
-  List<String> deliveryPlatforms = [
-    'Offerat',
-    'Careem food',
-    'Mythings',
-    'Zomato'
-  ];
+  List<String> deliveryPlatforms = ["Careem", "Talabat", "MyThings"];
   List<String> selectedPlatforms = [];
   final ImagePicker _imagePicker = ImagePicker();
-  String imagePath = "assets/images/yallow_logo.svg";
-  String shopName = "Shop Name";
-  String description = "Add a description";
+  String? imagePath;
+  String? shopName;
+  String? description;
   final Map<String, String> socialLinks = {
     'facebook': '',
     'whatsapp': '',
     'instagram': '',
   };
   List<Map<String, String?>> infoRows = [
-    {'icon': 'assets/icons/location.svg', 'text': 'shop location', 'link': ''},
-    {
-      'icon': 'assets/icons/phone.svg',
-      'text': '07(contact number)',
-      'link': ''
-    },
-    {
-      'icon': 'assets/icons/watch.svg',
-      'text': 'Opening Hours:\n 9:00  - 1:00 '
-    },
-    {'icon': 'assets/icons/delivery.svg', 'text': 'Delivery Apps: '},
+    {'icon': 'assets/icons/location.svg', 'text': '', 'link': ''},
+    {'icon': 'assets/icons/phone.svg', 'text': '', 'link': ''},
+    {'icon': 'assets/icons/watch.svg', 'text': '', 'link': ''},
+    {'icon': 'assets/icons/delivery.svg', 'text': '', 'link': ''},
   ];
-  final String rank = "#1st Place";
-  String reviews = "300";
-  double rating = 3.5;
+  String? rank;
+  String? reviews;
+  double? rating;
   bool isExpanded = false;
 
   void _editTextDialog(
@@ -163,9 +149,9 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           width: AspectRatios.width * 0.46,
           child: TextFormField(
             controller: controller,
-            keyboardType: TextInputType.phone, // Restrict to numeric input
+            keyboardType: TextInputType.phone,
             inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly, // Allow only digits
+              FilteringTextInputFormatter.digitsOnly,
             ],
             decoration: const InputDecoration(
               labelText: "Contact Number",
@@ -178,8 +164,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               ),
             ),
             onChanged: (value) {
-              infoRows[1]['text'] =
-                  value; // Update the phone number in the infoRows
+              infoRows[1]['text'] = value;
             },
           ),
         ),
@@ -187,8 +172,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           TextButton(
             onPressed: () {
               setState(() {
-                infoRows[1]['text'] =
-                    controller.text; // Update the infoRows with the new value
+                infoRows[1]['text'] = controller.text;
                 modified = true;
               });
               Navigator.pop(context);
@@ -206,11 +190,11 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   }
 
   void _editInfoRow(int index) {
-    if (infoRows[index]['text']!.startsWith("Opening Hours")) {
+    if (infoRows[index]['icon'] == 'assets/icons/watch.svg') {
       _editHours();
-    } else if (infoRows[index]['text']!.contains(deliveryPlatforms[0])) {
+    } else if (infoRows[index]['icon'] == 'assets/icons/delivery.svg') {
       _editDeliveryPlatforms();
-    } else if (infoRows[index]['text']!.startsWith("07")) {
+    } else if (infoRows[index]['icon'] == 'assets/icons/phone.svg') {
       _editPhoneNumber(infoRows[index]['text'] ?? "");
     } else {
       TextEditingController controller =
@@ -251,8 +235,8 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   }
 
   void _editHours() {
-    int tempOpeningHour = openingHour;
-    int tempClosingHour = closingHour;
+    int? tempOpeningHour = openingHour;
+    int? tempClosingHour = closingHour;
 
     showDialog(
       context: context,
@@ -264,9 +248,10 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
             children: [
               Row(
                 children: [
-                  const Text("Opening Hour: "),
+                  const Text("Opening Hour: ",style: TextStyle(fontSize: 15)),
                   DropdownButton<int>(
                     value: tempOpeningHour,
+                    hint: const Text("Select Opening Hour",style: TextStyle(fontSize: 14),),
                     items: List.generate(24, (index) {
                       return DropdownMenuItem(
                         value: index,
@@ -275,7 +260,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                     }),
                     onChanged: (value) {
                       setDialogState(() {
-                        tempOpeningHour = value!;
+                        tempOpeningHour = value;
                       });
                     },
                   ),
@@ -283,9 +268,10 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               ),
               Row(
                 children: [
-                  const Text("Closing Hour: "),
+                  const Text("Closing Hour: ",style: TextStyle(fontSize: 15),),
                   DropdownButton<int>(
                     value: tempClosingHour,
+                    hint: const Text("Select Closing Hour",style: TextStyle(fontSize: 14),),
                     items: List.generate(24, (index) {
                       return DropdownMenuItem(
                         value: index,
@@ -294,7 +280,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                     }),
                     onChanged: (value) {
                       setDialogState(() {
-                        tempClosingHour = value!;
+                        tempClosingHour = value;
                       });
                     },
                   ),
@@ -309,7 +295,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                   openingHour = tempOpeningHour;
                   closingHour = tempClosingHour;
                   infoRows[2]['text'] =
-                      "Opening Hours:\n $openingHour:00 - $closingHour:00";
+                      "${openingHour ?? '--'}:00 - ${closingHour ?? '--'}:00";
                   modified = true;
                 });
                 Navigator.pop(context);
@@ -329,6 +315,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
 
   void _editDeliveryPlatforms() {
     List<String> tempSelectedPlatforms = List.from(selectedPlatforms);
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -410,29 +397,13 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                   icon: const Icon(Icons.check),
                   onPressed: () {
                     if (modified) {
-                      /* cloudService.updateShopInfo(
-                  availableHours: infoRows[2]['text'] ?? '',
-                  contactInfo: {
-                    'phone_number': infoRows[1]['text'] ?? '',
-                  },
-                  deliveryApps: deliveryPlatforms.asMap().map((index, value) {
-                    return MapEntry(value, value);
-                  }),
-                  description: description,
-                  imagePath: imagePath,
-                  shopLocation: infoRows[0]['text'] ?? '',
-                  shopName: shopName,
-                  socialLinks: socialLinks,
-                ); */
                       print('''
   Updating shop info:
   availableHours: ${infoRows[2]['text'] ?? ''}
   contactInfo: {
     'phone_number': ${infoRows[1]['text'] ?? ''}
   }
-  deliveryApps: ${deliveryPlatforms.asMap().map((index, value) {
-                        return MapEntry(value, value);
-                      })}
+  deliveryApps: ${selectedPlatforms.join(", ")}
   description: $description
   imagePath: $imagePath
   shopLocation: ${infoRows[0]['text'] ?? ''}
@@ -462,18 +433,6 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           if (snapshot.hasData) {
             shop = snapshot.data as Shop;
           }
-          if (modified == false) {
-            shopName = snapshot.data?.shopName ?? '';
-            description = (snapshot.data!.description.isEmpty
-                ? description
-                : snapshot.data?.description)!;
-            imagePath = snapshot.data!.imagePath;
-            infoRows[0]['text'] = snapshot.data!.shopLocation;
-            infoRows[1]['text'] = snapshot.data!.contactInfo['phone_number'];
-            infoRows[2]['text'] = snapshot.data!.availableHours;
-            deliveryPlatforms = snapshot.data!.deliveryApps.keys.toList();
-            infoRows[3]['text'] = deliveryPlatforms.join(", ");
-          }
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,15 +448,18 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                             uploaded = await _pickImage();
                           },
                           child: uploaded == false
-                              ? Image.network(
-                                  imagePath,
-                                  height: AspectRatios.height *
-                                      0.2014218009478672985781990521327,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                )
+                              ? (imagePath != null
+                                  ? Image.network(
+                                      imagePath!,
+                                      height: AspectRatios.height *
+                                          0.2014218009478672985781990521327,
+                                      width: double.infinity,
+                                      fit: BoxFit.contain,
+                                    )
+                                  : const Icon(Icons.add_a_photo,
+                                      size: 50, color: Colors.grey))
                               : Image.file(
-                                  File(imagePath),
+                                  File(imagePath!),
                                   height: AspectRatios.height *
                                       0.2014218009478672985781990521327,
                                   width: double.infinity,
@@ -540,7 +502,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Text(
-                                '$rating Stars | $reviews + Reviews',
+                                '${rating ?? '--'} Stars | ${reviews ?? '--'} + Reviews',
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 17,
@@ -572,7 +534,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      shopName,
+                                      shopName ?? "Enter Shop Name",
                                       style: const TextStyle(
                                         fontSize: 18,
                                       ),
@@ -587,7 +549,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                                             color: AppColors.primaryColor),
                                         onPressed: () {
                                           _editTextDialog(
-                                              "Edit Shop Name", shopName,
+                                              "Edit Shop Name", shopName ?? "",
                                               (newValue) {
                                             setState(() {
                                               shopName = newValue;
@@ -620,7 +582,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      description,
+                                      description ?? "Add a description",
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
@@ -632,7 +594,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                                         color: AppColors.primaryColor),
                                     onPressed: () {
                                       _editTextDialog(
-                                          "Edit Description", description,
+                                          "Edit Description", description ?? "",
                                           (newValue) {
                                         setState(() {
                                           description = newValue;
@@ -665,7 +627,9 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                             width: AspectRatios.width * 0.06853846153,
                             height: AspectRatios.height * 0.02893601895,
                           ),
-                          title: Text(infoRows[index]['text']!.toString()),
+                          title: Text(infoRows[index]['text']!.isNotEmpty
+                              ? infoRows[index]['text']!
+                              : "Tap to edit"),
                           trailing: IconButton(
                             icon: Icon(
                               Icons.edit,
