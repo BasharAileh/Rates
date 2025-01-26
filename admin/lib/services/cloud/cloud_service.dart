@@ -93,7 +93,8 @@ class CloudService {
     }
   }
 
-  Future<String> uploadShopImage(File imageFile, Shop shopData) async {
+  Future<String> uploadShopImage(
+      File imageFile, Shop shopData, bool product) async {
     try {
       print('Starting file upload...');
 
@@ -102,11 +103,17 @@ class CloudService {
         return '';
       }
 
-      Reference storageRef = FirebaseStorage.instance
-          .ref()
-          .child('shops/${getCategoryId(
-            shopData.categoryID,
-          )}/${shopData.shopName}/shop_images/${shopData.shopName}_logo.jpg');
+      Reference storageRef;
+      String categoryName = await getCategoryName(
+        shopData.categoryID,
+      );
+      if (product != true) {
+        storageRef = FirebaseStorage.instance.ref().child(
+            'shops/$categoryName/${shopData.shopName}/shop_products/${shopData.shopName}_logo.jpg');
+      } else {
+        storageRef = FirebaseStorage.instance.ref().child(
+            'shops/$categoryName/${shopData.shopName}/product_images/${shopData.shopName}_logo.jpg');
+      }
 
       print('Uploading file: ${imageFile.path}');
 
@@ -383,7 +390,10 @@ class CloudService {
       required Map<String, String> contactInfo,
       required String availableHours,
       required Map<String, String> deliveryApps,
-      required Map<String, String> socialLinks}) {
+      required Map<String, String> socialLinks,
+      String? phoneNumber,
+      int? openingHour,
+      int? closingHour}) {
     try {
       print('Updating shop info...');
 

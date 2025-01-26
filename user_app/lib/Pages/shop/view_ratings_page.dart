@@ -344,6 +344,9 @@ class _ViewRatingState extends State<ViewRating> {
                           final rate = rates[index];
                           final review =
                               index < reviews.length ? reviews[index] : null;
+                          if (review == null) {
+                            return const SizedBox.shrink();
+                          }
                           return Card(
                             color: cardColor,
                             elevation: 0,
@@ -351,23 +354,40 @@ class _ViewRatingState extends State<ViewRating> {
                               leading: FutureBuilder(
                                   future: cloudService.getUserInfo(rate.userID),
                                   builder: (context, snapshot) {
+                                    FireStoreUser? user;
+                                    if (snapshot.hasError) {
+                                      return const Icon(Icons.error);
+                                    }
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return const CircularProgressIndicator();
                                     }
-                                    return CircleAvatar(
-                                      backgroundImage: review != null
-                                          ? AssetImage(review['avatar'])
-                                          : null,
-                                    );
+                                    user = snapshot.data;
+
+                                    return FutureBuilder(
+                                        future: cloudService
+                                            .isImageAvailable(user!.imagePath),
+                                        builder: (context, snapshot) {
+                                          return CircleAvatar(
+                                            backgroundImage: snapshot.data !=
+                                                    false
+                                                ? NetworkImage(user!.imagePath)
+                                                : AssetImage(
+                                                    user?.imagePath ??
+                                                        'assets/images/profile_images/default_profile_image_1.png',
+                                                  ),
+                                          );
+                                        });
                                   }),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    rate.ratingText,
+                                    review['review'],
                                     style: TextStyle(
-                                        fontSize: 13, color: textColor),
+                                      fontSize: 13,
+                                      color: textColor,
+                                    ),
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -376,7 +396,7 @@ class _ViewRatingState extends State<ViewRating> {
                                       (starIndex) => SvgPicture.asset(
                                         'assets/icons/star.svg',
                                         colorFilter: starIndex <
-                                                rate.ratingValue
+                                                review['rating']
                                             ? const ColorFilter.mode(
                                                 Color.fromARGB(
                                                     255, 255, 193, 7),

@@ -29,6 +29,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   String? imagePath;
   String? shopName;
   String? description;
+  XFile? imageFile;
   final Map<String, String> socialLinks = {
     'facebook': '',
     'whatsapp': '',
@@ -44,6 +45,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
   String? reviews;
   double? rating;
   bool isExpanded = false;
+  Shop? shop;
 
   void _editTextDialog(
       String title, String initialValue, Function(String) onSave) {
@@ -86,7 +88,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
       final mimeType = lookupMimeType(pickedFile.path);
       if (mimeType != null && mimeType.startsWith('image/')) {
         setState(() {
-          imagePath = pickedFile.path;
+          imageFile = pickedFile;
           modified = true;
         });
         return true;
@@ -248,10 +250,13 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
             children: [
               Row(
                 children: [
-                  const Text("Opening Hour: ",style: TextStyle(fontSize: 15)),
+                  const Text("Opening Hour: ", style: TextStyle(fontSize: 15)),
                   DropdownButton<int>(
                     value: tempOpeningHour,
-                    hint: const Text("Select Opening Hour",style: TextStyle(fontSize: 14),),
+                    hint: const Text(
+                      "Select Opening Hour",
+                      style: TextStyle(fontSize: 14),
+                    ),
                     items: List.generate(24, (index) {
                       return DropdownMenuItem(
                         value: index,
@@ -268,10 +273,16 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               ),
               Row(
                 children: [
-                  const Text("Closing Hour: ",style: TextStyle(fontSize: 15),),
+                  const Text(
+                    "Closing Hour: ",
+                    style: TextStyle(fontSize: 15),
+                  ),
                   DropdownButton<int>(
                     value: tempClosingHour,
-                    hint: const Text("Select Closing Hour",style: TextStyle(fontSize: 14),),
+                    hint: const Text(
+                      "Select Closing Hour",
+                      style: TextStyle(fontSize: 14),
+                    ),
                     items: List.generate(24, (index) {
                       return DropdownMenuItem(
                         value: index,
@@ -395,22 +406,10 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           modified
               ? IconButton(
                   icon: const Icon(Icons.check),
-                  onPressed: () {
+                  onPressed: () async {
                     if (modified) {
-                      print('''
-  Updating shop info:
-  availableHours: ${infoRows[2]['text'] ?? ''}
-  contactInfo: {
-    'phone_number': ${infoRows[1]['text'] ?? ''}
-  }
-  deliveryApps: ${selectedPlatforms.join(", ")}
-  description: $description
-  imagePath: $imagePath
-  shopLocation: ${infoRows[0]['text'] ?? ''}
-  shopName: $shopName
-  socialLinks: $socialLinks
-  ''');
-
+                      await cloudService.uploadShopImage(
+                          File(imageFile!.path), shop!, true);
                       modified = false;
                     }
                   },
@@ -423,7 +422,6 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
             .getShopInfoByOwnerID(AuthService.firebase().currentUser?.id ?? ''),
         builder: (context, snapshot) {
           bool uploaded = false;
-          Shop? shop;
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -432,6 +430,13 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
           }
           if (snapshot.hasData) {
             shop = snapshot.data as Shop;
+            shopName = shop?.shopName;
+            description = shop?.description;
+            imagePath = shop?.imagePath;
+            infoRows[0]['text'] = shop?.shopLocation;
+            infoRows[1]['text'] = shop?.contactInfo['phone_number'];
+            infoRows[2]['text'] = shop?.availableHours;
+            infoRows[3]['text'] = shop?.deliveryApps.keys.join(", ");
           }
           return SingleChildScrollView(
             child: Column(
@@ -483,30 +488,18 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                         offset: const Offset(0, 20),
                         child: Align(
                           alignment: Alignment.bottomCenter,
-                          child: InkWell(
-                            onTap: () {
-                              print(shopName);
-                              print(description);
-                              print(imagePath);
-                              print(infoRows[0]['text']);
-                              print(infoRows[1]['text']);
-                              print(infoRows[2]['text']);
-                              print(infoRows[3]['text']);
-                              print(socialLinks);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Text(
-                                '${rating ?? '--'} Stars | ${reviews ?? '--'} + Reviews',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 17,
-                                ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Text(
+                              '${rating ?? '--'} Stars | ${reviews ?? '--'} + Reviews',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
                               ),
                             ),
                           ),
