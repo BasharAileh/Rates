@@ -269,6 +269,82 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
     final category = args['category'];
     final categoryID = args['category_id'];
     final orderBy = orderByList[args['order_by'] ?? 0];
+
+    Widget buildShopList(List<Shop> shops) {
+      return Expanded(
+        child: ListView.builder(
+          controller: controller.scrollController,
+          itemCount: shops.length,
+          itemBuilder: (context, index) {
+            final shop = shops[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: FutureBuilder(
+                future: isImageAvailable(shop.shopImagePath),
+                builder: (context, snapshot) {
+                  return Column(
+                    children: [
+                      restaurantCard(
+                        name: shop.shopName,
+                        image: shop.shopImagePath,
+                        rating: orderBy == 'bayesian_average'
+                            ? shop.bayesianAverage
+                            : orderBy == 'annual_bayesian_average'
+                                ? shop.annualBayesianAverage
+                                : 2.5,
+                        index: index + 1,
+                        isFavorite: false,
+                        onFavoriteToggle: () => toggleFavorite(index),
+                        onDetailsPressed: () {
+                          Get.toNamed(
+                            restInfoRoute,
+                            arguments: {
+                              'shop': shop,
+                              'rank': index + 1,
+                            },
+                          );
+                        },
+                      ),
+                      shops.length - 1 == index
+                          ? const SizedBox(height: 40)
+                          : const SizedBox.shrink(),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    Widget buildUserList(List<FireStoreUser> users) {
+      return Expanded(
+        child: ListView.builder(
+          controller: controller.scrollController,
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final user = users[index];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(user.profileImageURL),
+              ),
+              title: Text(user.userName),
+              subtitle: Text('Ratings: ${user.ratings[categoryID] ?? 0}'),
+              onTap: () {
+                Get.toNamed(
+                  'userInfoRoute',
+                  arguments: {
+                    'user': user,
+                  },
+                );
+              },
+            );
+          },
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -408,77 +484,47 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 10),
               StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('shop')
-                    .orderBy(orderBy, descending: true)
-                    .where('category_id', isEqualTo: categoryID)
-                    .snapshots(),
+                stream: orderBy != 'user'
+                    ? FirebaseFirestore.instance
+                        .collection('shop')
+                        .orderBy(orderBy, descending: true)
+                        .where('category_id', isEqualTo: categoryID)
+                        .snapshots()
+                    : FirebaseFirestore.instance
+                        .collection('user')
+                        .orderBy('ratings.$categoryID', descending: true)
+                        .snapshots(),
                 builder: (context, snapshot) {
-                  late List<Shop> shops;
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   }
-                  if (snapshot.hasData) {
-                    shops = snapshot.data!.docs
-                        .map(
-                          (e) => Shop.fromMap(
-                            e.data() as Map<String, dynamic>,
-                            shopID: e.id,
-                          ),
-                        )
-                        .toList();
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                    if (orderBy != 'user') {
+                      final List<Shop> shops = snapshot.data!.docs
+                          .map(
+                            (e) => Shop.fromMap(
+                              e.data() as Map<String, dynamic>,
+                              shopID: e.id,
+                            ),
+                          )
+                          .toList();
+                      return buildShopList(shops);
+                    } else {
+                      final List<FireStoreUser> users = snapshot.data!.docs
+                          .map(
+                            (e) => FireStoreUser.fromMap(
+                              e.data() as Map<String, dynamic>,
+                              id: e.id,
+                            ),
+                          )
+                          .toList();
+                      return buildUserList(users);
+                    }
                   }
-                  return Expanded(
-                    child: ListView.builder(
-                      controller: controller.scrollController,
-                      itemCount: shops.length,
-                      itemBuilder: (context, index) {
-                        final restaurant = shops[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: FutureBuilder(
-                            future: isImageAvailable(restaurant.shopImagePath),
-                            builder: (context, snapshot) {
-                              return Column(
-                                children: [
-                                  restaurantCard(
-                                    name: restaurant.shopName,
-                                    image: restaurant.shopImagePath,
-                                    rating: orderBy == 'bayesian_average'
-                                        ? restaurant.bayesianAverage
-                                        : orderBy == 'annual_bayesian_average'
-                                            ? restaurant.annualBayesianAverage
-                                            : 2.5,
-                                    index: index + 1,
-                                    isFavorite: false,
-                                    onFavoriteToggle: () =>
-                                        toggleFavorite(index),
-                                    onDetailsPressed: () {
-                                      Get.toNamed(
-                                        restInfoRoute,
-                                        arguments: {
-                                          'shop': restaurant,
-                                          'rank': index + 1,
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  shops.length - 1 == index
-                                      ? const SizedBox(
-                                          height: 40,
-                                        )
-                                      : const SizedBox.shrink(),
-                                ],
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                  return const Center(child: Text('No data available'));
                 },
               ),
             ],
@@ -603,6 +649,7 @@ class ScrollControllerWithGetX extends GetxController {
     super.onClose();
   }
 }
+
 
 
 /* 

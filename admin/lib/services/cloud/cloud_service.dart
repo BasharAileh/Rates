@@ -1,11 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'package:admin/services/auth/auth_service.dart';
 import 'package:admin/services/cloud/cloud_instances.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:uuid/uuid.dart';
 
 class CloudService {
   Future<String> uploadPendingImage(File imageFile, String shopName) async {
@@ -16,10 +14,6 @@ class CloudService {
         print('File does not exist!');
         return '';
       }
-
-      // Generate a unique file name using a combination of shop name and timestamp.
-      String uniqueFileName =
-          '${DateTime.now().millisecondsSinceEpoch}_${Uuid().v4()}.jpg';
 
       Reference storageRef = FirebaseStorage.instance
           .ref()

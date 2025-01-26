@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:admin/constants/aspect_ratio.dart';
-import 'package:admin/services/cloud_service.dart';
 import 'package:admin/services/cloud/cloud_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -256,7 +255,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                             SizedBox(width: AspectRatios.width*0.06),
+                                            SizedBox(
+                                                width:
+                                                    AspectRatios.width * 0.06),
                                             DropdownButton(
                                               iconEnabledColor: Colors.black,
                                               value: value1,
@@ -279,7 +280,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 });
                                               },
                                             ),
-                                             SizedBox(width: AspectRatios.width*0.06),
+                                            SizedBox(
+                                                width:
+                                                    AspectRatios.width * 0.06),
                                             const Text(
                                               'To',
                                               style: TextStyle(
@@ -287,7 +290,9 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                             SizedBox(width: AspectRatios.width*0.06),
+                                            SizedBox(
+                                                width:
+                                                    AspectRatios.width * 0.06),
                                             DropdownButton(
                                               iconEnabledColor: Colors.black,
                                               value: value2,
@@ -550,9 +555,8 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                           shopData['Phone Number'] =
                               '$selectedCountryCode ${controller.text}';
                         } else {
-                          shopData[
-                                  _textFields[_controllers.indexOf(controller)]] =
-                              controller.text;
+                          shopData[_textFields[_controllers
+                              .indexOf(controller)]] = controller.text;
                         }
                       }
                     }
@@ -649,15 +653,15 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   ];
 
   final List<DropdownMenuItem<String>> _availableHours = List.generate(
-  24,
-  (index) {
-    final hour = '${index.toString().padLeft(2, '0')}:00';
-    return DropdownMenuItem(
-      value: hour,
-      child: Text(hour),
-    );
-  },
-);
+    24,
+    (index) {
+      final hour = '${index.toString().padLeft(2, '0')}:00';
+      return DropdownMenuItem(
+        value: hour,
+        child: Text(hour),
+      );
+    },
+  );
 
   List<String> selectedPlatforms = [];
   List<String> deliveryPlatforms = [
