@@ -38,6 +38,24 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
   final ThemeController _themeController = Get.find<ThemeController>();
   ThemeMode get themeMode => _themeController.themeMode.value;
 
+  bool isLoading = false;
+
+  Future<void> handleLogin(String email, String password) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await AuthService.firebase().logIn(email: email, password: password);
+      Get.offNamed(homeRoute);
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Show error message
+      Get.snackbar('Login Failed', e.toString());
+    }
+  }
+
   List<DropdownMenuItem<String>> countryItems = [
     const DropdownMenuItem(
       value: '00962',
@@ -109,23 +127,40 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Welcome to the Rates App! By creating an account, you agree to the following terms and conditions. Please read them carefully before proceeding.'),
+                Text(
+                    'Welcome to the Rates App! By creating an account, you agree to the following terms and conditions. Please read them carefully before proceeding.'),
                 SizedBox(height: 10),
-                Text('1.Acceptance of Terms',style: TextStyle(fontWeight: FontWeight.bold),),
+                Text(
+                  '1.Acceptance of Terms',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 5),
-                Text('● By signing up for and using the Rates App, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree, please refrain from using the app.'),
+                Text(
+                    '● By signing up for and using the Rates App, you acknowledge that you have read, understood, and agree to be bound by these terms. If you do not agree, please refrain from using the app.'),
                 SizedBox(height: 10),
-                Text('2.Authenticity and Content Submission',style: TextStyle(fontWeight: FontWeight.bold),),
+                Text(
+                  '2.Authenticity and Content Submission',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 5),
-                Text('● The app is committed to maintaining genuine ratings and reviews. You agree not to submit content that is false, misleading, offensive, or violates any laws.'),
+                Text(
+                    '● The app is committed to maintaining genuine ratings and reviews. You agree not to submit content that is false, misleading, offensive, or violates any laws.'),
                 SizedBox(height: 10),
-                Text('3.Privacy and Data Usage',style: TextStyle(fontWeight: FontWeight.bold),),
+                Text(
+                  '3.Privacy and Data Usage',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 5),
-                Text('● Your reviews and ratings may be visible to other users but will not be shared with third parties without your consent.'),
+                Text(
+                    '● Your reviews and ratings may be visible to other users but will not be shared with third parties without your consent.'),
                 SizedBox(height: 10),
-                Text('4.Updates to Terms and Conditions',style: TextStyle(fontWeight: FontWeight.bold),),
+                Text(
+                  '4.Updates to Terms and Conditions',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 5),
-                Text('● These terms may be updated periodically to reflect changes in the app or legal requirements. You will be notified of major updates.\nContinued use of the app after updates signifies your acceptance of the revised terms.'),              
+                Text(
+                    '● These terms may be updated periodically to reflect changes in the app or legal requirements. You will be notified of major updates.\nContinued use of the app after updates signifies your acceptance of the revised terms.'),
               ],
             ),
           ),
@@ -135,7 +170,6 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              
             ),
           ],
         );
@@ -151,133 +185,229 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: isDarkTheme ? Colors.grey[900] : Colors.white,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final height = constraints.maxHeight;
+      body: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final height = constraints.maxHeight;
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: width * 0.07,
-              vertical: height * 0.1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Sign Up to Rates',
-                  style: TextStyle(
-                    fontSize: width * 0.06,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkTheme ? Colors.white : Colors.black,
-                  ),
+              return SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.07,
+                  vertical: height * 0.1,
                 ),
-                SizedBox(height: height * 0.03),
-                Text(
-                  'Choose your sign-up method',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isDarkTheme ? Colors.white : Colors.black,
-                  ),
-                ),
-                SizedBox(height: height * 0.02),
-
-                // Sign-up method selection
-
-                Stack(
-                  alignment: Alignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AnimatedAlign(
-                      duration: const Duration(milliseconds: 300),
-                      alignment: _isEmailSelected
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      child: Container(
-                        width: width * 0.4,
-                        height: height * 0.04,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
+                    Text(
+                      'Sign Up to Rates',
+                      style: TextStyle(
+                        fontSize: width * 0.06,
+                        fontWeight: FontWeight.bold,
+                        color: isDarkTheme ? Colors.white : Colors.black,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    SizedBox(height: height * 0.03),
+                    Text(
+                      'Choose your sign-up method',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDarkTheme ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+
+                    // Sign-up method selection
+
+                    Stack(
+                      alignment: Alignment.center,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (!_isEmailSelected) {
-                              setState(() {
-                                _isEmailSelected = true;
-                                _animationController.forward(from: 0);
-                              });
-                            }
-                          },
+                        AnimatedAlign(
+                          duration: const Duration(milliseconds: 300),
+                          alignment: _isEmailSelected
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
                           child: Container(
                             width: width * 0.4,
                             height: height * 0.04,
                             decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
                               borderRadius: BorderRadius.circular(5),
-                              color: Colors.transparent,
-                            ),
-                            child: Center(
-                              child: AnimatedDefaultTextStyle(
-                                style: TextStyle(
-                                  color: _isEmailSelected
-                                      ? Colors.white
-                                      : isDarkTheme ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                duration: const Duration(milliseconds: 300),
-                                child: const Text('Email'),
-                              ),
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            if (_isEmailSelected) {
-                              setState(() {
-                                _isEmailSelected = false;
-                                _animationController.forward(from: 0);
-                              });
-                            }
-                          },
-                          child: Container(
-                            width: width * 0.4,
-                            height: height * 0.04,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.transparent,
-                            ),
-                            child: Center(
-                              child: AnimatedDefaultTextStyle(
-                                style: TextStyle(
-                                  color: !_isEmailSelected
-                                      ? Colors.white
-                                      : isDarkTheme ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (!_isEmailSelected) {
+                                  setState(() {
+                                    _isEmailSelected = true;
+                                    _animationController.forward(from: 0);
+                                  });
+                                }
+                              },
+                              child: Container(
+                                width: width * 0.4,
+                                height: height * 0.04,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.transparent,
                                 ),
-                                duration: const Duration(milliseconds: 300),
-                                child: const Text('Phone'),
+                                child: Center(
+                                  child: AnimatedDefaultTextStyle(
+                                    style: TextStyle(
+                                      color: _isEmailSelected
+                                          ? Colors.white
+                                          : isDarkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    duration: const Duration(milliseconds: 300),
+                                    child: const Text('Email'),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: () {
+                                if (_isEmailSelected) {
+                                  setState(() {
+                                    _isEmailSelected = false;
+                                    _animationController.forward(from: 0);
+                                  });
+                                }
+                              },
+                              child: Container(
+                                width: width * 0.4,
+                                height: height * 0.04,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: AnimatedDefaultTextStyle(
+                                    style: TextStyle(
+                                      color: !_isEmailSelected
+                                          ? Colors.white
+                                          : isDarkTheme
+                                              ? Colors.white
+                                              : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    duration: const Duration(milliseconds: 300),
+                                    child: const Text('Phone'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
 
-                //text fields
+                    //text fields
 
-                SizedBox(height: height * 0.02),
-                ...List.generate(
-                  4,
-                  (index) {
-                    if (index == 1) {
-                      if (_justInit) {
-                        _justInit = false;
+                    SizedBox(height: height * 0.02),
+                    ...List.generate(
+                      4,
+                      (index) {
+                        if (index == 1) {
+                          if (_justInit) {
+                            _justInit = false;
+                            return Column(
+                              children: [
+                                customTextField(
+                                  onChanged: (value) {
+                                    if (_controllers.every((controller) =>
+                                            controller.text.isNotEmpty) &&
+                                        _controllers[2].text ==
+                                            _controllers[3].text &&
+                                        _isSelected[0]) {
+                                      setState(() {
+                                        _bottomEnabled = true;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _bottomEnabled = false;
+                                      });
+                                    }
+                                  },
+                                  controller: _controllers[index],
+                                  hintText: _textFields[index],
+                                  height: height * 0.06,
+                                ),
+                                SizedBox(height: height * 0.03),
+                              ],
+                            );
+                          } else {
+                            return Column(
+                              children: [
+                                if (_isEmailSelected)
+                                  SlideTransition(
+                                    position: _emailSlideAnimation,
+                                    child: customTextField(
+                                      onChanged: (value) {
+                                        if (_controllers.every((controller) =>
+                                                controller.text.isNotEmpty) &&
+                                            _controllers[2].text ==
+                                                _controllers[3].text &&
+                                            _isSelected[0]) {
+                                          setState(() {
+                                            _bottomEnabled = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _bottomEnabled = false;
+                                          });
+                                        }
+                                      },
+                                      hintText: _textFields[index],
+                                      controller: _controllers[index],
+                                      height: height * 0.06,
+                                    ),
+                                  ),
+                                if (!_isEmailSelected)
+                                  SlideTransition(
+                                    position: _phoneSlideAnimation,
+                                    child: phoneNumberTextField(
+                                      onTextfieldChanged: (value) {
+                                        if (_controllers.every((controller) =>
+                                                controller.text.isNotEmpty) &&
+                                            _controllers[2].text ==
+                                                _controllers[3].text &&
+                                            _isSelected[0]) {
+                                          setState(() {
+                                            _bottomEnabled = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _bottomEnabled = false;
+                                          });
+                                        }
+                                      },
+                                      hintText: 'Phone Number',
+                                      phoneController: _controllers[index],
+                                      initialCountryCode: '01',
+                                      countryItems: countryItems,
+                                      onCountryChanged: (item) {},
+                                      borderRadius: 37.5,
+                                      height: height * 0.06,
+                                    ),
+                                  ),
+                                SizedBox(height: height * 0.03),
+                              ],
+                            );
+                          }
+                        }
+                        if (index == 2 || index == 3) {
+                          _isPasswordVisible = true;
+                        } else {
+                          _isPasswordVisible = false;
+                        }
                         return Column(
                           children: [
                             customTextField(
@@ -295,294 +425,218 @@ class _SignupPageState extends State<SignupPage> with TickerProviderStateMixin {
                                     _bottomEnabled = false;
                                   });
                                 }
+                                if (_controllers[2].text !=
+                                    _controllers[3].text) {
+                                  setState(() {
+                                    _passwordsMatch = 'Passwords do not match';
+                                  });
+                                } else {
+                                  setState(() {
+                                    _passwordsMatch = null;
+                                  });
+                                }
                               },
+                              obscureText: _isPasswordVisible,
                               controller: _controllers[index],
-                              hintText: _textFields[index],
                               height: height * 0.06,
+                              hintText: _textFields[index],
                             ),
-                            SizedBox(height: height * 0.03),
-                          ],
-                        );
-                      } else {
-                        return Column(
-                          children: [
-                            if (_isEmailSelected)
-                              SlideTransition(
-                                position: _emailSlideAnimation,
-                                child: customTextField(
-                                  onChanged: (value) {
-                                    if (_controllers.every((controller) =>
-                                            controller.text.isNotEmpty) &&
-                                        _controllers[2].text ==
-                                            _controllers[3].text &&
-                                        _isSelected[0]) {
-                                      setState(() {
-                                        _bottomEnabled = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _bottomEnabled = false;
-                                      });
-                                    }
-                                  },
-                                  hintText: _textFields[index],
-                                  controller: _controllers[index],
-                                  height: height * 0.06,
-                                ),
-                              ),
-                            if (!_isEmailSelected)
-                              SlideTransition(
-                                position: _phoneSlideAnimation,
-                                child: phoneNumberTextField(
-                                  onTextfieldChanged: (value) {
-                                    if (_controllers.every((controller) =>
-                                            controller.text.isNotEmpty) &&
-                                        _controllers[2].text ==
-                                            _controllers[3].text &&
-                                        _isSelected[0]) {
-                                      setState(() {
-                                        _bottomEnabled = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _bottomEnabled = false;
-                                      });
-                                    }
-                                  },
-                                  hintText: 'Phone Number',
-                                  phoneController: _controllers[index],
-                                  initialCountryCode: '01',
-                                  countryItems: countryItems,
-                                  onCountryChanged: (item) {},
-                                  borderRadius: 37.5,
-                                  height: height * 0.06,
-                                ),
-                              ),
-                            SizedBox(height: height * 0.03),
-                          ],
-                        );
-                      }
-                    }
-                    if (index == 2 || index == 3) {
-                      _isPasswordVisible = true;
-                    } else {
-                      _isPasswordVisible = false;
-                    }
-                    return Column(
-                      children: [
-                        customTextField(
-                          onChanged: (value) {
-                            if (_controllers.every((controller) =>
-                                    controller.text.isNotEmpty) &&
-                                _controllers[2].text == _controllers[3].text &&
-                                _isSelected[0]) {
-                              setState(() {
-                                _bottomEnabled = true;
-                              });
-                            } else {
-                              setState(() {
-                                _bottomEnabled = false;
-                              });
-                            }
-                            if (_controllers[2].text != _controllers[3].text) {
-                              setState(() {
-                                _passwordsMatch = 'Passwords do not match';
-                              });
-                            } else {
-                              setState(() {
-                                _passwordsMatch = null;
-                              });
-                            }
-                          },
-                          obscureText: _isPasswordVisible,
-                          controller: _controllers[index],
-                          height: height * 0.06,
-                          hintText: _textFields[index],
-                        ),
-                        index == 3 && _passwordsMatch != null
-                            ? Column(
-                                children: [
-                                  SizedBox(height: height * 0.005),
-                                  SizedBox(
-                                    height: height * 0.025,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(width: width * 0.03),
-                                        Text(
-                                          _passwordsMatch!,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 13,
-                                          ),
+                            index == 3 && _passwordsMatch != null
+                                ? Column(
+                                    children: [
+                                      SizedBox(height: height * 0.005),
+                                      SizedBox(
+                                        height: height * 0.025,
+                                        child: Row(
+                                          children: [
+                                            SizedBox(width: width * 0.03),
+                                            Text(
+                                              _passwordsMatch!,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  )
+                                : SizedBox(height: height * 0.03),
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: AspectRatios.height * 0.00888625592,
+                    ),
+                    SizedBox(
+                      height: AspectRatios.height * 0.03554502369,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: _isSelected[0],
+                            onChanged: (_) {
+                              setState(() {
+                                _isSelected[0] = !_isSelected[0];
+                              });
+                              if (_controllers.every((controller) =>
+                                      controller.text.isNotEmpty) &&
+                                  _controllers[2].text ==
+                                      _controllers[3].text &&
+                                  _isSelected[0]) {
+                                setState(() {
+                                  _bottomEnabled = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _bottomEnabled = false;
+                                });
+                              }
+                            },
+                          ),
+                          Flexible(
+                            child: RichText(
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color:
+                                      isDarkTheme ? Colors.white : Colors.black,
+                                ),
+                                children: [
+                                  const TextSpan(
+                                    text:
+                                        'By creating an account, you are agreeing with Rates ',
+                                  ),
+                                  TextSpan(
+                                    text: 'terms and conditions',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = _showTermsAndConditionsDialog,
                                   ),
                                 ],
-                              )
-                            : SizedBox(height: height * 0.03),
-                      ],
-                    );
-                  },
-                ),
-                SizedBox(
-                  height: AspectRatios.height * 0.00888625592,
-                ),
-                SizedBox(
-                  height: AspectRatios.height * 0.03554502369,
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        value: _isSelected[0],
-                        onChanged: (_) {
-                          setState(() {
-                            _isSelected[0] = !_isSelected[0];
-                          });
-                          if (_controllers.every(
-                                  (controller) => controller.text.isNotEmpty) &&
-                              _controllers[2].text == _controllers[3].text &&
-                              _isSelected[0]) {
-                            setState(() {
-                              _bottomEnabled = true;
-                            });
-                          } else {
-                            setState(() {
-                              _bottomEnabled = false;
-                            });
-                          }
-                        },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Flexible(
-                        child: RichText(
-                          text: TextSpan(
+                    ),
+                    SizedBox(
+                      height: AspectRatios.height * 0.00829383886,
+                    ),
+                    SizedBox(
+                      height: AspectRatios.height * 0.02843601895,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: _isSelected[1],
+                            onChanged: (_) {
+                              setState(() {
+                                _isSelected[1] = !_isSelected[1];
+                              });
+                            },
+                          ),
+                          Text(
+                            'Email me new updates',
                             style: TextStyle(
                               fontSize: 11,
                               color: isDarkTheme ? Colors.white : Colors.black,
                             ),
-                            children: [
-                              const TextSpan(
-                                text: 'By creating an account, you are agreeing with Rates ',
-                              ),
-                              TextSpan(
-                                text: 'terms and conditions',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = _showTermsAndConditionsDialog,
-                              ),
-                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: height * 0.02),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: _bottomEnabled == true
+                            ? () async {
+                                final username = _controllers[0].text;
+                                final phoneOrEmail = _controllers[1].text;
+                                final password = _controllers[2].text;
+
+                                try {
+                                  if (_isEmailSelected) {
+                                    await AuthService.firebase().createUser(
+                                        email: phoneOrEmail,
+                                        password: password,
+                                        userName: username);
+                                    await AuthService.firebase()
+                                        .sendEmailVerification();
+                                    Get.snackbar(
+                                      'Check you\'re email',
+                                      'Verification email sent',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      colorText: Colors.green[900],
+                                      backgroundColor: Colors.white,
+                                      barBlur: 0.5,
+                                      duration: 5000.milliseconds,
+                                      icon: Icon(Icons.check,
+                                          color: Colors.green[900]),
+                                    );
+                                    Get.offNamed(homeRoute);
+                                  }
+                                } on Exception catch (e) {
+                                  Get.snackbar(
+                                    'Error',
+                                    e.toString(),
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    colorText: Colors.red,
+                                  );
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          fixedSize: Size(AspectRatios.width * 0.58717948717,
+                              AspectRatios.height * 0.05450236966),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(37.5),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: AspectRatios.height * 0.00829383886,
-                ),
-                SizedBox(
-                  height: AspectRatios.height * 0.02843601895,
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        value: _isSelected[1],
-                        onChanged: (_) {
-                          setState(() {
-                            _isSelected[1] = !_isSelected[1];
-                          });
-                        },
-                      ),
-                      Text(
-                        'Email me new updates',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: isDarkTheme ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: height * 0.02),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _bottomEnabled == true
-                        ? () async {
-                            final username = _controllers[0].text;
-                            final phoneOrEmail = _controllers[1].text;
-                            final password = _controllers[2].text;
-
-                            try {
-                              if (_isEmailSelected) {
-                                await AuthService.firebase().createUser(
-                                    email: phoneOrEmail,
-                                    password: password,
-                                    userName: username);
-                                await AuthService.firebase()
-                                    .sendEmailVerification();
-                                Get.snackbar(
-                                  'Check you\'re email',
-                                  'Verification email sent',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  colorText: Colors.green[900],
-                                  backgroundColor: Colors.white,
-                                  barBlur: 0.5,
-                                  duration: 5000.milliseconds,
-                                  icon: Icon(Icons.check,
-                                      color: Colors.green[900]),
-                                );
-                                Get.offNamed(homeRoute);
-                              }
-                            } on Exception catch (e) {
-                              Get.snackbar(
-                                'Error',
-                                e.toString(),
-                                snackPosition: SnackPosition.BOTTOM,
-                                colorText: Colors.red,
-                              );
-                            }
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      fixedSize: Size(AspectRatios.width * 0.58717948717,
-                          AspectRatios.height * 0.05450236966),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(37.5),
+                        child: const Text('Sign Up'),
                       ),
                     ),
-                    child: const Text('Sign Up'),
-                  ),
-                ),
-                SizedBox(height: height * 0.04),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Already have an account?",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDarkTheme ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Get.offNamed(loginRoute);
-                      },
-                      child: const Text(
-                        "Log In",
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(height: height * 0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account?",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDarkTheme ? Colors.white : Colors.black,
+                          ),
                         ),
-                      ),
+                        TextButton(
+                          onPressed: () {
+                            Get.offNamed(loginRoute);
+                          },
+                          child: const Text(
+                            "Log In",
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              );
+            },
+          ),
+          if (isLoading)
+            Container(
+              color: Colors.black54, // Semi-transparent background
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
