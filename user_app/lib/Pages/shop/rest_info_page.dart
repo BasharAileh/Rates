@@ -36,7 +36,7 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
     'delivery': {'icon': 'assets/icons/delivery.svg', 'value': ""},
   };
   final String rank = "#1st Place";
-  String reviews = "300";
+  String reviews = '';
 
   Future<void> _launchUrl(String input) async {
     final uri = Uri.tryParse(input);
@@ -50,11 +50,9 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               : LaunchMode.externalApplication,
         );
       } else {
-        print('Cannot launch $input');
         throw 'Could not launch $input';
       }
     } else {
-      print('Invalid input: $input');
       throw 'Invalid input: $input';
     }
   }
@@ -78,7 +76,6 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
               ? rankValue.toString()
               : ''; // Ensure rank is a valid string
         }
-        print('hehe$shop');
 
         icons.forEach((key, value) async {
           switch (key) {
@@ -160,10 +157,42 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                   PageView(
                     children: [
                       if (imgList.isNotEmpty)
-                        Image.network(
-                          imgList.first,
-                          fit: BoxFit.contain,
-                        ),
+                        FutureBuilder(
+                            future:
+                                cloudService.isImageAvailable(imgList.first),
+                            builder: (context, snapshot) {
+                              if (snapshot.data == true) {
+                                return Image.network(
+                                  imgList.first,
+                                  fit: BoxFit.contain,
+                                );
+                              }
+                              return (Container(
+                                width: double.infinity,
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 243, 198, 35),
+                                      Color.fromARGB(255, 255, 166, 0),
+                                    ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    stops: [0.1, 1.0],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.black,
+                                    radius: 75,
+                                    child: SvgPicture.asset(
+                                      height: 90,
+                                      width: 90,
+                                      'assets/logos/yallow_logo.svg',
+                                    ),
+                                  ),
+                                ),
+                              ));
+                            })
                     ],
                   ),
 
@@ -179,12 +208,25 @@ class RestaurantInformationPageState extends State<RestaurantInformationPage> {
                           color: const Color.fromARGB(255, 243, 198, 35),
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        child: Text(
-                          '${shop!.bayesianAverage.toStringAsFixed(1)} Stars | $reviews + Reviews',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                          ),
+                        child: FutureBuilder(
+                          future:
+                              cloudService.getShopTotalRatings(shop!.shopID),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              reviews = snapshot.data.toString();
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            return Text(
+                              '${shop!.bayesianAverage.toStringAsFixed(1)} Stars | $reviews + Reviews',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

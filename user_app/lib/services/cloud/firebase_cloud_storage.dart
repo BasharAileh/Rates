@@ -365,4 +365,33 @@ class FirebaseCloudStorage {
       throw Exception('Failed to update user name: $e');
     }
   }
+
+  Future<int> getShopTotalRatings(String? shopID) async {
+    try {
+      final totalProductRatings = await FirebaseFirestore.instance
+          .collection('product_rating')
+          .where('shop_id', isEqualTo: shopID)
+          .get()
+          .then((value) {
+        if (value.docs.isEmpty) {
+          return 0;
+        }
+        return value.docs.length;
+      });
+      final totalServiceRatings = await FirebaseFirestore.instance
+          .collection('service_rating')
+          .where('shop_id', isEqualTo: shopID)
+          .get()
+          .then((value) {
+        if (value.docs.isEmpty) {
+          return 0;
+        }
+        return value.docs.length;
+      });
+
+      return totalProductRatings + totalServiceRatings;
+    } catch (e) {
+      throw Exception('Failed to get shop total ratings: $e');
+    }
+  }
 }

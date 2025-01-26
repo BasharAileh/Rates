@@ -318,35 +318,38 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
       );
     }
 
-  Widget buildUserList(List<FireStoreUser> users) {
-  return Expanded(
-    child: ListView.builder(
-      controller: controller.scrollController,
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        final user = users[index];
-        final imageUrl = user.profileImageURL;
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: imageUrl.startsWith('http')
-                ? NetworkImage(imageUrl)
-                : const AssetImage('assets/images/profile_images/default_profile_image_1.png') as ImageProvider,
-          ),
-          title: Text(user.userName),
-          subtitle: Text('Ratings: ${user.ratings[categoryID] ?? 0}'),
-          onTap: () {
-            Get.toNamed(
-              'userInfoRoute',
-              arguments: {
-                'user': user,
+    Widget buildUserList(List<FireStoreUser> users) {
+      return Expanded(
+        child: ListView.builder(
+          controller: controller.scrollController,
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final user = users[index];
+            final imageUrl = user.profileImageURL;
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: imageUrl.startsWith('http')
+                    ? NetworkImage(imageUrl)
+                    : const AssetImage(
+                            'assets/images/profile_images/default_profile_image_1.png')
+                        as ImageProvider,
+              ),
+              title: Text(user.userName),
+              subtitle: Text('Ratings: ${user.ratings[categoryID] ?? 0}'),
+              onTap: () {
+                Get.toNamed(
+                  'userInfoRoute',
+                  arguments: {
+                    'user': user,
+                  },
+                );
               },
             );
           },
-        );
-      },
-    ),
-  );
-}
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -366,7 +369,11 @@ class _FoodPageState extends State<FoodPage> with TickerProviderStateMixin {
           },
         ),
         title: Text(
-          category,
+          args['order_by'] == 2
+              ? 'Rating Experts'
+              : args['order_by'] == 1
+                  ? 'Yearly Finest'
+                  : 'Monthly Finest',
           style: TextStyle(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white

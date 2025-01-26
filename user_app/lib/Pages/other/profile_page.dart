@@ -140,45 +140,44 @@ class _ProfilePageState extends State<ProfilePage> {
           String profileImageUrl = userInfo.profileImageURL;
 
           if (user.isAnonymous) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.lock_outline,
-              size: AspectRatios.height*0.1,
-              color: isDarkMode ? Colors.white54 : Colors.black54,
-            ),
-             SizedBox(height: AspectRatios.height*0.005),
-            Text(
-              'Please login to view your profile.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white70 : Colors.black87,
-              ),
-            ),
-            ElevatedButton(
-                  onPressed: () async {
-                    Get.offAllNamed('/login/');
-                  },
-                  style: ElevatedButton.styleFrom(
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: AspectRatios.height * 0.1,
+                    color: isDarkMode ? Colors.white54 : Colors.black54,
+                  ),
+                  SizedBox(height: AspectRatios.height * 0.005),
+                  Text(
+                    'Please login to view your profile.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Get.offAllNamed('/login/');
+                    },
+                    style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 255, 196, 45),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                  child: const Text(
-                    'LogIn',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    child: const Text(
+                      'LogIn',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }
-
+                ],
+              ),
+            );
+          }
 
           return SingleChildScrollView(
             child: Padding(
@@ -224,7 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ),
-                         SizedBox(width: AspectRatios.height*0.015),
+                        SizedBox(width: AspectRatios.height * 0.015),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -232,7 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 isEditing
                                     ? SizedBox(
-                                        width: AspectRatios.width*0.4,
+                                        width: AspectRatios.width * 0.4,
                                         child: TextField(
                                           focusNode: _focusNode,
                                           controller: _controller,
@@ -327,7 +326,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           },
                                         ),
                                       ),
-                                 SizedBox(width:AspectRatios.width*0.02),
+                                SizedBox(width: AspectRatios.width * 0.02),
                                 IconButton(
                                   icon: Icon(
                                     isEditing ? Icons.check : Icons.edit,
@@ -379,14 +378,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                   SizedBox(height: AspectRatios.height*0.02),
+                  SizedBox(height: AspectRatios.height * 0.01),
                   Divider(
                     color: isDarkMode ? Colors.white : Colors.black,
                     thickness: 2,
                     indent: 15,
                     endIndent: 15,
                   ),
-                   SizedBox(height: AspectRatios.height*0.02),
+                  SizedBox(height: AspectRatios.height * 0.01),
                   Container(
                     margin: const EdgeInsets.only(left: 15),
                     child: Text(
@@ -398,16 +397,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                   SizedBox(height: AspectRatios.height*0.02),
+                  SizedBox(height: AspectRatios.height * 0.02),
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/profile.svg',
-                      height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.02,
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.02,
                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Personal Information",
                     subtitle: user.email,
@@ -431,36 +430,36 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/rewards.svg',
-                       height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
-                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Rewards and Vouchers",
                   ),
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/rating.svg',
-                       height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
-                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Rating",
                   ),
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/language.svg',
-                       height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
-                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Language",
                     subtitle: selectedLanguage,
@@ -502,12 +501,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/theme.svg',
-                     height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
-                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Theme",
                     subtitle: _themeController.themeMode == ThemeMode.light
@@ -586,28 +585,27 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/help.svg',
-                      height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Help",
                   ),
                   _buildCustomTile(
                     icon: SvgPicture.asset(
                       'assets/icons/reset_password.svg',
-                     height: AspectRatios.height*0.03,
-                      width: AspectRatios.width*0.03,
-                       colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                      height: AspectRatios.height * 0.03,
+                      width: AspectRatios.width * 0.03,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     title: "Reset Password",
                   ),
-                   SizedBox(height: AspectRatios.height*0.015),
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -651,7 +649,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Row(
           children: [
             icon,
-             SizedBox(width:AspectRatios.width*0.05),
+            SizedBox(width: AspectRatios.width * 0.05),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -677,12 +675,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SvgPicture.asset(
               'assets/icons/arrow.svg',
-             height: AspectRatios.height*0.035,
-                      width: AspectRatios.width*0.03,
+              height: AspectRatios.height * 0.035,
+              width: AspectRatios.width * 0.03,
               colorFilter: ColorFilter.mode(
-                  isDarkMode ? Colors.white : Colors.black,
-                  BlendMode.srcIn,
-                ),
+                isDarkMode ? Colors.white : Colors.black,
+                BlendMode.srcIn,
+              ),
             ),
           ],
         ),

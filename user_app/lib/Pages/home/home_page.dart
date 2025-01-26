@@ -257,10 +257,13 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Center(
                                         child: Container(
-                                          color: _selectedCategoryIndex == index
-                                              ? null
-                                              : Colors.grey[
-                                                  800], // Added color change
+                                          color: !isDarkMode
+                                              ? _selectedCategoryIndex == index
+                                                  ? Colors.grey[800]
+                                                  : AppColors.iconBackground
+                                              : _selectedCategoryIndex == index
+                                                  ? null
+                                                  : Colors.grey[800],
                                           height: AspectRatios.height * 0.054,
                                           width: AspectRatios.width *
                                               0.10256410256,
