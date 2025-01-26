@@ -103,6 +103,7 @@ class _ViewRatingState extends State<ViewRating> {
     final isDarkMode = brightness == Brightness.dark;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final iconColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
 
     late final Product product;
     late final Shop shop;
@@ -292,7 +293,7 @@ class _ViewRatingState extends State<ViewRating> {
                           product.productDescription.isEmpty
                               ? 'No description available'
                               : product.productDescription,
-                          style: const TextStyle(fontSize: 11),
+                          style: TextStyle(fontSize: 11, color: textColor),
                           overflow: TextOverflow.clip,
                         ),
                       ),
@@ -322,26 +323,26 @@ class _ViewRatingState extends State<ViewRating> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      if (snapshot.hasData) {
-                        rates = snapshot.data as List<ProductRating>;
-                      }
                       if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Failed to load rates'),
+                        return Center(
+                          child: Text('Failed to load rates', style: TextStyle(color: textColor)),
                         );
                       }
 
-                      print(productID);
+                      if (rates == null || rates.isEmpty) {
+                        return Center(
+                          child: Text('No rates available', style: TextStyle(color: textColor)),
+                        );
+                      }
 
                       return ListView.builder(
                         controller: _scrollController,
-                        itemCount: rates?.length ?? 0,
+                        itemCount: rates.length,
                         itemBuilder: (context, index) {
-                          final rate = rates![index];
-                          print('[rate] $rate');
-                          final review = reviews[index];
+                          final rate = rates[index];
+                          final review = index < reviews.length ? reviews[index] : null;
                           return Card(
-                            color: Colors.white,
+                            color: cardColor,
                             elevation: 0,
                             child: ListTile(
                               leading: FutureBuilder(
@@ -352,8 +353,9 @@ class _ViewRatingState extends State<ViewRating> {
                                       return const CircularProgressIndicator();
                                     }
                                     return CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage(review['avatar']),
+                                      backgroundImage: review != null
+                                          ? AssetImage(review['avatar'])
+                                          : null,
                                     );
                                   }),
                               subtitle: Column(
@@ -361,7 +363,7 @@ class _ViewRatingState extends State<ViewRating> {
                                 children: [
                                   Text(
                                     rate.ratingText,
-                                    style: const TextStyle(fontSize: 13),
+                                    style: TextStyle(fontSize: 13, color: textColor),
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
