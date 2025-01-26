@@ -103,6 +103,7 @@ class _ViewRatingState extends State<ViewRating> {
     final isDarkMode = brightness == Brightness.dark;
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final iconColor = isDarkMode ? Colors.white : Colors.black;
+    final cardColor = isDarkMode ? Colors.grey[800] : Colors.white;
 
     late final Product product;
     late final Shop shop;
@@ -292,7 +293,7 @@ class _ViewRatingState extends State<ViewRating> {
                           product.productDescription.isEmpty
                               ? 'No description available'
                               : product.productDescription,
-                          style: const TextStyle(fontSize: 11),
+                          style: TextStyle(fontSize: 11, color: textColor),
                           overflow: TextOverflow.clip,
                         ),
                       ),
@@ -322,92 +323,77 @@ class _ViewRatingState extends State<ViewRating> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      if (snapshot.hasData) {
-                        rates = snapshot.data as List<ProductRating>;
-                      }
                       if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Failed to load rates'),
+                        return Center(
+                          child: Text('Failed to load rates',
+                              style: TextStyle(color: textColor)),
                         );
                       }
 
-                      return Column(
-                        children: [
-                          ...List.generate(
-                            rates?.length ?? 0,
-                            (index) {
-                              FutureBuilder(
-                                future: cloudService
-                                    .getUserInfo(rates![index].userID),
-                                builder: (context, snapshot) {
-                                  print('snapshot: $snapshot');
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  if (snapshot.hasData) {
-                                    final user = snapshot.data as FireStoreUser;
-                                    return Row(
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              user.imagePath), // User Image
-                                        ),
-                                        Column(
-                                          children: [
-                                            Text(user.userName), // User Name
-                                            Row(
-                                              children: [
-                                                ...List.generate(
-                                                  rates![index]
-                                                      .ratingValue
-                                                      .floor(),
-                                                  (index) => Icon(
-                                                    Icons.star,
-                                                    color: Colors.amber,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                                if ((rates![index].ratingValue -
-                                                        rates![index]
-                                                            .ratingValue
-                                                            .floor()) >=
-                                                    0.5)
-                                                  Icon(
-                                                    Icons.star_half,
-                                                    color: Colors.amber,
-                                                    size: 20,
-                                                  ),
-                                                ...List.generate(
-                                                  5 -
-                                                      rates![index]
-                                                          .ratingValue
-                                                          .ceil(),
-                                                  (index) => Icon(
-                                                    Icons.star_border,
-                                                    color: Colors.amber,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Text(rates![index]
-                                                .ratingValue
-                                                .toString()),
-                                            Text(rates![index].ratingText),
-                                          ],
-                                        ),
-                                      ],
+                      if (rates == null || rates.isEmpty) {
+                        return Center(
+                          child: Text('No rates available',
+                              style: TextStyle(color: textColor)),
+                        );
+                      }
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        itemCount: rates.length,
+                        itemBuilder: (context, index) {
+                          final rate = rates[index];
+                          final review =
+                              index < reviews.length ? reviews[index] : null;
+                          return Card(
+                            color: cardColor,
+                            elevation: 0,
+                            child: ListTile(
+                              leading: FutureBuilder(
+                                  future: cloudService.getUserInfo(rate.userID),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    return CircleAvatar(
+                                      backgroundImage: review != null
+                                          ? AssetImage(review['avatar'])
+                                          : null,
                                     );
-                                  }
-                                  return Text('');
-                                },
-                              );
-                              return Text('da');
-                            },
-                          )
-                        ],
+                                  }),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    rate.ratingText,
+                                    style: TextStyle(
+                                        fontSize: 13, color: textColor),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: List.generate(
+                                      5,
+                                      (starIndex) => SvgPicture.asset(
+                                        'assets/icons/star.svg',
+                                        colorFilter: starIndex <
+                                                rate.ratingValue
+                                            ? const ColorFilter.mode(
+                                                Color.fromARGB(
+                                                    255, 255, 193, 7),
+                                                BlendMode.srcIn)
+                                            : const ColorFilter.mode(
+                                                Color.fromARGB(200, 0, 0, 0),
+                                                BlendMode.srcIn),
+                                        width: AspectRatios.width * 0.02,
+                                        height: AspectRatios.height * 0.03,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
