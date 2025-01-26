@@ -172,13 +172,13 @@ class MenuPageState extends State<MenuPage> {
                           color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
-                      Text(
-                        'Rating of ${shop.bayesianAverage}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: isDarkMode ? Colors.white70 : Colors.black,
-                        ),
-                      ),
+                   Text(
+  'Rating of ${shop.bayesianAverage.toStringAsFixed(2)}',
+  style: TextStyle(
+    fontSize: 11,
+    color: isDarkMode ? Colors.white70 : Colors.black,
+  ),
+)
                     ],
                   ),
                 ),
