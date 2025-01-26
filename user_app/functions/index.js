@@ -6,13 +6,6 @@ const functions = require('firebase-functions');
 const express = require('express');
 
 
-
-
-
-
-
-
-
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   admin.initializeApp();

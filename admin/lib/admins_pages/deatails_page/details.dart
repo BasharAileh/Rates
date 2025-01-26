@@ -165,8 +165,8 @@ class CheckResState extends State<CheckRes> {
                         ),
                       ),
                       onPressed: () async {
-                        /* await cloudService.deletePendingRestaurant(
-                            shopData['documentID']); */
+                        await cloudService
+                            .deletePendingRestaurant(shopData['documentID']);
                       },
                       child: const Text(
                         'Reject',

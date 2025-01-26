@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/Pages/rating/rate_res_page.dart';
+import 'package:rates/Pages/rating/rate_shop_page.dart';
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
@@ -143,7 +143,7 @@ class VerificationDialogPage extends StatelessWidget {
                               await cloudService.getReceiptInfo(enteredCode);
                               print('object');
                               Get.to(
-                                  () => const RateMealPage(
+                                  () => const RateProductPage(
                                         restaurant: '',
                                         meals: [],
                                         rating: '',
