@@ -237,6 +237,7 @@ class RateProductPageState extends State<RateProductPage> {
                       ElevatedButton(
                         onPressed: () async {
                           try {
+                            Get.offAllNamed('/home/');
                             for (var key in controller.ratings.keys) {
                               for (int productNumber = 0;
                                   productNumber <
@@ -288,57 +289,11 @@ class RateProductPageState extends State<RateProductPage> {
                                 }
                               }
                             }
+                           
                           } catch (e) {
                             print('Error: $e');
                           }
-
-                          /* showDialog(
-                context: context,
-                builder: (context) => Dialog(
-                  backgroundColor: Colors.transparent,
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/verfication_success.svg',
-                            width: AspectRatios.width * 0.2,
-                            height: AspectRatios.height * 0.2,
-                          ),
-                          SizedBox(height: AspectRatios.height * 0.01),
-                          const Text(
-                            'Your ratings have been submitted!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 196, 45),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-              Future.delayed(const Duration(seconds: 4), () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              }); */
-                        },
+                       },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               const Color.fromARGB(255, 255, 196, 45),
@@ -347,6 +302,7 @@ class RateProductPageState extends State<RateProductPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
+                          
                         ),
                         child: const Text(
                           "Submit Ratings",

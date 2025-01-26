@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:rates/services/auth/auth_service.dart';
 import 'package:rates/services/auth/auth_user.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/cloud_storage_exception.dart';
-import 'package:http/http.dart' as http;
 
 class FirebaseCloudStorage {
   // Singleton instance
