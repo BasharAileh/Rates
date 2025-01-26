@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:rates/constants/app_colors.dart';
 import 'package:rates/constants/aspect_ratio.dart';
-import 'package:rates/dialogs/redeem_dialog.dart';
 import 'package:rates/services/cloud/cloud_instances.dart';
 import 'package:rates/services/cloud/firebase_cloud_storage.dart';
 
@@ -271,7 +270,7 @@ class _ViewRatingState extends State<ViewRating> {
                               ),
                             ),
                             Text(
-                              ' - ${product.productPrice.toString()}',
+                              ' - ${"${product.productPrice}JOD"}',
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
@@ -280,23 +279,26 @@ class _ViewRatingState extends State<ViewRating> {
                             ),
                           ],
                         ),
-                        Text(
+                      ],
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Flexible(
+                        child: Text(
                           product.productDescription.isEmpty
                               ? 'No description available'
                               : product.productDescription,
                           style: const TextStyle(fontSize: 11),
+                          overflow: TextOverflow.clip,
                         ),
-                      ],
+                      ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const VerificationDialogPage(); // Show the verification dialog
-                          },
-                        );
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 10),
@@ -349,17 +351,9 @@ class _ViewRatingState extends State<ViewRating> {
                                         ConnectionState.waiting) {
                                       return const CircularProgressIndicator();
                                     }
-                                    print(rate.userID);
-                                    print('snapshot.data ${snapshot.data}');
                                     return CircleAvatar(
                                       backgroundImage:
                                           AssetImage(review['avatar']),
-                                      onBackgroundImageError: (_, __) {
-                                        setState(() {
-                                          review['avatar'] =
-                                              'assets/images/default_avatar.png'; // Use fallback image
-                                        });
-                                      },
                                     );
                                   }),
                               subtitle: Column(
